@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "map-app"
+version = "0.1.1"
+description = "Reusable Django map app framework"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "Django>=5.0,<7.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
