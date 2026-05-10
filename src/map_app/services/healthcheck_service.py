@@ -5,13 +5,13 @@ from django.db import connection
 from django.db.utils import DatabaseError
 
 
-def run_health_checks():
+def run_health_checks(*, cache_backend=cache, db_connection=connection):
     started_at = time.perf_counter()
     checks = {"db": "ok", "cache": "ok"}
     details = {}
 
     try:
-        with connection.cursor() as cursor:
+        with db_connection.cursor() as cursor:
             cursor.execute("SELECT 1")
             cursor.fetchone()
     except DatabaseError as exc:
@@ -20,14 +20,13 @@ def run_health_checks():
 
     cache_key = "map_app:healthz:probe"
     try:
-        cache.set(cache_key, "ok", 5)
-        if cache.get(cache_key) != "ok":
+        cache_backend.set(cache_key, "ok", 5)
+        if cache_backend.get(cache_key) != "ok":
             checks["cache"] = "error"
             details["cache_error"] = "cache roundtrip mismatch"
-        cache_backend = cache.__class__.__module__ + "." + cache.__class__.__name__
-        details["cache_backend"] = cache_backend
+        details["cache_backend"] = cache_backend.__class__.__module__ + "." + cache_backend.__class__.__name__
 
-        redis_client_factory = getattr(getattr(cache, "_cache", None), "get_client", None)
+        redis_client_factory = getattr(getattr(cache_backend, "_cache", None), "get_client", None)
         if callable(redis_client_factory):
             try:
                 redis_client = redis_client_factory()

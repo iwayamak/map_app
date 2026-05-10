@@ -35,7 +35,15 @@ def update_video_processing_progress(video_id, *, step=None, percent=None):
     Video.objects.filter(pk=video_id).update(**update_fields)
 
 
-def process_video_now(video_id):
+def process_video_now(
+    video_id,
+    *,
+    delete_replaced_file_func=delete_replaced_file,
+    get_uploaded_media_dimensions_func=get_uploaded_media_dimensions,
+    generate_video_thumbnail_func=generate_video_thumbnail,
+    compress_uploaded_video_func=compress_uploaded_video,
+    populate_video_dimensions_func=None,
+):
     if not getattr(settings, "VIDEO_PROCESSING_ALLOWED", True):
         logger.warning("video processing skipped on disabled host. video_id=%s", video_id)
         return False
@@ -45,20 +53,22 @@ def process_video_now(video_id):
         return False
 
     thumbnail_only = bool(getattr(video, "thumbnail_regeneration_requested", False))
+    if populate_video_dimensions_func is None:
+        populate_video_dimensions_func = populate_video_dimensions
     previous_video_name = video.video_file.name
     previous_thumbnail_name = video.thumbnail.name if video.thumbnail else None
 
     try:
         with video_processing_session(video):
             if thumbnail_only:
-                populate_video_dimensions(video)
+                populate_video_dimensions_func(video, get_uploaded_media_dimensions_func=get_uploaded_media_dimensions_func)
                 update_video_processing_progress(video_id, step="thumbnail", percent=90)
-                thumbnail_name, thumbnail_file = generate_video_thumbnail(video.video_file, video.title)
+                thumbnail_name, thumbnail_file = generate_video_thumbnail_func(video.video_file, video.title)
                 video.thumbnail.save(thumbnail_name, thumbnail_file, save=False)
             else:
                 update_video_processing_progress(video_id, step="transcoding", percent=1)
                 if should_transcode_video(video):
-                    compressed_name, compressed_file, media_metadata = compress_uploaded_video(
+                    compressed_name, compressed_file, media_metadata = compress_uploaded_video_func(
                         video.video_file,
                         progress_callback=lambda percent: update_video_processing_progress(
                             video_id,
@@ -70,12 +80,12 @@ def process_video_now(video_id):
                     video.video_width = media_metadata.get("width")
                     video.video_height = media_metadata.get("height")
                 else:
-                    populate_video_dimensions(video)
+                    populate_video_dimensions_func(video, get_uploaded_media_dimensions_func=get_uploaded_media_dimensions_func)
                     update_video_processing_progress(video_id, step="transcoding", percent=94)
 
                 update_video_processing_progress(video_id, step="thumbnail", percent=95)
                 if settings.VIDEO_AUTO_THUMBNAIL_ENABLED and not video.thumbnail:
-                    thumbnail_name, thumbnail_file = generate_video_thumbnail(video.video_file, video.title)
+                    thumbnail_name, thumbnail_file = generate_video_thumbnail_func(video.video_file, video.title)
                     video.thumbnail.save(thumbnail_name, thumbnail_file, save=False)
 
             update_video_processing_progress(video_id, step="finalizing", percent=99)
@@ -99,12 +109,17 @@ def process_video_now(video_id):
     finally:
         close_old_connections()
 
-    delete_replaced_file(video.video_file, previous_video_name)
-    delete_replaced_file(video.thumbnail, previous_thumbnail_name)
+    delete_replaced_file_func(video.video_file, previous_video_name)
+    delete_replaced_file_func(video.thumbnail, previous_thumbnail_name)
     return True
 
 
-def regenerate_video_thumbnail_now(video_id):
+def regenerate_video_thumbnail_now(
+    video_id,
+    *,
+    delete_replaced_file_func=delete_replaced_file,
+    generate_video_thumbnail_func=generate_video_thumbnail,
+):
     video = get_processable_video(video_id)
     if not video:
         return False
@@ -112,7 +127,7 @@ def regenerate_video_thumbnail_now(video_id):
     previous_thumbnail_name = video.thumbnail.name if video.thumbnail else None
     try:
         with video_processing_session(video):
-            thumbnail_name, thumbnail_file = generate_video_thumbnail(video.video_file, video.title)
+            thumbnail_name, thumbnail_file = generate_video_thumbnail_func(video.video_file, video.title)
             video.thumbnail.save(thumbnail_name, thumbnail_file, save=False)
             video.prepare_thumbnail_regeneration()
             video.save(update_fields=["thumbnail", "processing_error", "updated_at"])
@@ -121,7 +136,7 @@ def regenerate_video_thumbnail_now(video_id):
     finally:
         close_old_connections()
 
-    delete_replaced_file(video.thumbnail, previous_thumbnail_name)
+    delete_replaced_file_func(video.thumbnail, previous_thumbnail_name)
     return True
 
 
@@ -177,12 +192,12 @@ def truncate_error_message(exc):
     return f"{exc.__class__.__name__}: {str(exc).strip()}"[:500]
 
 
-def populate_video_dimensions(video):
+def populate_video_dimensions(video, *, get_uploaded_media_dimensions_func=get_uploaded_media_dimensions):
     width = int(getattr(video, "video_width", 0) or 0)
     height = int(getattr(video, "video_height", 0) or 0)
     if width > 0 and height > 0:
         return
-    detected_width, detected_height = get_uploaded_media_dimensions(video.video_file)
+    detected_width, detected_height = get_uploaded_media_dimensions_func(video.video_file)
     video.video_width = detected_width
     video.video_height = detected_height
 

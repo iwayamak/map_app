@@ -34,7 +34,7 @@ def get_ffprobe_binary():
     raise ValidationError("ffprobe が見つかりません。動画情報を取得できません。")
 
 
-def get_media_duration_seconds(input_path):
+def get_media_duration_seconds(input_path, *, subprocess_module=subprocess):
     command = [
         get_ffprobe_binary(),
         "-v",
@@ -46,8 +46,8 @@ def get_media_duration_seconds(input_path):
         str(input_path),
     ]
     try:
-        completed = subprocess.run(command, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as exc:
+        completed = subprocess_module.run(command, check=True, capture_output=True, text=True)
+    except subprocess_module.CalledProcessError as exc:
         error_output = (exc.stderr or exc.stdout or "").strip()
         raise ValidationError(f"動画情報の取得に失敗しました。{error_output[:400]}") from exc
 
@@ -58,7 +58,7 @@ def get_media_duration_seconds(input_path):
         raise ValidationError("動画情報の取得結果が不正です。") from exc
 
 
-def get_media_dimensions(input_path):
+def get_media_dimensions(input_path, *, subprocess_module=subprocess):
     command = [
         get_ffprobe_binary(),
         "-v",
@@ -72,8 +72,8 @@ def get_media_dimensions(input_path):
         str(input_path),
     ]
     try:
-        completed = subprocess.run(command, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as exc:
+        completed = subprocess_module.run(command, check=True, capture_output=True, text=True)
+    except subprocess_module.CalledProcessError as exc:
         error_output = (exc.stderr or exc.stdout or "").strip()
         raise ValidationError(f"動画寸法の取得に失敗しました。{error_output[:400]}") from exc
 
@@ -93,18 +93,18 @@ def get_media_dimensions(input_path):
     return width, height
 
 
-def run_ffmpeg_command(command, failure_prefix, *, progress_callback=None):
+def run_ffmpeg_command(command, failure_prefix, *, progress_callback=None, subprocess_module=subprocess):
     if not progress_callback:
         try:
-            subprocess.run(command, check=True, capture_output=True, text=True)
-        except subprocess.CalledProcessError as exc:
+            subprocess_module.run(command, check=True, capture_output=True, text=True)
+        except subprocess_module.CalledProcessError as exc:
             error_output = (exc.stderr or exc.stdout or "").strip()
             raise ValidationError(f"{failure_prefix}{error_output[-400:]}") from exc
         return
 
     command = [*command, "-progress", "pipe:1", "-nostats"]
     try:
-        with subprocess.Popen(
+        with subprocess_module.Popen(
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -128,7 +128,7 @@ def run_ffmpeg_command(command, failure_prefix, *, progress_callback=None):
             return_code = process.wait()
             if return_code != 0:
                 combined_output = "\n".join(output_lines[-80:])
-                raise subprocess.CalledProcessError(return_code, command, output=combined_output, stderr=combined_output)
-    except subprocess.CalledProcessError as exc:
+                raise subprocess_module.CalledProcessError(return_code, command, output=combined_output, stderr=combined_output)
+    except subprocess_module.CalledProcessError as exc:
         error_output = (exc.stderr or exc.stdout or "").strip()
         raise ValidationError(f"{failure_prefix}{error_output[-400:]}") from exc

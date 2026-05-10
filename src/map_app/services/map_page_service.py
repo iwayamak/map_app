@@ -1,7 +1,7 @@
 from map_app.contracts.map_search_contract import (
     MapSearchPayload,
 )
-from map_app.domain import get_site_settings_model, get_statistics_builder
+from map_app.domain import get_statistics_builder
 from map_app.services.map_marker_service import (
     add_performance_markers,
     add_unvisited_markers,
@@ -25,14 +25,13 @@ from map_app.services.map_render_service import (
 )
 from map_app.services.map_summary_service import serialize_map_statistics, serialize_map_summary
 from map_app.services.map_tag_service import build_tag_context, normalize_selected_tags
+from map_app.services.site_context_service import load_site_context
 
 
 def build_map_search_payload(search_query="", selected_tags=None):
-    SiteSettings = get_site_settings_model()
     build_map_statistics = get_statistics_builder()
     search_query = (search_query or "").strip()
-    site_settings = SiteSettings.load()
-    domain_terms = site_settings.get_domain_terms()
+    site_settings, domain_terms = load_site_context()
     selected_tags = normalize_selected_tags(selected_tags, domain_terms=domain_terms)
 
     performances = list(
@@ -70,11 +69,9 @@ def build_map_search_payload(search_query="", selected_tags=None):
 
 
 def render_map_page_html(user, search_query="", selected_tags=None):
-    SiteSettings = get_site_settings_model()
     build_map_statistics = get_statistics_builder()
     search_query = (search_query or "").strip()
-    site_settings = SiteSettings.load()
-    domain_terms = site_settings.get_domain_terms()
+    site_settings, domain_terms = load_site_context()
     selected_tags = normalize_selected_tags(selected_tags, domain_terms=domain_terms)
 
     map_instance = create_map()

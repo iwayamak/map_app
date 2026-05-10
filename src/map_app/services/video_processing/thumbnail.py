@@ -7,20 +7,29 @@ from .ffmpeg import get_ffmpeg_binary, run_ffmpeg_command
 from .files import build_generated_media_name, build_spooled_content_file, write_uploaded_file
 
 
-def generate_video_thumbnail(uploaded_file, title):
+def generate_video_thumbnail(
+    uploaded_file,
+    title,
+    *,
+    get_ffmpeg_binary_func=get_ffmpeg_binary,
+    run_ffmpeg_command_func=run_ffmpeg_command,
+    build_generated_media_name_func=build_generated_media_name,
+    build_spooled_content_file_func=build_spooled_content_file,
+    write_uploaded_file_func=write_uploaded_file,
+):
     original_name = getattr(uploaded_file, "name", "") or "video"
     input_suffix = Path(original_name).suffix or ".mp4"
-    output_name = build_generated_media_name("video-thumb", ".jpg")
+    output_name = build_generated_media_name_func("video-thumb", ".jpg")
 
     with tempfile.TemporaryDirectory(prefix="map-app-video-thumb-") as temp_dir:
         temp_dir_path = Path(temp_dir)
         input_path = temp_dir_path / f"input{input_suffix}"
         frame_path = temp_dir_path / "frame.jpg"
 
-        write_uploaded_file(uploaded_file, input_path)
+        write_uploaded_file_func(uploaded_file, input_path)
 
         command = [
-            get_ffmpeg_binary(),
+            get_ffmpeg_binary_func(),
             "-y",
             "-ss",
             "00:00:01",
@@ -33,17 +42,17 @@ def generate_video_thumbnail(uploaded_file, title):
             str(frame_path),
         ]
 
-        run_ffmpeg_command(command, "サムネイル生成に失敗しました。")
-        return output_name, build_thumbnail_file(frame_path)
+        run_ffmpeg_command_func(command, "サムネイル生成に失敗しました。")
+        return output_name, build_thumbnail_file(frame_path, build_spooled_content_file_func=build_spooled_content_file_func)
 
 
-def build_thumbnail_file(frame_path):
+def build_thumbnail_file(frame_path, *, build_spooled_content_file_func=build_spooled_content_file):
     with Image.open(frame_path) as source_image:
         source_image = source_image.convert("RGB")
         source_width, source_height = source_image.size
         is_portrait = source_height > source_width
         image = build_thumbnail_canvas(source_image, is_portrait=is_portrait)
-        return build_spooled_content_file(image)
+        return build_spooled_content_file_func(image)
 
 
 def build_thumbnail_canvas(source_image, *, is_portrait):

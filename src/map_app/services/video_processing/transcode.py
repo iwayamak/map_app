@@ -37,10 +37,21 @@ def resolve_transcode_profile(uploaded_file):
     }
 
 
-def compress_uploaded_video(uploaded_file, *, progress_callback=None):
+def compress_uploaded_video(
+    uploaded_file,
+    *,
+    progress_callback=None,
+    get_ffmpeg_binary_func=get_ffmpeg_binary,
+    get_media_dimensions_func=get_media_dimensions,
+    get_media_duration_seconds_func=get_media_duration_seconds,
+    run_ffmpeg_command_func=run_ffmpeg_command,
+    build_content_file_from_path_func=build_content_file_from_path,
+    build_generated_media_name_func=build_generated_media_name,
+    write_uploaded_file_func=write_uploaded_file,
+):
     original_name = getattr(uploaded_file, "name", "") or "video"
     input_suffix = Path(original_name).suffix or ".mp4"
-    output_name = build_generated_media_name("video", ".mp4")
+    output_name = build_generated_media_name_func("video", ".mp4")
 
     with tempfile.TemporaryDirectory(prefix="map-app-video-") as temp_dir:
         temp_dir_path = Path(temp_dir)
@@ -48,8 +59,8 @@ def compress_uploaded_video(uploaded_file, *, progress_callback=None):
         encoded_path = temp_dir_path / "encoded.mp4"
         output_path = temp_dir_path / "output.mp4"
 
-        write_uploaded_file(uploaded_file, input_path)
-        duration_seconds = get_media_duration_seconds(input_path)
+        write_uploaded_file_func(uploaded_file, input_path)
+        duration_seconds = get_media_duration_seconds_func(input_path)
         profile = resolve_transcode_profile(uploaded_file)
 
         scale_filter = f"scale=w='min({profile['max_width']},iw)':h=-2"
@@ -58,7 +69,7 @@ def compress_uploaded_video(uploaded_file, *, progress_callback=None):
             video_filters.append(f"fps={profile['max_fps']}")
 
         command = [
-            get_ffmpeg_binary(),
+            get_ffmpeg_binary_func(),
             "-y",
             "-i",
             str(input_path),
@@ -93,10 +104,10 @@ def compress_uploaded_video(uploaded_file, *, progress_callback=None):
             progress_ratio = min(1.0, out_time_ms / (duration_seconds * 1_000_000))
             progress_callback(int(progress_ratio * 100))
 
-        run_ffmpeg_command(command, "動画圧縮に失敗しました。", progress_callback=ffmpeg_progress_callback)
-        run_ffmpeg_command(
+        run_ffmpeg_command_func(command, "動画圧縮に失敗しました。", progress_callback=ffmpeg_progress_callback)
+        run_ffmpeg_command_func(
             [
-                get_ffmpeg_binary(),
+                get_ffmpeg_binary_func(),
                 "-y",
                 "-i",
                 str(encoded_path),
@@ -108,5 +119,5 @@ def compress_uploaded_video(uploaded_file, *, progress_callback=None):
             ],
             "圧縮後の最適化に失敗しました。",
         )
-        width, height = get_media_dimensions(output_path)
-        return output_name, build_content_file_from_path(output_path), {"width": width, "height": height}
+        width, height = get_media_dimensions_func(output_path)
+        return output_name, build_content_file_from_path_func(output_path), {"width": width, "height": height}

@@ -128,9 +128,9 @@ def _build_default_favicon_url(url):
     return f"{parsed.scheme}://{parsed.netloc}/favicon.ico"
 
 
-def fetch_link_preview(url):
+def fetch_link_preview(url, *, urlopen_func=urlopen, cache_backend=cache):
     cache_key = _build_cache_key(url)
-    cached = cache.get(cache_key)
+    cached = cache_backend.get(cache_key)
     if cached is not None:
         return cached or None
 
@@ -143,32 +143,32 @@ def fetch_link_preview(url):
     )
 
     try:
-        with urlopen(request, timeout=LINK_PREVIEW_REQUEST_TIMEOUT_SECONDS) as response:
+        with urlopen_func(request, timeout=LINK_PREVIEW_REQUEST_TIMEOUT_SECONDS) as response:
             content_type = response.headers.get_content_type()
             if content_type and "html" not in content_type:
-                cache.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
+                cache_backend.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
                 return None
             charset = response.headers.get_content_charset() or "utf-8"
             html = decode_html_bytes(response.read(65536), charset=charset)
     except URLError as error:
         reason = getattr(error, "reason", None)
         if not isinstance(reason, ssl.SSLCertVerificationError):
-            cache.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
+            cache_backend.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
             return None
         try:
             insecure_context = ssl._create_unverified_context()
-            with urlopen(request, timeout=LINK_PREVIEW_REQUEST_TIMEOUT_SECONDS, context=insecure_context) as response:
+            with urlopen_func(request, timeout=LINK_PREVIEW_REQUEST_TIMEOUT_SECONDS, context=insecure_context) as response:
                 content_type = response.headers.get_content_type()
                 if content_type and "html" not in content_type:
-                    cache.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
+                    cache_backend.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
                     return None
                 charset = response.headers.get_content_charset() or "utf-8"
                 html = decode_html_bytes(response.read(65536), charset=charset)
         except (OSError, URLError, ValueError):
-            cache.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
+            cache_backend.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
             return None
     except (OSError, URLError, ValueError):
-        cache.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
+        cache_backend.set(cache_key, "", LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS)
         return None
 
     preview = {
@@ -176,7 +176,7 @@ def fetch_link_preview(url):
         "favicon_url": extract_favicon_url_from_html(url, html) or "",
     }
     has_useful_preview = bool(preview["title"] or preview["favicon_url"])
-    cache.set(
+    cache_backend.set(
         cache_key,
         preview if has_useful_preview else "",
         LINK_PREVIEW_CACHE_TIMEOUT_SECONDS if has_useful_preview else LINK_PREVIEW_FAILURE_CACHE_TIMEOUT_SECONDS,
@@ -184,22 +184,22 @@ def fetch_link_preview(url):
     return preview if has_useful_preview else None
 
 
-def build_link_preview_map(text):
+def build_link_preview_map(text, *, fetch_link_preview_func=fetch_link_preview):
     preview_map = {}
     for url in extract_urls(text):
-        preview = fetch_link_preview(url)
+        preview = fetch_link_preview_func(url)
         if preview:
             preview_map[url] = preview
     return preview_map
 
 
-def warm_link_preview_cache(text):
+def warm_link_preview_cache(text, *, build_link_preview_map_func=build_link_preview_map):
     if not extract_urls(text):
         return
-    build_link_preview_map(text)
+    build_link_preview_map_func(text)
 
 
-def schedule_link_preview_cache_warmup(text):
+def schedule_link_preview_cache_warmup(text, *, warm_link_preview_cache_func=warm_link_preview_cache):
     if not extract_urls(text):
         return
-    threading.Thread(target=warm_link_preview_cache, args=(text,), daemon=True).start()
+    threading.Thread(target=warm_link_preview_cache_func, args=(text,), daemon=True).start()

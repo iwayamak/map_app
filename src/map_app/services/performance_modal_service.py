@@ -46,7 +46,15 @@ def _build_custom_fields_payload(target, custom_data):
     return payload
 
 
-def _build_common_modal_payload(*, record_id, location, date, current_count, songs):
+def _build_common_modal_payload(
+    *,
+    record_id,
+    location,
+    date,
+    current_count,
+    songs,
+    build_link_preview_map_func=build_link_preview_map,
+):
     DomainFieldDefinition = get_domain_field_definition_model()
     location_prefetched = getattr(location, "_prefetched_objects_cache", {})
     prefetched_photos = location_prefetched.get("photos")
@@ -85,7 +93,7 @@ def _build_common_modal_payload(*, record_id, location, date, current_count, son
         "walking_minutes": location.walking_minutes,
         "playable_schedule_note": location.playable_schedule_note,
         "detail_note": detail_note,
-        "detail_note_link_previews": build_link_preview_map(detail_note),
+        "detail_note_link_previews": build_link_preview_map_func(detail_note),
         "current_count": current_count,
         "badge_color": "#ef4444" if is_new else "#3b82f6",
         "status_badge": "新規" if is_new else "再訪",
@@ -103,7 +111,7 @@ def _build_common_modal_payload(*, record_id, location, date, current_count, son
     }
 
 
-def build_activity_modal_payload(activity_id):
+def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=build_link_preview_map):
     ActivityLog = get_activity_log_model()
     ActivityLogItem = get_activity_log_item_model()
     LocationPhoto = get_location_photo_model()
@@ -150,6 +158,7 @@ def build_activity_modal_payload(activity_id):
         date=activity.date,
         current_count=current_count,
         songs=songs,
+        build_link_preview_map_func=build_link_preview_map_func,
     )
     payload["custom_fields"] = (
         payload["custom_fields"]
@@ -161,11 +170,14 @@ def build_activity_modal_payload(activity_id):
     return payload
 
 
-def build_performance_modal_payload(performance_id):
-    return build_activity_modal_payload(performance_id)
+def build_performance_modal_payload(performance_id, *, build_link_preview_map_func=build_link_preview_map):
+    return build_activity_modal_payload(
+        performance_id,
+        build_link_preview_map_func=build_link_preview_map_func,
+    )
 
 
-def build_location_modal_payload(location_id):
+def build_location_modal_payload(location_id, *, build_link_preview_map_func=build_link_preview_map):
     Location = get_location_model()
     LocationPhoto = get_location_photo_model()
     Tag = get_tag_model()
@@ -219,7 +231,7 @@ def build_location_modal_payload(location_id):
         "walking_minutes": location.walking_minutes,
         "playable_schedule_note": location.playable_schedule_note,
         "detail_note": detail_note,
-        "detail_note_link_previews": build_link_preview_map(detail_note),
+        "detail_note_link_previews": build_link_preview_map_func(detail_note),
         "current_count": 0,
         "badge_color": "#eab308",
         "status_badge": "未訪問",
