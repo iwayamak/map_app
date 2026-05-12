@@ -86,10 +86,13 @@ def render_header_html(user, site_settings, search_query, selected_tags, selecte
     )
 
 
-def render_hamburger_menu_html(user):
+def render_hamburger_menu_html(user, domain_terms):
     return render_to_string(
         template_name("MAP_APP_TEMPLATE_HAMBURGER_MENU", ""),
-        {"user": user},
+        {
+            "user": user,
+            "domain_terms": domain_terms,
+        },
     )
 
 

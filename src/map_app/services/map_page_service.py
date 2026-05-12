@@ -111,7 +111,7 @@ def render_map_page_html(user, search_query="", selected_tags=None):
         selected_tag_items=selected_tag_items,
         tag_options=tag_options,
     )
-    hamburger_menu_html = render_hamburger_menu_html(user)
+    hamburger_menu_html = render_hamburger_menu_html(user, domain_terms)
     attach_page_elements(
         map_instance,
         site_settings,
