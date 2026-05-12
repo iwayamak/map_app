@@ -1,6 +1,16 @@
 var IMAGE_MODAL_ANIMATION_MS = 220;
-var GALLERY_SWITCH_ANIMATION_MS = 280;
 var imageModalCloseTimer = null;
+
+function fitSizeInBox(naturalWidth, naturalHeight, boxWidth, boxHeight) {
+    if (!naturalWidth || !naturalHeight || !boxWidth || !boxHeight) {
+        return { width: boxWidth || 1, height: boxHeight || 1 };
+    }
+    var ratio = Math.min(boxWidth / naturalWidth, boxHeight / naturalHeight);
+    return {
+        width: Math.max(1, naturalWidth * ratio),
+        height: Math.max(1, naturalHeight * ratio),
+    };
+}
 
 function showImageModal(imageUrl) {
     var modal = document.getElementById("imageModal");
@@ -61,23 +71,15 @@ function setLocationGalleryImage(galleryId, imageUrl, fullImageUrl, thumbButton)
     preload.src = imageUrl;
 
     var applySwitch = function() {
-        if (wrapper) {
-            var currentHeight = Math.max(mainImage.getBoundingClientRect().height, 120);
-            var wrapperWidth = Math.max(wrapper.clientWidth, 1);
-            var nextHeight = currentHeight;
-            if (preload.naturalWidth > 0 && preload.naturalHeight > 0) {
-                var maxHeight = Math.floor(window.innerHeight * 0.7);
-                nextHeight = Math.min(
-                    maxHeight,
-                    Math.round((wrapperWidth * preload.naturalHeight) / preload.naturalWidth)
-                );
-            }
-            wrapper.style.height = currentHeight + "px";
-            wrapper.classList.toggle("is-shrinking", nextHeight < currentHeight);
-            wrapper.classList.add("is-switching");
-            wrapper.offsetHeight;
-            wrapper.style.height = nextHeight + "px";
-        }
+        if (wrapper) wrapper.classList.add("is-switching");
+
+        var box = wrapper ? wrapper.getBoundingClientRect() : { width: 1, height: 1 };
+        var oldNaturalWidth = mainImage.naturalWidth || preload.naturalWidth || 1;
+        var oldNaturalHeight = mainImage.naturalHeight || preload.naturalHeight || 1;
+        var oldFit = fitSizeInBox(oldNaturalWidth, oldNaturalHeight, Math.max(box.width, 1), Math.max(box.height, 1));
+        var newFit = fitSizeInBox(preload.naturalWidth, preload.naturalHeight, Math.max(box.width, 1), Math.max(box.height, 1));
+        var scaleX = Math.max(0.72, Math.min(1.38, oldFit.width / Math.max(newFit.width, 1)));
+        var scaleY = Math.max(0.72, Math.min(1.38, oldFit.height / Math.max(newFit.height, 1)));
 
         mainImage.src = imageUrl;
         if (fullImageUrl) {
@@ -89,12 +91,17 @@ function setLocationGalleryImage(galleryId, imageUrl, fullImageUrl, thumbButton)
         applyImageLoadingState(mainImage, wrapper);
 
         var settle = function() {
+            mainImage.style.transition = "none";
+            mainImage.style.transform = "scale(" + scaleX.toFixed(4) + "," + scaleY.toFixed(4) + ")";
+            void mainImage.offsetWidth;
+            mainImage.style.transition = "";
+            requestAnimationFrame(function() {
+                mainImage.style.transform = "scale(1,1)";
+            });
             if (!wrapper) return;
-            wrapper.classList.remove("is-switching");
-            wrapper.classList.remove("is-shrinking");
             setTimeout(function() {
-                wrapper.style.height = "";
-            }, GALLERY_SWITCH_ANIMATION_MS);
+                wrapper.classList.remove("is-switching");
+            }, 380);
         };
         mainImage.addEventListener("load", settle, { once: true });
         mainImage.addEventListener("error", settle, { once: true });
