@@ -1,0 +1,47 @@
+@media (max-width: 768px) {
+    #changelist-form .results {
+        overflow-x: visible !important;
+    }
+
+    #result_list {
+        width: 100% !important;
+        table-layout: fixed;
+    }
+
+    #result_list td {
+        min-width: 0 !important;
+        vertical-align: top;
+    }
+
+    #result_list td.field-date {
+        width: 92px !important;
+        min-width: 92px !important;
+        max-width: 92px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    #result_list td.field-location {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        padding-right: 6px !important;
+    }
+
+    #result_list td.field-song_count {
+        width: 48px !important;
+        min-width: 48px !important;
+        max-width: 48px !important;
+        white-space: nowrap !important;
+        text-align: center;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    #result_list td.field-delete_button {
+        width: 34px !important;
+        min-width: 34px !important;
+        max-width: 34px !important;
+    }
+}

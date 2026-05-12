@@ -1,0 +1,27 @@
+/* =========================================================
+   Map Header Interaction
+   - Pointer/hover/focus interaction-only styling.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Hover (desktop pointer devices)
+   --------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+    #search-toggle-button:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    #hamburger-button:hover {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.28);
+    }
+}
+
+/* ---------------------------------------------------------
+   Focus cleanup for toggle button
+   --------------------------------------------------------- */
+#search-toggle-button[aria-expanded="false"]:focus:not(:focus-visible) {
+    background: transparent;
+    border-color: transparent;
+}

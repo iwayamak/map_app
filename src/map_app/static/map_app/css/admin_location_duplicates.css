@@ -1,0 +1,341 @@
+:root {
+    --dup-border-soft: #e5e7eb;
+    --dup-border-strong: #d1d5db;
+    --dup-subtext: #6b7280;
+    --dup-muted: #475569;
+    --dup-accent: #1d4ed8;
+    --dup-accent-soft: #dbeafe;
+    --dup-rank-bg: #e2e8f0;
+    --dup-rank-text: #1e293b;
+    --dup-panel-bg: #ffffff;
+    --dup-panel-hover-bg: #eff6ff;
+    --dup-panel-hover-border: #93c5fd;
+    --dup-panel-selected-bg: #dbeafe;
+    --dup-panel-selected-border: #2563eb;
+    --dup-panel-selected-shadow: rgba(37, 99, 235, 0.2);
+    --dup-card-bg: #ffffff;
+    --dup-card-shadow: rgba(0, 0, 0, 0.04);
+    --dup-chip-bg: #f8fafc;
+    --dup-title: #64748b;
+    --dup-name: #0f172a;
+    --dup-score-track: #e5e7eb;
+    --dup-score-fill-start: #60a5fa;
+    --dup-score-fill-end: #2563eb;
+}
+
+.dup-page-note {
+    margin-bottom: 16px;
+    color: var(--dup-subtext);
+}
+
+.dup-table-wrap {
+    overflow-x: auto;
+}
+
+.dup-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dup-table th,
+.dup-table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--dup-border-soft);
+    vertical-align: top;
+}
+
+.dup-table th {
+    border-bottom-color: var(--dup-border-strong);
+}
+
+.dup-subtext {
+    font-size: 11px;
+    color: var(--dup-subtext);
+}
+
+.dup-score-box {
+    min-width: 112px;
+}
+
+.dup-score-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dup-score-label {
+    font-size: 11px;
+    color: var(--dup-muted);
+    margin-bottom: 2px;
+}
+
+.dup-score-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dup-accent);
+    line-height: 1;
+}
+
+.dup-score-rank {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: var(--dup-rank-bg);
+    color: var(--dup-rank-text);
+}
+
+.dup-score-bar {
+    margin-top: 6px;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--dup-score-track);
+    overflow: hidden;
+}
+
+.dup-score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dup-score-fill-start) 0%, var(--dup-score-fill-end) 100%);
+}
+
+.dup-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 240px;
+}
+
+.dup-select-hint {
+    font-size: 11px;
+    color: var(--dup-muted);
+}
+
+.dup-choice-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.dup-choice-panel {
+    border: 1px solid var(--dup-border-strong);
+    border-radius: 10px;
+    background: var(--dup-panel-bg);
+    text-align: left;
+    padding: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dup-choice-panel:hover {
+    border-color: var(--dup-panel-hover-border);
+    background: var(--dup-panel-hover-bg);
+}
+
+.dup-choice-panel.is-selected {
+    border-color: var(--dup-panel-selected-border);
+    background: var(--dup-panel-selected-bg);
+    box-shadow: 0 0 0 1px var(--dup-panel-selected-shadow);
+}
+
+.dup-choice-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dup-name);
+    word-break: break-word;
+}
+
+.dup-cards {
+    display: none;
+}
+
+.dup-card {
+    border: 1px solid var(--dup-border-soft);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: var(--dup-card-bg);
+    box-shadow: 0 1px 2px var(--dup-card-shadow);
+}
+
+.dup-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.dup-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.dup-card-grid > div {
+    background: var(--dup-chip-bg);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.dup-metric-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.dup-metric {
+    background: var(--dup-chip-bg);
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+
+.dup-card-title {
+    font-size: 12px;
+    color: var(--dup-title);
+    margin-bottom: 4px;
+}
+
+.dup-card-name {
+    font-weight: 600;
+    color: var(--dup-name);
+    word-break: break-word;
+}
+
+.dup-card .dup-form-fields {
+    min-width: 0;
+    margin-bottom: 8px;
+}
+
+.dup-submit-button {
+    min-height: 40px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 700;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dup-form-error {
+    color: #b91c1c;
+    font-size: 12px;
+    min-height: 1.2em;
+}
+
+.dup-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.62);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 4000;
+    padding: 16px;
+}
+
+.dup-confirm-overlay.is-open {
+    display: flex;
+}
+
+.dup-confirm-dialog {
+    width: min(420px, 100%);
+    background: linear-gradient(165deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 14px;
+    box-shadow: 0 18px 45px rgba(2, 6, 23, 0.55);
+    padding: 16px;
+    color: #e2e8f0;
+}
+
+.dup-confirm-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #f8fafc;
+}
+
+.dup-confirm-message {
+    margin: 0 0 12px 0;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.dup-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.dup-confirm-cancel,
+.dup-confirm-ok {
+    min-height: 36px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    padding: 0 14px;
+}
+
+.dup-confirm-cancel {
+    background: rgba(148, 163, 184, 0.18);
+    color: #e2e8f0;
+    border-color: rgba(148, 163, 184, 0.35);
+}
+
+.dup-confirm-cancel:hover {
+    background: rgba(148, 163, 184, 0.28);
+}
+
+.dup-confirm-ok {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #eff6ff;
+    border-color: rgba(147, 197, 253, 0.5);
+}
+
+.dup-confirm-ok:hover {
+    filter: brightness(1.06);
+}
+
+.dup-submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .dup-table-wrap {
+        display: none;
+    }
+
+    .dup-cards {
+        display: block;
+    }
+
+    .dup-submit-button {
+        min-height: 36px;
+        font-size: 13px;
+    }
+
+    .dup-card-grid {
+        gap: 6px;
+    }
+
+    .dup-card-grid > div {
+        padding: 6px;
+    }
+
+    .dup-metric-row {
+        gap: 6px;
+    }
+}

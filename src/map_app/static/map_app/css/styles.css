@@ -1,0 +1,179 @@
+:root {
+    --map-header-height: 84px;
+    --map-base-bg: #e5e7eb;
+    --app-vh: 1vh;
+    --modal-overlay-duration: 180ms;
+    --modal-card-duration: 240ms;
+    --modal-overlay-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --modal-card-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --photo-fade-duration: 140ms;
+    --photo-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    min-height: 100svh;
+    height: 100svh;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--map-base-bg);
+    overscroll-behavior: none;
+}
+
+html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: var(--map-base-bg);
+    z-index: -1;
+    pointer-events: none;
+}
+
+body {
+    position: fixed;
+    inset: 0;
+}
+
+/* ヘッダー(84px)を除いた高さに地図を固定し、解像度差によるページスクロールを防ぐ */
+.folium-map {
+    height: calc(var(--app-vh) * 100 - var(--map-header-height)) !important;
+    height: calc(100svh - var(--map-header-height)) !important;
+    height: calc(100vh - var(--map-header-height)) !important;
+    height: calc(100dvh - var(--map-header-height)) !important;
+    background: var(--map-base-bg) !important;
+}
+
+body.keyboard-focus-active .folium-map {
+    height: var(--keyboard-lock-map-height) !important;
+    min-height: var(--keyboard-lock-map-height) !important;
+}
+
+.leaflet-container {
+    background: var(--map-base-bg) !important;
+}
+
+/* 地図タイルに紫がかった色調を適用 */
+.leaflet-tile-pane {
+    filter: hue-rotate(20deg) saturate(0.9);
+}
+
+/* サマリーボックス */
+.summary-box {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    z-index: 900;
+    background: rgba(0,0,0,0.30);
+    color: white;
+    padding: 16px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+body.stats-panel-open .summary-box {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+}
+
+.summary-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* モバイル対応 */
+@media screen and (max-width: 768px) {
+    .summary-box {
+        left: 8px;
+        bottom: 8px;
+        padding: 10px 12px;
+        font-size: 11px;
+        max-width: calc(100vw - 80px);
+    }
+
+    .summary-title {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .summary-box {
+        font-size: 10px;
+        padding: 8px 10px;
+    }
+}
+
+/* 地図コントロール（ズーム、全画面表示）の位置調整 */
+.leaflet-top.leaflet-right {
+    top: calc(var(--map-header-height) + 10px) !important;
+}
+
+.leaflet-control-zoom,
+.leaflet-control-fullscreen {
+    margin-top: 10px !important;
+}
+
+.leaflet-control-resetzoom {
+    margin-top: 10px !important;
+}
+
+.leaflet-control-resetzoom-button {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+    background: #ffffff;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.leaflet-control-resetzoom-button:hover {
+    background: #f4f4f4;
+    color: #111827;
+    text-decoration: none;
+}
+
+.leaflet-control-resetzoom-button:focus {
+    text-decoration: none;
+}
+
+/* クラスタマーカーの色をテーマカラーに変更 */
+.marker-cluster-small {
+    background-color: rgba(102, 126, 234, 0.4) !important;
+}
+.marker-cluster-small div {
+    background-color: rgba(102, 126, 234, 0.6) !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.marker-cluster-medium {
+    background-color: rgba(118, 75, 162, 0.4) !important;
+}
+.marker-cluster-medium div {
+    background-color: rgba(118, 75, 162, 0.6) !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.marker-cluster-large {
+    background-color: rgba(102, 126, 234, 0.4) !important;
+}
+.marker-cluster-large div {
+    background-color: rgba(102, 126, 234, 0.6) !important;
+    color: white !important;
+    font-weight: bold !important;
+}

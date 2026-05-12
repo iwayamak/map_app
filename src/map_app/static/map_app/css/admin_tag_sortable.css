@@ -1,0 +1,68 @@
+/* Tag changelist: keep drag handle and order column compact. */
+#result_list th.column-_reorder_,
+#result_list td.field-_reorder_ {
+    width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+
+#result_list th:first-child,
+#result_list td:first-child {
+    width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+}
+
+#result_list .handle {
+    width: 18px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    margin: 0 auto !important;
+}
+
+#result_list thead .sortoptions,
+#result_list thead .sortpriority {
+    display: none !important;
+}
+
+#result_list thead th.sortable a {
+    pointer-events: none !important;
+    cursor: default !important;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+/* Override adminsortable2's legacy striped drag texture with a hamburger grip icon. */
+#result_list div.drag,
+#result_list div.drag.handle {
+    position: relative;
+    background: transparent !important;
+    border-radius: 6px;
+    opacity: 1 !important;
+}
+
+#result_list div.drag.handle {
+    cursor: grab !important;
+}
+
+#result_list div.drag.handle:active {
+    cursor: grabbing !important;
+}
+
+#result_list div.drag.handle::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: #6b7280;
+    box-shadow: 0 4px 0 #6b7280, 0 8px 0 #6b7280;
+}
+
+#result_list tr:hover div.drag.handle {
+    background: #f3f4f6 !important;
+}

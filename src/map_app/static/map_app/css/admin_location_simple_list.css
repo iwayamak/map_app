@@ -1,0 +1,73 @@
+@media (max-width: 768px) {
+    .change-list .object-tools {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch;
+        gap: 6px;
+        margin: 0 0 10px 0 !important;
+        padding: 0;
+        list-style: none;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .change-list .object-tools li {
+        float: none !important;
+        margin: 0 !important;
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .change-list .object-tools a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap !important;
+        width: 100%;
+        min-height: 24px;
+        padding: 2px 4px !important;
+        font-size: clamp(8px, 2.1vw, 10px) !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.015em;
+        box-sizing: border-box;
+    }
+
+    .change-list .object-tools a.addlink {
+        background-image: none !important;
+        padding-left: 4px !important;
+    }
+
+    #changelist-form .results {
+        overflow-x: visible !important;
+    }
+
+    #result_list {
+        width: 100% !important;
+        table-layout: fixed;
+    }
+
+    #result_list td.field-name {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    #result_list td.field-get_tags_display {
+        white-space: normal !important;
+        overflow: visible !important;
+    }
+
+    #result_list td.field-name,
+    #result_list td.field-get_tags_display,
+    #result_list td.field-delete_button {
+        min-width: 0 !important;
+    }
+
+    #result_list td.field-get_tags_display span[title] {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+}

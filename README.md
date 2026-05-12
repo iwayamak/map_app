@@ -51,7 +51,7 @@ MAP_APP_TEMPLATE_STATISTICS = "piano_map/statistics.html"
 MAP_APP_TEMPLATE_HEADER = "piano_map/header.html"
 MAP_APP_TEMPLATE_HAMBURGER_MENU = "map_app/hamburger_menu.html"
 MAP_APP_TEMPLATE_MODALS = "piano_map/modals.html"
-MAP_APP_STATIC_PREFIX = "piano_map"
+MAP_APP_STATIC_PREFIX = "map_app"
 MAP_APP_CACHE_KEY_NAMESPACE = "map_app"
 ```
 

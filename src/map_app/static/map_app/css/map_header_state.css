@@ -1,0 +1,78 @@
+/* =========================================================
+   Map Header State
+   - Open/closed/expanded states driven by JS and attributes.
+   - No base geometry rules here.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Search Container Open State
+   --------------------------------------------------------- */
+#map-search-container.is-open {
+    max-width: min(72vw, 760px);
+    max-height: 64px;
+    margin-left: 8px;
+    margin-right: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    overflow: visible;
+    pointer-events: auto;
+    transition:
+        max-width 0.24s ease,
+        max-height 0.22s ease,
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        margin-right 0.24s ease,
+        visibility 0s linear 0s;
+}
+
+/* ---------------------------------------------------------
+   Tag Panel Open State
+   --------------------------------------------------------- */
+.map-tag-filter[open] .map-tag-options {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* ---------------------------------------------------------
+   Search Toggle Active State
+   --------------------------------------------------------- */
+#search-toggle-button[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.38);
+}
+
+#search-toggle-button.has-filter-badge {
+    position: relative;
+}
+
+#search-toggle-button.has-filter-badge::after {
+    content: attr(data-filter-count);
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #f97316;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   Responsive State Overrides
+   --------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+    #map-search-container.is-open {
+        max-width: 100%;
+        max-height: 72px;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 8px;
+    }
+}

@@ -1,0 +1,114 @@
+/* Django Admin カレンダーウィジェットのスタイル調整 */
+
+/* カレンダーポップアップの幅を調整 */
+.calendarbox, .clockbox {
+    max-width: 280px !important;
+    font-size: 12px !important;
+}
+
+/* カレンダーのテーブル */
+.calendarbox table {
+    width: 100% !important;
+}
+
+/* 日付セルのサイズ調整 */
+.calendarbox td, .calendarbox th {
+    padding: 4px !important;
+    font-size: 11px !important;
+    text-align: center !important;
+}
+
+/* 月/年のヘッダー */
+.calendarbox .calendar-shortcuts {
+    font-size: 12px !important;
+}
+
+/* ナビゲーションリンク */
+.calendarbox .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+/* 今日の日付 */
+.calendarbox td.today {
+    background-color: #79aec8 !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* 選択された日付 */
+.calendarbox td.selected {
+    background-color: #417690 !important;
+    color: white !important;
+}
+
+/* ホバー時 */
+.calendarbox td a:hover {
+    background-color: #e1f0f5 !important;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .calendarbox, .clockbox {
+        max-width: calc(100vw - 20px) !important;
+        width: calc(100vw - 20px) !important;
+        margin: 0 auto !important;
+    }
+
+    /* スマホでカレンダーテーブルが切れないように調整 */
+    .calendarbox table {
+        width: 100% !important;
+        table-layout: fixed !important;
+    }
+
+    .calendarbox td, .calendarbox th {
+        padding: 8px 4px !important;
+        font-size: 13px !important;
+        width: 14.28% !important; /* 7列（日〜土）を均等配置 */
+        overflow: hidden !important;
+        text-overflow: clip !important;
+    }
+
+    /* 曜日ヘッダー */
+    .calendarbox thead th {
+        font-size: 12px !important;
+        padding: 6px 2px !important;
+    }
+
+    /* 日付リンク */
+    .calendarbox td a {
+        display: block !important;
+        padding: 8px 2px !important;
+        font-size: 13px !important;
+    }
+
+    /* カレンダーナビゲーション */
+    .calendarbox .calendar-nav {
+        padding: 8px !important;
+        font-size: 13px !important;
+    }
+
+    /* カレンダーショートカット */
+    .calendarbox .calendar-shortcuts {
+        font-size: 12px !important;
+        padding: 6px !important;
+    }
+}
+
+/* 極小画面（iPhone SEなど） */
+@media (max-width: 380px) {
+    .calendarbox td, .calendarbox th {
+        padding: 6px 2px !important;
+        font-size: 12px !important;
+    }
+
+    .calendarbox td a {
+        font-size: 12px !important;
+        padding: 6px 1px !important;
+    }
+
+    .calendarbox thead th {
+        font-size: 11px !important;
+    }
+}

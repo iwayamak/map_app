@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.templatetags.static import static
 
-MAP_BUILD_VERSION = "20260403-3"
+MAP_BUILD_VERSION = "20260512-1"
 STATIC_PREFIX = getattr(settings, "MAP_APP_STATIC_PREFIX", "map_app").strip("/") or "map_app"
 CACHE_KEY_NAMESPACE = getattr(settings, "MAP_APP_CACHE_KEY_NAMESPACE", "map_app").strip() or "map_app"
 

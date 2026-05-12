@@ -1,0 +1,159 @@
+/* Location タグインライン */
+
+/* 共通: original列と閲覧アイコン(目)を非表示 */
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) th.original,
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) td.original,
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.original,
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .view-related,
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) a[id^="view_id_Location_tags-"] {
+    display: none !important;
+}
+
+/* 共通: 鉛筆アイコンのサイズを揃える */
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .related-widget-wrapper-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 4px !important;
+}
+
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .field-tag .related-widget-wrapper {
+    gap: 2px !important;
+}
+
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .related-widget-wrapper-link img {
+    display: block !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .related-widget-wrapper-link.add-related {
+    margin-top: 0 !important;
+    transform: none !important;
+}
+
+:is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .addlink {
+    display: inline-block !important;
+    line-height: 1.6 !important;
+    background-position: 0 50% !important;
+    background-size: 16px 16px !important;
+    padding-left: 22px !important;
+}
+
+/* PC版: 曲名/場所写真と同様に通常テーブル表示 */
+@media (min-width: 769px) {
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular thead th.field-tag,
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody td.field-tag {
+        width: auto !important;
+    }
+}
+
+/* モバイル: 曲名/場所写真と同系のカード表示 */
+@media (max-width: 768px) {
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular {
+        display: block !important;
+        overflow: visible !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody,
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular .wrapper,
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular table {
+        overflow: visible !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        max-height: none !important;
+        height: auto !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .module {
+        overflow: visible !important;
+        padding: 10px !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular thead {
+        display: none !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr:not(.empty-form) {
+        display: block !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 10px !important;
+        padding: 10px !important;
+        border-radius: 8px !important;
+        background: #f9f9f9 !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td {
+        display: block !important;
+        width: 100% !important;
+        border: none !important;
+        padding: 5px 0 !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.field-tag::before {
+        content: "タグ: ";
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 5px;
+        color: #666;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.field-tag .related-widget-wrapper {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.field-tag .select2-container,
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.field-tag .select2-container--admin-autocomplete,
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.field-tag select {
+        width: calc(100% - 80px) !important;
+        max-width: calc(100% - 80px) !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.delete {
+        text-align: left !important;
+        margin-top: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.delete::before {
+        content: "削除: ";
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 5px;
+        color: #666;
+        line-height: 1;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .tabular tbody tr td.delete input[type="checkbox"] {
+        margin: 0 !important;
+        vertical-align: middle !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .add-row {
+        display: block !important;
+        width: 100% !important;
+        padding: 8px 12px !important;
+        margin-top: 10px !important;
+        white-space: normal !important;
+        box-sizing: border-box !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .add-row a {
+        display: inline-block !important;
+        line-height: 1.6 !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    :is(#Location_tags-group, #location_tags-group, #locationtag_set-group) .add-row a.addlink {
+        background-position: 0 50% !important;
+        background-size: 16px 16px !important;
+        padding-left: 22px !important;
+    }
+}

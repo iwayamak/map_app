@@ -1,0 +1,216 @@
+.video-admin-mobile-cards {
+    display: none;
+}
+
+#changelist .video-admin-progress,
+.change-form .video-admin-progress {
+    display: grid;
+    gap: 6px;
+    min-width: 120px;
+}
+
+#changelist .video-admin-progress-bar,
+.change-form .video-admin-progress-bar {
+    position: relative;
+    height: 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+#changelist .video-admin-progress-fill,
+.change-form .video-admin-progress-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0f766e 0%, #22c55e 100%);
+    transition: width 0.4s ease;
+}
+
+#changelist .video-admin-progress-text,
+.change-form .video-admin-progress-text {
+    font-size: 12px;
+    line-height: 1.4;
+    color: #0f172a;
+}
+
+@media (max-width: 768px) {
+    #changelist .video-admin-desktop-results {
+        display: none;
+    }
+
+    #changelist .video-admin-mobile-cards {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    #changelist .video-admin-card {
+        border: 1px solid #dbe2ea;
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+    }
+
+    #changelist .video-admin-card-link {
+        display: grid;
+        grid-template-columns: 144px minmax(0, 1fr);
+        color: #0f172a;
+        text-decoration: none !important;
+    }
+
+    #changelist .video-admin-card-link,
+    #changelist .video-admin-card-link:hover,
+    #changelist .video-admin-card-link:focus,
+    #changelist .video-admin-card-link h3,
+    #changelist .video-admin-card-link dt,
+    #changelist .video-admin-card-link dd,
+    #changelist .video-admin-card-link p,
+    #changelist .video-admin-card-link span {
+        text-decoration: none !important;
+    }
+
+    #changelist .video-admin-card-media {
+        background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+        min-height: 100%;
+    }
+
+    #changelist .video-admin-card-media--portrait {
+        min-height: 160px;
+    }
+
+    #changelist .video-admin-card-media img,
+    #changelist .video-admin-card-fallback {
+        width: 100%;
+        height: 100%;
+        min-height: 136px;
+        display: block;
+        object-fit: cover;
+    }
+
+    #changelist .video-admin-card-media--portrait img,
+    #changelist .video-admin-card-media--portrait .video-admin-card-fallback {
+        min-height: 160px;
+    }
+
+    #changelist .video-admin-card-fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+    }
+
+    #changelist .video-admin-card-body {
+        min-width: 0;
+        padding: 12px 12px 13px;
+    }
+
+    #changelist .video-admin-card-top {
+        display: block;
+    }
+
+    #changelist .video-admin-card-top h3 {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.4;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    #changelist .video-admin-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    #changelist .video-admin-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    #changelist .video-admin-chip-status {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    #changelist .video-admin-chip-status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    #changelist .video-admin-chip-status-ready {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    #changelist .video-admin-chip-status-failed {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    #changelist .video-admin-chip-published {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    #changelist .video-admin-chip-unpublished {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    #changelist .video-admin-meta-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 12px;
+        margin: 12px 0 0;
+    }
+
+    #changelist .video-admin-meta-list div {
+        min-width: 0;
+    }
+
+    #changelist .video-admin-meta-list dt {
+        margin: 0 0 2px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    #changelist .video-admin-meta-list dd {
+        margin: 0;
+        color: #0f172a;
+        font-size: 12px;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+
+    #changelist .video-admin-progress-text {
+        font-size: 11px;
+    }
+
+    #changelist .video-admin-card-error {
+        margin: 10px 0 0;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: #fff1f2;
+        color: #9f1239;
+        font-size: 12px;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    #changelist .actions,
+    #changelist #result_list {
+        display: none;
+    }
+}

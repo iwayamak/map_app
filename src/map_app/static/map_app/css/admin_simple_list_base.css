@@ -1,0 +1,33 @@
+#result_list thead {
+    display: none !important;
+}
+
+#result_list tbody tr:first-child td {
+    border-top: 0 !important;
+}
+
+#result_list th.column-delete_button,
+#result_list td.field-delete_button {
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    text-align: center;
+}
+
+#result_list .admin-delete-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    font-size: 16px;
+    line-height: 1;
+    color: #ef4444;
+    text-decoration: none !important;
+}
+
+#result_list .admin-delete-x:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}

@@ -1,0 +1,125 @@
+/* td.originalを完全に非表示 */
+td.original {
+    display: none !important;
+}
+
+/* ヘッダーのoriginalカラムも非表示 */
+th.original {
+    display: none !important;
+}
+
+/* より具体的なセレクタ */
+.tabular tbody tr td.original,
+.tabular tbody tr.form-row td.original,
+#activitylogitem_set-group td.original {
+    display: none !important;
+}
+
+/* PC版：順序フィールドを非表示 */
+@media (min-width: 769px) {
+    #activitylogitem_set-group .tabular thead th.field-order,
+    #activitylogitem_set-group .tabular tbody td.field-order {
+        display: none !important;
+    }
+}
+
+/* PC版：セレクトボックスの幅を統一 */
+@media (min-width: 769px) {
+    /* 場所のSelect2コンテナ */
+    .form-row.field-location .select2-container,
+    .form-row.field-location .select2-container--admin-autocomplete {
+        min-width: 400px !important;
+    }
+
+    /* 項目のSelect2コンテナ */
+    #activitylogitem_set-group .tabular tbody tr td.field-item .select2-container,
+    #activitylogitem_set-group .tabular tbody tr td.field-item .select2-container--admin-autocomplete {
+        min-width: 400px !important;
+    }
+
+    /* 演奏日フィールドを左寄せ */
+    .form-row.field-date .flex-container {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    .form-row.field-date label {
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+        min-width: auto !important;
+        max-width: none !important;
+    }
+
+    .form-row.field-date p.date {
+        display: flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 5px !important;
+    }
+
+    .form-row.field-date input[type="text"].vDateField {
+        margin: 0 !important;
+    }
+
+    .form-row.field-date .datetimeshortcuts {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 演奏日フィールドのヘルプテキストを非表示 */
+    .form-row.field-date .help {
+        display: none !important;
+    }
+}
+
+/* 記録項目の見出しスタイルを基本情報に合わせる（PC・スマホ共通） */
+#activitylogitem_set-group h2.inline-heading {
+    color: #fff !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    border: none !important;
+}
+
+/* 記録項目セレクトのフォントを管理画面デフォルトへ揃える */
+#activitylogitem_set-group .tabular tbody tr td.field-item select,
+#activitylogitem_set-group .tabular tbody tr td.field-item .select2-selection__rendered,
+#activitylogitem_set-group .tabular tbody tr td.field-item .select2-selection__choice,
+.select2-container .select2-results__option {
+    font-family: inherit !important;
+}
+
+/* PC版：記録項目の追加リンクの高さを調整 */
+@media (min-width: 769px) {
+    #activitylogitem_set-group .add-row a {
+        line-height: 1.8 !important;
+        display: inline-block !important;
+    }
+}
+
+/* 「+ 記録項目の追加」の縦ズレを補正 */
+#activitylogitem_set-group .add-row a {
+    display: inline-block !important;
+    line-height: 1.6 !important;
+}
+
+#activitylogitem_set-group .add-row a.addlink {
+    background-position: 0 50% !important;
+    background-size: 16px 16px !important;
+    padding-left: 22px !important;
+}
+
+/* 動的に追加されるインライン行のスタイルを統一（カクつき防止） */
+#activitylogitem_set-group .dynamic-activitylogitem_set {
+    /* has_originalクラスがなくても同じスタイルを適用 */
+    /* これによりJavaScriptでクラスを後から追加しても視覚的な変化がない */
+}
+
+#activitylogitem_set-group .dynamic-activitylogitem_set td.original {
+    display: none !important;
+}
