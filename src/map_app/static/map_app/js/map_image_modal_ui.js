@@ -1,5 +1,6 @@
 var IMAGE_MODAL_ANIMATION_MS = 220;
 var imageModalCloseTimer = null;
+var GALLERY_MORPH_MS = 380;
 
 function fitSizeInBox(naturalWidth, naturalHeight, boxWidth, boxHeight) {
     if (!naturalWidth || !naturalHeight || !boxWidth || !boxHeight) {
@@ -94,14 +95,14 @@ function setLocationGalleryImage(galleryId, imageUrl, fullImageUrl, thumbButton)
             mainImage.style.transition = "none";
             mainImage.style.transform = "scale(" + scaleX.toFixed(4) + "," + scaleY.toFixed(4) + ")";
             void mainImage.offsetWidth;
-            mainImage.style.transition = "";
+            mainImage.style.transition = "transform " + GALLERY_MORPH_MS + "ms cubic-bezier(0.22, 1, 0.36, 1)";
             requestAnimationFrame(function() {
                 mainImage.style.transform = "scale(1,1)";
             });
-            if (!wrapper) return;
             setTimeout(function() {
-                wrapper.classList.remove("is-switching");
-            }, 380);
+                mainImage.style.transition = "";
+                if (wrapper) wrapper.classList.remove("is-switching");
+            }, GALLERY_MORPH_MS + 20);
         };
         mainImage.addEventListener("load", settle, { once: true });
         mainImage.addEventListener("error", settle, { once: true });

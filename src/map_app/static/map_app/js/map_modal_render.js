@@ -320,7 +320,7 @@ function renderPhotosHtml(performance) {
         return (
             "<div class='location-photo-gallery performance-modal-gallery'>" +
                 "<div class='performance-modal-section-title'>📸 写真（" + photoAssets.length + "枚）</div>" +
-                "<div class='location-photo-main-wrapper'>" +
+                "<div class='location-photo-main-wrapper' style='height:clamp(260px,48vh,520px)'>" +
                     "<div id='" + galleryId + "-bg' class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(firstMedium) + "\")'></div>" +
                     "<img id='" + galleryId + "-main'" +
                         " class='location-photo-main'" +
@@ -340,7 +340,7 @@ function renderPhotosHtml(performance) {
         return (
             "<div class='location-photo-gallery performance-modal-gallery'>" +
                 "<div class='performance-modal-section-title'>📸 写真</div>" +
-                "<div class='location-photo-main-wrapper'>" +
+                "<div class='location-photo-main-wrapper' style='height:clamp(260px,48vh,520px)'>" +
                     "<div class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(performance.legacy_image_url) + "\")'></div>" +
                     "<img class='location-photo-main'" +
                         " src='" + escapeHtml(performance.legacy_image_url) + "'" +
