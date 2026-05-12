@@ -163,34 +163,21 @@
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background: #0f172a;
+    border: none;
+    box-shadow: none;
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: height 0.24s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.location-photo-main-wrapper.is-shrinking {
-    transition-duration: 0.34s;
-    transition-timing-function: cubic-bezier(0.18, 0.82, 0.22, 1);
+    height: clamp(260px, 48vh, 520px);
 }
 
 .location-photo-main-stage-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    filter: blur(16px) brightness(0.72) saturate(1.08);
-    transform: scale(1.08);
-    opacity: 0.86;
-    transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-    pointer-events: none;
+    display: none;
 }
 
 .location-photo-main-wrapper.is-switching .location-photo-main-stage-bg {
-    opacity: 0.82;
-    transform: scale(1.03);
+    display: none;
 }
 
 .location-photo-main {
@@ -208,12 +195,11 @@
     transform: scale(1);
     transition:
         opacity var(--photo-fade-duration) var(--photo-fade-ease),
-        transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .location-photo-main-wrapper.is-switching .location-photo-main {
-    opacity: 0.58;
-    transform: scale(0.996);
+    opacity: 1;
 }
 
 .location-photo-thumbs {
@@ -230,14 +216,14 @@
     border: 2px solid transparent;
     border-radius: 10px;
     padding: 0;
-    background: transparent;
+    background: #ffffff;
     flex: 0 0 auto;
     height: 72px;
     width: auto;
     max-width: 180px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -256,6 +242,7 @@
 
 .location-photo-thumb.is-active {
     border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
 }
 
 .location-photo-main.is-loaded,
