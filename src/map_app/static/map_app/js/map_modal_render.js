@@ -321,10 +321,12 @@ function renderPhotosHtml(performance) {
             "<div class='location-photo-gallery performance-modal-gallery'>" +
                 "<div class='performance-modal-section-title'>📸 写真（" + photoAssets.length + "枚）</div>" +
                 "<div class='location-photo-main-wrapper'>" +
+                    "<div id='" + galleryId + "-bg' class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(firstMedium) + "\")'></div>" +
                     "<img id='" + galleryId + "-main'" +
                         " class='location-photo-main'" +
                         " src='" + escapeHtml(firstMedium) + "'" +
                         " data-full-url='" + escapeHtml(firstFull) + "'" +
+                        " data-gallery-id='" + galleryId + "'" +
                         " alt='写真 1'" +
                         " onclick='showImageModal(this.dataset.fullUrl || this.src)' />" +
                 "</div>" +
@@ -339,6 +341,7 @@ function renderPhotosHtml(performance) {
             "<div class='location-photo-gallery performance-modal-gallery'>" +
                 "<div class='performance-modal-section-title'>📸 写真</div>" +
                 "<div class='location-photo-main-wrapper'>" +
+                    "<div class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(performance.legacy_image_url) + "\")'></div>" +
                     "<img class='location-photo-main'" +
                         " src='" + escapeHtml(performance.legacy_image_url) + "'" +
                         " alt='ピアノ設置場所の写真'" +
