@@ -3,6 +3,7 @@ from django import forms
 
 DOMAIN_TERM_FIELDS = (
     ("app_title", "アプリ名"),
+    ("header_logo_emoji", "ヘッダーロゴ絵文字"),
     ("subtitle", "サブタイトル"),
     ("location_label", "場所ラベル"),
     ("record_label", "記録ラベル"),
@@ -21,6 +22,11 @@ DOMAIN_TERM_FIELDS = (
 
 DOMAIN_TERM_BOOLEAN_FIELDS = (
     ("show_video_library_menu", "メニュー: 動画ライブラリを表示"),
+)
+
+HEADER_BG_MODE_CHOICES = (
+    ("gradient", "ヘッダー背景: グラデーション"),
+    ("solid", "ヘッダー背景: 単色"),
 )
 
 MODAL_PHOTO_PROFILE_CHOICES = (
@@ -61,6 +67,7 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
     class SiteSettingsAdminForm(forms.ModelForm):
         _wide_text_widget = forms.TextInput(attrs={"style": "width: min(72ch, 96%);"})
         app_title = forms.CharField(max_length=120, required=False, label="アプリ名", widget=_wide_text_widget)
+        header_logo_emoji = forms.CharField(max_length=8, required=False, label="ヘッダーロゴ絵文字", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         subtitle = forms.CharField(max_length=120, required=False, label="サブタイトル", widget=_wide_text_widget)
         location_label = forms.CharField(max_length=40, required=False, label="場所ラベル", widget=_wide_text_widget)
         record_label = forms.CharField(max_length=40, required=False, label="記録ラベル", widget=_wide_text_widget)
@@ -85,6 +92,37 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             max_value=90,
             label="モーダル写真: ステージ最大高さ(vh)",
             initial=70,
+        )
+        header_bg_mode = forms.ChoiceField(
+            required=False,
+            label="ヘッダー背景モード",
+            choices=HEADER_BG_MODE_CHOICES,
+            initial="gradient",
+        )
+        header_bg_solid_color = forms.CharField(
+            required=False,
+            label="ヘッダー背景色（単色）",
+            initial="#667eea",
+            widget=forms.TextInput(attrs={"type": "color"}),
+        )
+        header_bg_gradient_from = forms.CharField(
+            required=False,
+            label="ヘッダーグラデーション開始色",
+            initial="#667eea",
+            widget=forms.TextInput(attrs={"type": "color"}),
+        )
+        header_bg_gradient_to = forms.CharField(
+            required=False,
+            label="ヘッダーグラデーション終了色",
+            initial="#764ba2",
+            widget=forms.TextInput(attrs={"type": "color"}),
+        )
+        header_bg_gradient_angle = forms.IntegerField(
+            required=False,
+            min_value=0,
+            max_value=360,
+            label="ヘッダーグラデーション角度",
+            initial=135,
         )
         system_unvisited_tag_label = forms.CharField(max_length=40, required=False, label="システムタグ: 未訪問", widget=_wide_text_widget)
         system_info_only_tag_label = forms.CharField(max_length=80, required=False, label="システムタグ: 情報のみ表示（ドメイン固有）", widget=_wide_text_widget)
@@ -120,6 +158,18 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             except (TypeError, ValueError):
                 max_height = 70
             self.fields["modal_photo_stage_max_height_vh"].initial = max(40, min(90, max_height))
+            header_bg_mode = (terms.get("header_bg_mode") or "gradient").strip()
+            if header_bg_mode not in {"gradient", "solid"}:
+                header_bg_mode = "gradient"
+            self.fields["header_bg_mode"].initial = header_bg_mode
+            self.fields["header_bg_solid_color"].initial = terms.get("header_bg_solid_color", "#667eea")
+            self.fields["header_bg_gradient_from"].initial = terms.get("header_bg_gradient_from", "#667eea")
+            self.fields["header_bg_gradient_to"].initial = terms.get("header_bg_gradient_to", "#764ba2")
+            try:
+                angle = int(terms.get("header_bg_gradient_angle", 135))
+            except (TypeError, ValueError):
+                angle = 135
+            self.fields["header_bg_gradient_angle"].initial = max(0, min(360, angle))
             for key, _label in ADMIN_LABEL_FIELDS:
                 self.fields[key].initial = terms.get(key, "")
             modal_sections = terms.get("modal_sections", {}) if isinstance(terms.get("modal_sections"), dict) else {}
@@ -149,6 +199,18 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             except (TypeError, ValueError):
                 stage_max_vh = 70
             merged_terms["modal_photo_stage_max_height_vh"] = max(40, min(90, stage_max_vh))
+            header_bg_mode = (cleaned.get("header_bg_mode") or "gradient").strip()
+            if header_bg_mode not in {"gradient", "solid"}:
+                header_bg_mode = "gradient"
+            merged_terms["header_bg_mode"] = header_bg_mode
+            merged_terms["header_bg_solid_color"] = (cleaned.get("header_bg_solid_color") or "#667eea").strip() or "#667eea"
+            merged_terms["header_bg_gradient_from"] = (cleaned.get("header_bg_gradient_from") or "#667eea").strip() or "#667eea"
+            merged_terms["header_bg_gradient_to"] = (cleaned.get("header_bg_gradient_to") or "#764ba2").strip() or "#764ba2"
+            try:
+                header_angle = int(cleaned.get("header_bg_gradient_angle") if cleaned.get("header_bg_gradient_angle") is not None else 135)
+            except (TypeError, ValueError):
+                header_angle = 135
+            merged_terms["header_bg_gradient_angle"] = max(0, min(360, header_angle))
             for key, _label in ADMIN_LABEL_FIELDS:
                 value = (cleaned.get(key) or "").strip()
                 merged_terms[key] = value or defaults.get(key, "")
@@ -175,6 +237,9 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
     class SiteSettingsAdminMixin:
         form = SiteSettingsAdminForm
 
+        class Media:
+            js = ("map_app/js/admin_sitesettings.js",)
+
         def has_add_permission(self, request):
             return False
 
@@ -197,6 +262,16 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             ("モーダル写真表示", {
                 "fields": ("modal_photo_profile", "modal_photo_stage_max_height_vh"),
                 "description": "写真を切り抜かず表示するか、横幅優先にするか、ステージ充填するかを選べます。",
+            }),
+            ("ヘッダー背景", {
+                "fields": (
+                    "header_bg_mode",
+                    "header_bg_solid_color",
+                    "header_bg_gradient_from",
+                    "header_bg_gradient_to",
+                    "header_bg_gradient_angle",
+                ),
+                "description": "マップヘッダーの背景を単色またはグラデーションで設定できます。",
             }),
             ("管理画面表示名", {
                 "fields": tuple(field_name for field_name, _ in ADMIN_LABEL_FIELDS),
