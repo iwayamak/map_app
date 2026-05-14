@@ -3,6 +3,8 @@ var DEFAULT_MAP_TERMS = {
     modal_empty_records_text: "記録なし",
     modal_note_title: "メモ",
     modal_count_label: "累積記録数",
+    modal_photo_profile: "preserve",
+    modal_photo_stage_max_height_vh: 70,
     modal_sections: {
         access: true,
         meta: true,
@@ -35,6 +37,20 @@ function isModalSectionActive(sectionKey) {
         return true;
     }
     return Boolean(sections[sectionKey]);
+}
+
+function getModalPhotoConfig() {
+    var terms = getMapTerms();
+    var profile = String((terms && terms.modal_photo_profile) || "preserve");
+    if (profile !== "preserve" && profile !== "fit_width" && profile !== "fill") {
+        profile = "preserve";
+    }
+    var maxHeightVh = parseInt((terms && terms.modal_photo_stage_max_height_vh), 10);
+    if (!Number.isFinite(maxHeightVh)) {
+        maxHeightVh = 70;
+    }
+    maxHeightVh = Math.max(40, Math.min(90, maxHeightVh));
+    return { profile: profile, maxHeightVh: maxHeightVh };
 }
 
 function buildLoadingModalHtml() {
@@ -291,6 +307,7 @@ function renderPhotosHtml(performance) {
         });
     }
     if (photoAssets.length > 0) {
+        var photoConfig = getModalPhotoConfig();
         var galleryId = "location-gallery-" + String(performance.id);
         var thumbsHtml = photoAssets.map(function(photo, index) {
             var thumbUrl = photo.thumb_url || photo.medium_url || photo.full_url;
@@ -320,7 +337,8 @@ function renderPhotosHtml(performance) {
         return (
             "<div class='location-photo-gallery performance-modal-gallery'>" +
                 "<div class='performance-modal-section-title'>📸 写真（" + photoAssets.length + "枚）</div>" +
-                "<div class='location-photo-main-wrapper' style='height:clamp(260px,48vh,520px)'>" +
+                "<div class='location-photo-main-wrapper location-photo-main-wrapper--" + photoConfig.profile + "'" +
+                    " style='height:clamp(260px,48vh,520px);--photo-stage-max-height:" + photoConfig.maxHeightVh + "vh;'>" +
                     "<div id='" + galleryId + "-bg' class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(firstMedium) + "\")'></div>" +
                     "<img id='" + galleryId + "-main'" +
                         " class='location-photo-main'" +

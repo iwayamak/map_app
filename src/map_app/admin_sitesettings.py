@@ -23,6 +23,12 @@ DOMAIN_TERM_BOOLEAN_FIELDS = (
     ("show_video_library_menu", "メニュー: 動画ライブラリを表示"),
 )
 
+MODAL_PHOTO_PROFILE_CHOICES = (
+    ("preserve", "モーダル写真: 全体表示（トリミングしない）"),
+    ("fit_width", "モーダル写真: 横幅優先（高さ内に収める）"),
+    ("fill", "モーダル写真: ステージ充填（トリミングあり）"),
+)
+
 ADMIN_LABEL_FIELDS = (
     ("admin_label_location", "管理画面: 場所"),
     ("admin_label_tag", "管理画面: タグ"),
@@ -67,6 +73,19 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         modal_empty_records_text = forms.CharField(max_length=120, required=False, label="モーダル: 空データ文言", widget=_wide_text_widget)
         modal_note_title = forms.CharField(max_length=120, required=False, label="モーダル: メモ見出し", widget=_wide_text_widget)
         modal_count_label = forms.CharField(max_length=120, required=False, label="モーダル: 回数ラベル", widget=_wide_text_widget)
+        modal_photo_profile = forms.ChoiceField(
+            required=False,
+            label="モーダル写真: 表示プロファイル",
+            choices=MODAL_PHOTO_PROFILE_CHOICES,
+            initial="preserve",
+        )
+        modal_photo_stage_max_height_vh = forms.IntegerField(
+            required=False,
+            min_value=40,
+            max_value=90,
+            label="モーダル写真: ステージ最大高さ(vh)",
+            initial=70,
+        )
         system_unvisited_tag_label = forms.CharField(max_length=40, required=False, label="システムタグ: 未訪問", widget=_wide_text_widget)
         system_piano_info_only_tag_label = forms.CharField(max_length=80, required=False, label="システムタグ: ピアノ情報のみ表示（ピアノ固有）", widget=_wide_text_widget)
         show_video_library_menu = forms.BooleanField(required=False, label="メニュー: 動画ライブラリを表示")
@@ -94,6 +113,13 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
                 self.fields[key].initial = terms.get(key, "")
             for key, _label in DOMAIN_TERM_BOOLEAN_FIELDS:
                 self.fields[key].initial = bool(terms.get(key, False))
+            self.fields["modal_photo_profile"].initial = terms.get("modal_photo_profile", "preserve")
+            max_height = terms.get("modal_photo_stage_max_height_vh", 70)
+            try:
+                max_height = int(max_height)
+            except (TypeError, ValueError):
+                max_height = 70
+            self.fields["modal_photo_stage_max_height_vh"].initial = max(40, min(90, max_height))
             for key, _label in ADMIN_LABEL_FIELDS:
                 self.fields[key].initial = terms.get(key, "")
             modal_sections = terms.get("modal_sections", {}) if isinstance(terms.get("modal_sections"), dict) else {}
@@ -111,6 +137,15 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
                 merged_terms[key] = value or defaults.get(key, "")
             for key, _label in DOMAIN_TERM_BOOLEAN_FIELDS:
                 merged_terms[key] = bool(cleaned.get(key))
+            photo_profile = (cleaned.get("modal_photo_profile") or "preserve").strip()
+            valid_profiles = {key for key, _label in MODAL_PHOTO_PROFILE_CHOICES}
+            merged_terms["modal_photo_profile"] = photo_profile if photo_profile in valid_profiles else "preserve"
+            stage_max_vh = cleaned.get("modal_photo_stage_max_height_vh")
+            try:
+                stage_max_vh = int(stage_max_vh if stage_max_vh is not None else 70)
+            except (TypeError, ValueError):
+                stage_max_vh = 70
+            merged_terms["modal_photo_stage_max_height_vh"] = max(40, min(90, stage_max_vh))
             for key, _label in ADMIN_LABEL_FIELDS:
                 value = (cleaned.get(key) or "").strip()
                 merged_terms[key] = value or defaults.get(key, "")
@@ -155,6 +190,10 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             ("メニュー表示制御", {
                 "fields": tuple(field_name for field_name, _ in DOMAIN_TERM_BOOLEAN_FIELDS),
                 "description": "ハンバーガーメニュー項目の表示/非表示を切り替えます。",
+            }),
+            ("モーダル写真表示", {
+                "fields": ("modal_photo_profile", "modal_photo_stage_max_height_vh"),
+                "description": "写真を切り抜かず表示するか、横幅優先にするか、ステージ充填するかを選べます。",
             }),
             ("管理画面表示名", {
                 "fields": tuple(field_name for field_name, _ in ADMIN_LABEL_FIELDS),

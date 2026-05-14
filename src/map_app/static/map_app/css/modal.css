@@ -183,9 +183,10 @@
 .location-photo-main {
     position: relative;
     z-index: 1;
-    width: 100%;
+    width: auto;
     height: auto;
-    max-height: 70vh;
+    max-width: 100%;
+    max-height: min(100%, var(--photo-stage-max-height, 70vh));
     display: block;
     object-fit: contain;
     object-position: center;
@@ -196,6 +197,22 @@
     transition:
         opacity var(--photo-fade-duration) var(--photo-fade-ease),
         transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.location-photo-main-wrapper--fit_width .location-photo-main {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.location-photo-main-wrapper--fill .location-photo-main {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
 }
 
 .location-photo-main-wrapper.is-switching .location-photo-main {
