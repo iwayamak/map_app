@@ -14,7 +14,8 @@ var DEFAULT_MAP_TERMS = {
         tags: true,
         photos: true
     },
-    system_piano_info_only_tag_label: "ピアノ情報のみ表示"
+    system_info_only_tag_label: "情報のみ表示",
+    system_piano_info_only_tag_label: "情報のみ表示"
 };
 
 function getMapTerms() {
@@ -376,8 +377,14 @@ function renderPhotosHtml(performance) {
 
 function isPianoInfoOnlyMode() {
     var terms = getMapTerms();
-    var selector = "input[name='tags'][value='" + terms.system_piano_info_only_tag_label + "']:checked";
-    return Boolean(document.querySelector(selector));
+    var candidates = [];
+    if (terms && terms.system_info_only_tag_label) candidates.push(String(terms.system_info_only_tag_label));
+    if (terms && terms.system_piano_info_only_tag_label) candidates.push(String(terms.system_piano_info_only_tag_label));
+    candidates.push("情報のみ表示", "ピアノ情報のみ表示");
+    return candidates.some(function(label) {
+        var selector = "input[name='tags'][value='" + label.replace(/'/g, "\\'") + "']:checked";
+        return Boolean(document.querySelector(selector));
+    });
 }
 
 function renderMetaSection(performance) {

@@ -16,7 +16,7 @@ DOMAIN_TERM_FIELDS = (
     ("modal_note_title", "モーダル: メモ見出し"),
     ("modal_count_label", "モーダル: 回数ラベル"),
     ("system_unvisited_tag_label", "システムタグ: 未訪問"),
-    ("system_piano_info_only_tag_label", "システムタグ: 情報のみ表示（ドメイン固有）"),
+    ("system_info_only_tag_label", "システムタグ: 情報のみ表示（ドメイン固有）"),
 )
 
 DOMAIN_TERM_BOOLEAN_FIELDS = (
@@ -87,7 +87,7 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             initial=70,
         )
         system_unvisited_tag_label = forms.CharField(max_length=40, required=False, label="システムタグ: 未訪問", widget=_wide_text_widget)
-        system_piano_info_only_tag_label = forms.CharField(max_length=80, required=False, label="システムタグ: 情報のみ表示（ドメイン固有）", widget=_wide_text_widget)
+        system_info_only_tag_label = forms.CharField(max_length=80, required=False, label="システムタグ: 情報のみ表示（ドメイン固有）", widget=_wide_text_widget)
         show_video_library_menu = forms.BooleanField(required=False, label="メニュー: 動画ライブラリを表示")
         admin_label_location = forms.CharField(max_length=80, required=False, label="管理画面: 場所", widget=_wide_text_widget)
         admin_label_tag = forms.CharField(max_length=80, required=False, label="管理画面: タグ", widget=_wide_text_widget)
@@ -135,6 +135,9 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             for key, _label in DOMAIN_TERM_FIELDS:
                 value = (cleaned.get(key) or "").strip()
                 merged_terms[key] = value or defaults.get(key, "")
+            # Backward compatibility: keep legacy key synced so old clients/settings still work.
+            if merged_terms.get("system_info_only_tag_label"):
+                merged_terms["system_piano_info_only_tag_label"] = merged_terms["system_info_only_tag_label"]
             for key, _label in DOMAIN_TERM_BOOLEAN_FIELDS:
                 merged_terms[key] = bool(cleaned.get(key))
             photo_profile = (cleaned.get("modal_photo_profile") or "preserve").strip()
