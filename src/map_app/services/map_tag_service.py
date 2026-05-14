@@ -14,7 +14,14 @@ def _resolve_system_tag_names(domain_terms=None):
     info_only_key = getattr(settings, "MAP_APP_SYSTEM_INFO_ONLY_TAG_KEY", "system_info_only_tag_label")
     legacy_info_only_key = getattr(settings, "MAP_APP_SYSTEM_INFO_ONLY_TAG_LEGACY_KEY", "")
     unvisited_tag_name = terms["system_unvisited_tag_label"]
-    domain_info_only_tag_name = terms.get(info_only_key) or terms.get(legacy_info_only_key) or ""
+    primary_info_only = (terms.get(info_only_key) or "").strip()
+    legacy_info_only = (terms.get(legacy_info_only_key) or "").strip() if legacy_info_only_key else ""
+    # Backward compatibility: if the primary key still has the old default wording
+    # but the legacy key has a customized value, prefer the customized legacy value.
+    if primary_info_only and legacy_info_only and primary_info_only == "ピアノ情報のみ表示" and legacy_info_only != primary_info_only:
+        domain_info_only_tag_name = legacy_info_only
+    else:
+        domain_info_only_tag_name = primary_info_only or legacy_info_only
     if not domain_info_only_tag_name:
         domain_info_only_tag_name = "情報のみ表示"
     return unvisited_tag_name, domain_info_only_tag_name
