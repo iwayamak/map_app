@@ -160,8 +160,15 @@
             if (!richPickerMountEl.querySelector(richPickerTag)) {
                 var picker = document.createElement(richPickerTag);
                 picker.setAttribute("locale", "ja");
+                picker.setAttribute("theme", "light");
                 picker.style.width = "100%";
                 picker.style.height = "360px";
+                picker.style.setProperty("--background", "#ffffff");
+                picker.style.setProperty("--border-color", "#e5e7eb");
+                picker.style.setProperty("--input-border-color", "#d1d5db");
+                picker.style.setProperty("--input-font-color", "#111827");
+                picker.style.setProperty("--category-font-color", "#374151");
+                picker.style.setProperty("--button-hover-background", "#f3f4f6");
                 picker.addEventListener("emoji-click", function (event) {
                     var unicode = event && event.detail && event.detail.unicode ? event.detail.unicode : "";
                     if (!unicode) return;
