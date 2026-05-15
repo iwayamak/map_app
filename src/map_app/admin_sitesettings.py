@@ -19,6 +19,8 @@ DOMAIN_TERM_FIELDS = (
     ("statistics_monthly_title_icon", "統計: 月別グラフアイコン"),
     ("statistics_recent_title_icon", "統計: 最近の記録アイコン"),
     ("statistics_top_title_icon", "統計: ランキングアイコン"),
+    ("statistics_recent_item_title_icon", "統計: 最近カードの項目アイコン"),
+    ("statistics_recent_item_title_label", "統計: 最近カードの項目ラベル"),
     ("search_placeholder", "検索プレースホルダ"),
     ("search_aria_label", "検索ARIAラベル"),
     ("modal_records_title", "モーダル: 記録セクション名"),
@@ -32,6 +34,7 @@ DOMAIN_TERM_FIELDS = (
 
 DOMAIN_TERM_BOOLEAN_FIELDS = (
     ("show_video_library_menu", "メニュー: 動画ライブラリを表示"),
+    ("statistics_show_recent_item_title", "統計: 最近カードの項目行を表示"),
 )
 
 HEADER_BG_MODE_CHOICES = (
@@ -103,6 +106,8 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         statistics_monthly_title_icon = forms.CharField(max_length=8, required=False, label="統計: 月別グラフアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         statistics_recent_title_icon = forms.CharField(max_length=8, required=False, label="統計: 最近の記録アイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         statistics_top_title_icon = forms.CharField(max_length=8, required=False, label="統計: ランキングアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        statistics_recent_item_title_icon = forms.CharField(max_length=8, required=False, label="統計: 最近カードの項目アイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        statistics_recent_item_title_label = forms.CharField(max_length=80, required=False, label="統計: 最近カードの項目ラベル", widget=_wide_text_widget)
         search_placeholder = forms.CharField(max_length=200, required=False, label="検索プレースホルダ", widget=_wide_text_widget)
         search_aria_label = forms.CharField(max_length=200, required=False, label="検索ARIAラベル", widget=_wide_text_widget)
         modal_records_title = forms.CharField(max_length=120, required=False, label="モーダル: 記録セクション名", widget=_wide_text_widget)

@@ -20,6 +20,10 @@
     var pickerOverlayEl = null;
     var pickerDialogEl = null;
     var pickerGridEl = null;
+    var richPickerMountEl = null;
+    var richPickerLoadPromise = null;
+    var richPickerTag = "emoji-picker";
+    var richPickerScriptUrl = "https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js";
 
     function buildEmojiButton(emoji, onSelect) {
         var button = document.createElement("button");
@@ -50,6 +54,7 @@
         if (!pickerOverlayEl) return;
         activeInputEl = inputEl;
         pickerOverlayEl.style.display = "flex";
+        mountRichPickerIfAvailable();
     }
 
     function ensureEmojiModal() {
@@ -100,6 +105,9 @@
         footer.appendChild(closeButton);
 
         pickerDialogEl.appendChild(header);
+        richPickerMountEl = document.createElement("div");
+        richPickerMountEl.className = "emoji-picker-rich";
+        pickerDialogEl.appendChild(richPickerMountEl);
         pickerDialogEl.appendChild(pickerGridEl);
         pickerDialogEl.appendChild(footer);
         pickerOverlayEl.appendChild(pickerDialogEl);
@@ -115,6 +123,54 @@
             if (event.key === "Escape" && pickerOverlayEl && pickerOverlayEl.style.display !== "none") {
                 closeEmojiModal();
             }
+        });
+    }
+
+    function ensureRichPickerLoaded() {
+        if (window.customElements && window.customElements.get(richPickerTag)) {
+            return Promise.resolve(true);
+        }
+        if (richPickerLoadPromise) {
+            return richPickerLoadPromise;
+        }
+        richPickerLoadPromise = new Promise(function (resolve) {
+            var script = document.createElement("script");
+            script.src = richPickerScriptUrl;
+            script.async = true;
+            script.onload = function () {
+                resolve(Boolean(window.customElements && window.customElements.get(richPickerTag)));
+            };
+            script.onerror = function () {
+                resolve(false);
+            };
+            document.head.appendChild(script);
+        });
+        return richPickerLoadPromise;
+    }
+
+    function mountRichPickerIfAvailable() {
+        if (!richPickerMountEl) return;
+        ensureRichPickerLoaded().then(function (loaded) {
+            if (!loaded || !window.customElements.get(richPickerTag)) {
+                richPickerMountEl.style.display = "none";
+                pickerGridEl.style.display = "grid";
+                return;
+            }
+            if (!richPickerMountEl.querySelector(richPickerTag)) {
+                var picker = document.createElement(richPickerTag);
+                picker.setAttribute("locale", "ja");
+                picker.style.width = "100%";
+                picker.style.height = "360px";
+                picker.addEventListener("emoji-click", function (event) {
+                    var unicode = event && event.detail && event.detail.unicode ? event.detail.unicode : "";
+                    if (!unicode) return;
+                    setEmojiToActiveInput(unicode);
+                    closeEmojiModal();
+                });
+                richPickerMountEl.appendChild(picker);
+            }
+            richPickerMountEl.style.display = "block";
+            pickerGridEl.style.display = "none";
         });
     }
 
@@ -146,6 +202,7 @@
             + ".emoji-picker-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:10050;align-items:center;justify-content:center;padding:20px;}"
             + ".emoji-picker-dialog{width:min(560px,100%);max-height:min(70vh,560px);overflow:auto;background:#fff;border-radius:10px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.25);}"
             + ".emoji-picker-header{font-size:14px;font-weight:700;margin-bottom:10px;color:#0f172a;}"
+            + ".emoji-picker-rich{display:none;margin-bottom:8px;}"
             + ".emoji-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:6px;}"
             + ".emoji-picker-button{height:34px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:18px;line-height:1;color:#111827 !important;}"
             + ".emoji-picker-button:hover{background:#f9fafb;border-color:#94a3b8;}"
@@ -187,7 +244,8 @@
             "id_statistics_title_icon",
             "id_statistics_monthly_title_icon",
             "id_statistics_recent_title_icon",
-            "id_statistics_top_title_icon"
+            "id_statistics_top_title_icon",
+            "id_statistics_recent_item_title_icon"
         ].forEach(attachEmojiPicker);
     });
 })();
