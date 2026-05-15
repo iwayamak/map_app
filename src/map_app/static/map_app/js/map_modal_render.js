@@ -3,6 +3,7 @@ var DEFAULT_MAP_TERMS = {
     modal_empty_records_text: "記録なし",
     modal_note_title: "メモ",
     modal_count_label: "累積記録数",
+    modal_title_icon: "🎹",
     modal_photo_profile: "preserve",
     modal_photo_stage_max_height_vh: 70,
     modal_sections: {
@@ -413,12 +414,36 @@ function renderMetaSection(performance) {
     );
 }
 
+function buildModalHeaderStyle(terms) {
+    var mode = String((terms && terms.header_bg_mode) || "gradient");
+    var solidColor = String((terms && terms.header_bg_solid_color) || "#667eea");
+    var gradientFrom = String((terms && terms.header_bg_gradient_from) || "#667eea");
+    var gradientTo = String((terms && terms.header_bg_gradient_to) || "#764ba2");
+    var gradientAngle = parseInt((terms && terms.header_bg_gradient_angle), 10);
+    if (!Number.isFinite(gradientAngle)) gradientAngle = 135;
+    gradientAngle = Math.max(0, Math.min(360, gradientAngle));
+
+    if (mode === "solid") {
+        return "background:" + escapeHtml(solidColor) + ";";
+    }
+    return (
+        "background:linear-gradient(" + gradientAngle + "deg, " +
+        escapeHtml(gradientFrom) + " 0%, " +
+        escapeHtml(gradientTo) + " 100%);"
+    );
+}
+
 function renderPerformanceModal(performance) {
+    var terms = getMapTerms();
+    var modalTitleIcon = (terms && terms.modal_title_icon) ? String(terms.modal_title_icon).trim() : "";
+    if (!modalTitleIcon) {
+        modalTitleIcon = "🎹";
+    }
     return (
         "<div class='performance-modal-content'>" +
-            "<div class='performance-modal-header'>" +
+            "<div class='performance-modal-header' style='" + buildModalHeaderStyle(terms) + "'>" +
                 "<div class='performance-modal-title'>" +
-                    "🎹 " + escapeHtml(performance.location_name || "") +
+                    escapeHtml(modalTitleIcon) + " " + escapeHtml(performance.location_name || "") +
                 "</div>" +
                 "<div class='performance-modal-date'>📅 " + escapeHtml(performance.date || "") + "</div>" +
                 renderHeaderGuideHtml(performance) +

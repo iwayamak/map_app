@@ -9,13 +9,21 @@ DOMAIN_TERM_FIELDS = (
     ("record_label", "記録ラベル"),
     ("item_label", "項目ラベル"),
     ("summary_title", "サマリータイトル"),
+    ("summary_title_icon", "サマリーアイコン"),
     ("total_records_label", "総件数ラベル"),
+    ("statistics_title", "統計: パネルタイトル"),
+    ("statistics_title_icon", "統計: パネルアイコン"),
+    ("statistics_monthly_title", "統計: 月別グラフタイトル"),
+    ("statistics_monthly_title_icon", "統計: 月別グラフアイコン"),
+    ("statistics_recent_title_icon", "統計: 最近の記録アイコン"),
+    ("statistics_top_title_icon", "統計: ランキングアイコン"),
     ("search_placeholder", "検索プレースホルダ"),
     ("search_aria_label", "検索ARIAラベル"),
     ("modal_records_title", "モーダル: 記録セクション名"),
     ("modal_empty_records_text", "モーダル: 空データ文言"),
     ("modal_note_title", "モーダル: メモ見出し"),
     ("modal_count_label", "モーダル: 回数ラベル"),
+    ("modal_title_icon", "モーダル: タイトルアイコン"),
     ("system_unvisited_tag_label", "システムタグ: 未訪問"),
     ("system_info_only_tag_label", "システムタグ: 情報のみ表示（ドメイン固有）"),
 )
@@ -62,6 +70,18 @@ MODAL_SECTION_KEY_BY_FIELD = {
     "modal_section_photos_active": "photos",
 }
 
+STATISTICS_SECTION_FIELDS = (
+    ("statistics_section_monthly_active", "統計: 月別グラフ"),
+    ("statistics_section_recent_active", "統計: 最近の記録"),
+    ("statistics_section_top_active", "統計: ランキング"),
+)
+
+STATISTICS_SECTION_KEY_BY_FIELD = {
+    "statistics_section_monthly_active": "monthly",
+    "statistics_section_recent_active": "recent",
+    "statistics_section_top_active": "top",
+}
+
 
 def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
     class SiteSettingsAdminForm(forms.ModelForm):
@@ -73,13 +93,21 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         record_label = forms.CharField(max_length=40, required=False, label="記録ラベル", widget=_wide_text_widget)
         item_label = forms.CharField(max_length=40, required=False, label="項目ラベル", widget=_wide_text_widget)
         summary_title = forms.CharField(max_length=120, required=False, label="サマリータイトル", widget=_wide_text_widget)
+        summary_title_icon = forms.CharField(max_length=8, required=False, label="サマリーアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         total_records_label = forms.CharField(max_length=120, required=False, label="総件数ラベル", widget=_wide_text_widget)
+        statistics_title = forms.CharField(max_length=120, required=False, label="統計: パネルタイトル", widget=_wide_text_widget)
+        statistics_title_icon = forms.CharField(max_length=8, required=False, label="統計: パネルアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        statistics_monthly_title = forms.CharField(max_length=120, required=False, label="統計: 月別グラフタイトル", widget=_wide_text_widget)
+        statistics_monthly_title_icon = forms.CharField(max_length=8, required=False, label="統計: 月別グラフアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        statistics_recent_title_icon = forms.CharField(max_length=8, required=False, label="統計: 最近の記録アイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        statistics_top_title_icon = forms.CharField(max_length=8, required=False, label="統計: ランキングアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         search_placeholder = forms.CharField(max_length=200, required=False, label="検索プレースホルダ", widget=_wide_text_widget)
         search_aria_label = forms.CharField(max_length=200, required=False, label="検索ARIAラベル", widget=_wide_text_widget)
         modal_records_title = forms.CharField(max_length=120, required=False, label="モーダル: 記録セクション名", widget=_wide_text_widget)
         modal_empty_records_text = forms.CharField(max_length=120, required=False, label="モーダル: 空データ文言", widget=_wide_text_widget)
         modal_note_title = forms.CharField(max_length=120, required=False, label="モーダル: メモ見出し", widget=_wide_text_widget)
         modal_count_label = forms.CharField(max_length=120, required=False, label="モーダル: 回数ラベル", widget=_wide_text_widget)
+        modal_title_icon = forms.CharField(max_length=8, required=False, label="モーダル: タイトルアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
         modal_photo_profile = forms.ChoiceField(
             required=False,
             label="モーダル写真: 表示プロファイル",
@@ -139,6 +167,9 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         modal_section_records_active = forms.BooleanField(required=False, label="モーダル: 記録セクション")
         modal_section_tags_active = forms.BooleanField(required=False, label="モーダル: タグ")
         modal_section_photos_active = forms.BooleanField(required=False, label="モーダル: 写真")
+        statistics_section_monthly_active = forms.BooleanField(required=False, label="統計: 月別グラフ")
+        statistics_section_recent_active = forms.BooleanField(required=False, label="統計: 最近の記録")
+        statistics_section_top_active = forms.BooleanField(required=False, label="統計: ランキング")
 
         class Meta:
             model = site_settings_model
@@ -176,6 +207,10 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             for field_name, _label in MODAL_SECTION_FIELDS:
                 section_key = MODAL_SECTION_KEY_BY_FIELD[field_name]
                 self.fields[field_name].initial = bool(modal_sections.get(section_key, True))
+            statistics_sections = terms.get("statistics_sections", {}) if isinstance(terms.get("statistics_sections"), dict) else {}
+            for field_name, _label in STATISTICS_SECTION_FIELDS:
+                section_key = STATISTICS_SECTION_KEY_BY_FIELD[field_name]
+                self.fields[field_name].initial = bool(statistics_sections.get(section_key, True))
 
         def clean(self):
             cleaned = super().clean()
@@ -223,6 +258,16 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
                 section_key = MODAL_SECTION_KEY_BY_FIELD[field_name]
                 merged_modal_sections[section_key] = bool(cleaned.get(field_name))
             merged_terms["modal_sections"] = merged_modal_sections
+
+            default_statistics_sections = defaults.get("statistics_sections", {})
+            merged_statistics_sections = dict(default_statistics_sections)
+            current_statistics_sections = merged_terms.get("statistics_sections", {})
+            if isinstance(current_statistics_sections, dict):
+                merged_statistics_sections.update(current_statistics_sections)
+            for field_name, _label in STATISTICS_SECTION_FIELDS:
+                section_key = STATISTICS_SECTION_KEY_BY_FIELD[field_name]
+                merged_statistics_sections[section_key] = bool(cleaned.get(field_name))
+            merged_terms["statistics_sections"] = merged_statistics_sections
             cleaned["domain_terms"] = merged_terms
             return cleaned
 
@@ -280,6 +325,10 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             ("モーダル表示制御", {
                 "fields": tuple(field_name for field_name, _ in MODAL_SECTION_FIELDS),
                 "description": "モーダル内の各セクションをドメインごとにON/OFFできます。",
+            }),
+            ("統計表示制御", {
+                "fields": tuple(field_name for field_name, _ in STATISTICS_SECTION_FIELDS),
+                "description": "統計パネル内の各セクションをドメインごとにON/OFFできます。",
             }),
         )
 
