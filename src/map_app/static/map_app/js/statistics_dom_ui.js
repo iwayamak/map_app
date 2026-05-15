@@ -31,6 +31,9 @@
     function renderRecentVisits(payload) {
         var list = document.getElementById("recent-visits-list");
         if (!list) return;
+        var showVisitTitle = list.dataset.showVisitTitle !== "0";
+        var visitTitleIcon = list.dataset.visitTitleIcon || "🎵";
+        var visitTitleLabel = list.dataset.visitTitleLabel || "記録";
 
         var visits = [];
         if (payload && Array.isArray(payload.recent_visits)) {
@@ -45,11 +48,19 @@
         }
 
         list.innerHTML = visits.map(function(visit) {
+            var titleHtml = "";
+            if (showVisitTitle) {
+                titleHtml =
+                    "<div class='visit-title'>" +
+                    escapeHtml(visitTitleIcon) + " " + escapeHtml(visitTitleLabel) +
+                    (visit.title ? ": " + escapeHtml(visit.title) : "") +
+                    "</div>";
+            }
             return (
                 "<button type='button' class='visit-item' data-lat='" + visit.latitude + "' data-lng='" + visit.longitude + "'>" +
                     "<div class='visit-name'>" + escapeHtml(visit.location_name) + "</div>" +
                     "<div class='visit-date'>📅 " + escapeHtml(visit.date) + "</div>" +
-                    "<div class='visit-title'>🎵 " + escapeHtml(visit.title) + "</div>" +
+                    titleHtml +
                 "</button>"
             );
         }).join("");
