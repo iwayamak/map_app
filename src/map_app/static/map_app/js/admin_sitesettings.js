@@ -163,6 +163,7 @@
                 picker.setAttribute("theme", "light");
                 picker.style.width = "100%";
                 picker.style.height = "360px";
+                picker.style.colorScheme = "light";
                 picker.style.setProperty("--background", "#ffffff");
                 picker.style.setProperty("--border-color", "#e5e7eb");
                 picker.style.setProperty("--input-border-color", "#d1d5db");
