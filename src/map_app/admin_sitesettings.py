@@ -1,4 +1,6 @@
 from django import forms
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 DOMAIN_TERM_FIELDS = (
@@ -290,6 +292,15 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
 
         def has_delete_permission(self, request, obj=None):
             return False
+
+        def changelist_view(self, request, extra_context=None):
+            obj = self.model.load()
+            return redirect(
+                reverse(
+                    f"admin:{self.model._meta.app_label}_{self.model._meta.model_name}_change",
+                    args=[obj.pk],
+                )
+            )
 
         fieldsets = (
             ("サイト設定", {
