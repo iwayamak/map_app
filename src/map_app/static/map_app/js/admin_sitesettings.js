@@ -135,6 +135,7 @@
         }
         richPickerLoadPromise = new Promise(function (resolve) {
             var script = document.createElement("script");
+            script.type = "module";
             script.src = richPickerScriptUrl;
             script.async = true;
             script.onload = function () {
