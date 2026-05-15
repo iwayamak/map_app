@@ -3,7 +3,7 @@ var DEFAULT_MAP_TERMS = {
     modal_empty_records_text: "記録なし",
     modal_note_title: "メモ",
     modal_count_label: "累積記録数",
-    modal_title_icon: "🎹",
+    modal_title_icon: "📍",
     modal_photo_profile: "preserve",
     modal_photo_stage_max_height_vh: 70,
     modal_sections: {
@@ -437,7 +437,7 @@ function renderPerformanceModal(performance) {
     var terms = getMapTerms();
     var modalTitleIcon = (terms && terms.modal_title_icon) ? String(terms.modal_title_icon).trim() : "";
     if (!modalTitleIcon) {
-        modalTitleIcon = "🎹";
+        modalTitleIcon = "📍";
     }
     return (
         "<div class='performance-modal-content'>" +
