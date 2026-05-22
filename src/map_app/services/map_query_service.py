@@ -4,6 +4,7 @@ from django.db.models import Count, Exists, F, OuterRef, Prefetch, Q, Subquery, 
 from django.db.models.functions import Cast
 
 from map_app.domain import get_activity_log_model, get_location_model, get_tag_model
+from map_app.domain_terms import get_domain_term_bool
 from map_app.services.map_tag_service import normalize_selected_tags, split_selected_tags
 
 
@@ -79,9 +80,7 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
             ).values("id")
         )
 
-    use_record_items = True
-    if isinstance(domain_terms, dict) and "use_record_items" in domain_terms:
-        use_record_items = bool(domain_terms.get("use_record_items"))
+    use_record_items = get_domain_term_bool(domain_terms, "use_record_items", default=True)
 
     if search_query:
         escaped_search_query = json.dumps(search_query, ensure_ascii=True).strip('"')

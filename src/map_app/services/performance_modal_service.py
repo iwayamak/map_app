@@ -12,6 +12,7 @@ from map_app.domain import (
     get_site_settings_model,
     get_tag_model,
 )
+from map_app.domain_terms import get_domain_term_bool
 from map_app.services.link_preview_service import build_link_preview_map
 
 
@@ -123,7 +124,7 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
     default_terms = get_default_domain_terms_func()()
     site_settings = SiteSettings.load()
     domain_terms = site_settings.get_domain_terms() if site_settings else default_terms
-    use_record_items = bool(domain_terms.get("use_record_items", True))
+    use_record_items = get_domain_term_bool(domain_terms, "use_record_items", default=True)
 
     prefetches = [
         Prefetch(
