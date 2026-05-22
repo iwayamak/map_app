@@ -5,9 +5,11 @@ from django.shortcuts import get_object_or_404
 from map_app.domain import (
     get_activity_log_item_model,
     get_activity_log_model,
+    get_default_domain_terms_func,
     get_domain_field_definition_model,
     get_location_model,
     get_location_photo_model,
+    get_site_settings_model,
     get_tag_model,
 )
 from map_app.services.link_preview_service import build_link_preview_map
@@ -117,21 +119,32 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
     LocationPhoto = get_location_photo_model()
     Tag = get_tag_model()
     DomainFieldDefinition = get_domain_field_definition_model()
-    activity = get_object_or_404(
-        ActivityLog.objects.select_related("location").prefetch_related(
+    SiteSettings = get_site_settings_model()
+    default_terms = get_default_domain_terms_func()()
+    site_settings = SiteSettings.load()
+    domain_terms = site_settings.get_domain_terms() if site_settings else default_terms
+    use_record_items = bool(domain_terms.get("use_record_items", True))
+
+    prefetches = [
+        Prefetch(
+            "location__photos",
+            queryset=LocationPhoto.objects.only("id", "location_id", "image", "order").order_by("order", "id"),
+        ),
+        Prefetch(
+            "location__tags",
+            queryset=Tag.objects.only("id", "name", "color").order_by("order", "name"),
+        ),
+    ]
+    if use_record_items:
+        prefetches.insert(
+            0,
             Prefetch(
                 "activitylogitem_set",
                 queryset=ActivityLogItem.objects.select_related("item").order_by("order"),
             ),
-            Prefetch(
-                "location__photos",
-                queryset=LocationPhoto.objects.only("id", "location_id", "image", "order").order_by("order", "id"),
-            ),
-            Prefetch(
-                "location__tags",
-                queryset=Tag.objects.only("id", "name", "color").order_by("order", "name"),
-            ),
-        ),
+        )
+    activity = get_object_or_404(
+        ActivityLog.objects.select_related("location").prefetch_related(*prefetches),
         pk=activity_id,
     )
 
@@ -141,17 +154,19 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
         .count()
     )
 
-    prefetched = getattr(activity, "_prefetched_objects_cache", {})
-    prefetched_items = prefetched.get("activitylogitem_set")
-    if prefetched_items is not None:
-        performance_songs = list(prefetched_items)
-    else:
-        performance_songs = list(
-            ActivityLogItem.objects.filter(activity_log=activity).select_related("item").order_by("order")
-        )
-    songs = [ps.item.name for ps in performance_songs]
-    if not songs:
-        songs = activity.title.split(", ") if activity.title else []
+    songs = []
+    if use_record_items:
+        prefetched = getattr(activity, "_prefetched_objects_cache", {})
+        prefetched_items = prefetched.get("activitylogitem_set")
+        if prefetched_items is not None:
+            performance_songs = list(prefetched_items)
+        else:
+            performance_songs = list(
+                ActivityLogItem.objects.filter(activity_log=activity).select_related("item").order_by("order")
+            )
+        songs = [ps.item.name for ps in performance_songs]
+        if not songs:
+            songs = activity.title.split(", ") if activity.title else []
     payload = _build_common_modal_payload(
         record_id=activity.id,
         location=activity.location,

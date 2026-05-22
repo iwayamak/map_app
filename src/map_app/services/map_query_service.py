@@ -79,22 +79,28 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
             ).values("id")
         )
 
+    use_record_items = True
+    if isinstance(domain_terms, dict) and "use_record_items" in domain_terms:
+        use_record_items = bool(domain_terms.get("use_record_items"))
+
     if search_query:
         escaped_search_query = json.dumps(search_query, ensure_ascii=True).strip('"')
         performance_qs = performance_qs.annotate(
             activity_custom_data_text=Cast("custom_data", output_field=TextField()),
             location_custom_data_text=Cast("location__custom_data", output_field=TextField()),
         )
-        performance_qs = performance_qs.filter(
+        query = (
             Q(location__name__icontains=search_query)
             | Q(location__tags__name__icontains=search_query)
-            | Q(activitylogitem__item__name__icontains=search_query)
             | Q(title__icontains=search_query)
             | Q(activity_custom_data_text__icontains=search_query)
             | Q(location_custom_data_text__icontains=search_query)
             | Q(activity_custom_data_text__icontains=escaped_search_query)
             | Q(location_custom_data_text__icontains=escaped_search_query)
         )
+        if use_record_items:
+            query |= Q(activitylogitem__item__name__icontains=search_query)
+        performance_qs = performance_qs.filter(query)
     return performance_qs.distinct()
 
 

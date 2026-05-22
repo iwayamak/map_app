@@ -1,4 +1,8 @@
 (function(global) {
+    var DEFAULT_MAP_TERMS = {
+        use_record_items: true
+    };
+
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -6,6 +10,17 @@
             .replace(/>/g, "&gt;")
             .replace(/\"/g, "&quot;")
             .replace(/'/g, "&#39;");
+    }
+
+    function getMapTerms() {
+        var node = document.getElementById("map-domain-terms");
+        if (!node || !node.textContent) return DEFAULT_MAP_TERMS;
+        try {
+            var parsed = JSON.parse(node.textContent);
+            return Object.assign({}, DEFAULT_MAP_TERMS, parsed || {});
+        } catch (error) {
+            return DEFAULT_MAP_TERMS;
+        }
     }
 
     function bindLocationEvents() {
@@ -32,6 +47,9 @@
         var list = document.getElementById("recent-visits-list");
         if (!list) return;
         var showVisitTitle = list.dataset.showVisitTitle !== "0";
+        if (!getMapTerms().use_record_items) {
+            showVisitTitle = false;
+        }
         var visitTitleIcon = list.dataset.visitTitleIcon || "🎵";
         var visitTitleLabel = list.dataset.visitTitleLabel || "記録";
 

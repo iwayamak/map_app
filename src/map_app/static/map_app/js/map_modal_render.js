@@ -1,4 +1,5 @@
 var DEFAULT_MAP_TERMS = {
+    use_record_items: true,
     modal_records_title: "記録項目",
     modal_empty_records_text: "記録なし",
     modal_note_title: "メモ",
@@ -221,6 +222,9 @@ function renderSongsSection(performance) {
         return "";
     }
     var terms = getMapTerms();
+    if (!terms.use_record_items) {
+        return "";
+    }
     var songs = performance && Array.isArray(performance.songs) ? performance.songs : [];
     if (performance && (performance.status_badge === "未訪問" || isPianoInfoOnlyMode())) {
         return "";

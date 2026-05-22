@@ -33,6 +33,7 @@ DOMAIN_TERM_FIELDS = (
 )
 
 DOMAIN_TERM_BOOLEAN_FIELDS = (
+    ("use_record_items", "記録項目を利用する"),
     ("show_video_library_menu", "メニュー: 動画ライブラリを表示"),
     ("statistics_show_recent_item_title", "統計: 最近カードの項目行を表示"),
 )
@@ -162,6 +163,7 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         system_unvisited_tag_label = forms.CharField(max_length=40, required=False, label="システムタグ: 未訪問", widget=_wide_text_widget)
         system_info_only_tag_label = forms.CharField(max_length=80, required=False, label="システムタグ: 情報のみ表示（ドメイン固有）", widget=_wide_text_widget)
         show_video_library_menu = forms.BooleanField(required=False, label="メニュー: 動画ライブラリを表示")
+        use_record_items = forms.BooleanField(required=False, label="記録項目を利用する")
         statistics_show_recent_item_title = forms.BooleanField(required=False, label="統計: 最近カードの項目行を表示")
         admin_label_location = forms.CharField(max_length=80, required=False, label="管理画面: 場所", widget=_wide_text_widget)
         admin_label_tag = forms.CharField(max_length=80, required=False, label="管理画面: タグ", widget=_wide_text_widget)
