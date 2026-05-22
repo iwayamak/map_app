@@ -1,9 +1,9 @@
 import json
 
-from django.db.models import Count, Exists, F, OuterRef, Prefetch, Q, Subquery, TextField
+from django.db.models import Count, F, OuterRef, Prefetch, Q, Subquery, TextField
 from django.db.models.functions import Cast
 
-from map_app.domain import get_activity_log_model, get_location_model, get_tag_model
+from map_app.domain import get_activity_log_item_model, get_activity_log_model, get_location_model, get_tag_model
 from map_app.domain_terms import get_domain_term_bool
 from map_app.services.map_tag_service import normalize_selected_tags, split_selected_tags
 
@@ -45,8 +45,8 @@ def filter_locations_queryset(location_qs, search_query="", selected_tags=None, 
 
 def get_filtered_performance_queryset(search_query="", selected_tags=None, domain_terms=None):
     ActivityLog = get_activity_log_model()
+    ActivityLogItem = get_activity_log_item_model()
     Location = get_location_model()
-    Tag = get_tag_model()
     search_query = (search_query or "").strip()
     selected_tags, include_unvisited_only, include_domain_info_only = split_selected_tags(
         selected_tags,
@@ -55,11 +55,7 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
     if include_unvisited_only:
         return ActivityLog.objects.none()
 
-    performance_qs = (
-        ActivityLog.objects.select_related("location")
-        .annotate(location_has_tags=Exists(Tag.objects.filter(locations=OuterRef("location_id"))))
-        .order_by("date", "id")
-    )
+    performance_qs = ActivityLog.objects.select_related("location").order_by("date", "id")
 
     if include_domain_info_only:
         first_perf_id_subquery = (
@@ -81,6 +77,13 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
         )
 
     use_record_items = get_domain_term_bool(domain_terms, "use_record_items", default=True)
+    if use_record_items:
+        performance_qs = performance_qs.prefetch_related(
+            Prefetch(
+                "activitylogitem_set",
+                queryset=ActivityLogItem.objects.select_related("item").order_by("order"),
+            )
+        )
 
     if search_query:
         escaped_search_query = json.dumps(search_query, ensure_ascii=True).strip('"')
