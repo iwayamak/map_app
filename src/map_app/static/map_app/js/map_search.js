@@ -143,15 +143,23 @@ function setupAutoSearch() {
     headerUi.syncSearchFilterIndicator();
     summaryUi.syncFromCurrentSummaryDom();
 
-    // If initial HTML was rendered without markers, hydrate map+summary from API immediately.
-    if (
-        typeof globalMarkerClusterGroup !== "undefined" &&
-        globalMarkerClusterGroup &&
-        typeof globalMarkerClusterGroup.getLayers === "function" &&
-        globalMarkerClusterGroup.getLayers().length === 0
-    ) {
-        scheduleSearch(0);
-    }
+    // If initial HTML was rendered without markers, hydrate map+summary from API.
+    // Retry briefly until marker cluster is ready.
+    (function hydrateDeferredInitialMarkers(attempt) {
+        var hasCluster =
+            typeof globalMarkerClusterGroup !== "undefined" &&
+            globalMarkerClusterGroup &&
+            typeof globalMarkerClusterGroup.getLayers === "function";
+        if (!hasCluster) {
+            if (attempt < 20) {
+                setTimeout(function() { hydrateDeferredInitialMarkers(attempt + 1); }, 100);
+            }
+            return;
+        }
+        if (globalMarkerClusterGroup.getLayers().length === 0) {
+            scheduleSearch(0);
+        }
+    })(0);
 
     window.MapSearchPublicApi = window.MapSearchPublicApi || {};
     window.MapSearchPublicApi.applyFilters = applyFilters;
