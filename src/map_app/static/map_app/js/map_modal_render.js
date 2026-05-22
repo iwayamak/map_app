@@ -20,6 +20,18 @@ var DEFAULT_MAP_TERMS = {
     system_piano_info_only_tag_label: "情報のみ表示"
 };
 
+function coerceBoolean(value, defaultValue) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value !== 0;
+    if (typeof value === "string") {
+        var normalized = value.trim().toLowerCase();
+        if (normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on") return true;
+        if (normalized === "false" || normalized === "0" || normalized === "no" || normalized === "off" || normalized === "") return false;
+    }
+    if (value === null || value === undefined) return defaultValue;
+    return Boolean(value);
+}
+
 function getMapTerms() {
     var node = document.getElementById("map-domain-terms");
     if (!node || !node.textContent) return DEFAULT_MAP_TERMS;
@@ -39,7 +51,7 @@ function isModalSectionActive(sectionKey) {
     if (!Object.prototype.hasOwnProperty.call(sections, sectionKey)) {
         return true;
     }
-    return Boolean(sections[sectionKey]);
+    return coerceBoolean(sections[sectionKey], true);
 }
 
 function getModalPhotoConfig() {
@@ -222,7 +234,7 @@ function renderSongsSection(performance) {
         return "";
     }
     var terms = getMapTerms();
-    if (!terms.use_record_items) {
+    if (!coerceBoolean(terms.use_record_items, true)) {
         return "";
     }
     var songs = performance && Array.isArray(performance.songs) ? performance.songs : [];

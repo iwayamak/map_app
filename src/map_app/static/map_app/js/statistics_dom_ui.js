@@ -12,6 +12,18 @@
             .replace(/'/g, "&#39;");
     }
 
+    function coerceBoolean(value, defaultValue) {
+        if (typeof value === "boolean") return value;
+        if (typeof value === "number") return value !== 0;
+        if (typeof value === "string") {
+            var normalized = value.trim().toLowerCase();
+            if (normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on") return true;
+            if (normalized === "false" || normalized === "0" || normalized === "no" || normalized === "off" || normalized === "") return false;
+        }
+        if (value === null || value === undefined) return defaultValue;
+        return Boolean(value);
+    }
+
     function getMapTerms() {
         var node = document.getElementById("map-domain-terms");
         if (!node || !node.textContent) return DEFAULT_MAP_TERMS;
@@ -47,7 +59,7 @@
         var list = document.getElementById("recent-visits-list");
         if (!list) return;
         var showVisitTitle = list.dataset.showVisitTitle !== "0";
-        if (!getMapTerms().use_record_items) {
+        if (!coerceBoolean(getMapTerms().use_record_items, true)) {
             showVisitTitle = false;
         }
         var visitTitleIcon = list.dataset.visitTitleIcon || "🎵";
