@@ -143,6 +143,16 @@ function setupAutoSearch() {
     headerUi.syncSearchFilterIndicator();
     summaryUi.syncFromCurrentSummaryDom();
 
+    // If initial HTML was rendered without markers, hydrate map+summary from API immediately.
+    if (
+        typeof globalMarkerClusterGroup !== "undefined" &&
+        globalMarkerClusterGroup &&
+        typeof globalMarkerClusterGroup.getLayers === "function" &&
+        globalMarkerClusterGroup.getLayers().length === 0
+    ) {
+        scheduleSearch(0);
+    }
+
     window.MapSearchPublicApi = window.MapSearchPublicApi || {};
     window.MapSearchPublicApi.applyFilters = applyFilters;
 }

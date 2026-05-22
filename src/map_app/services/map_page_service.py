@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from map_app.contracts.map_search_contract import (
     MapSearchPayload,
 )
@@ -77,20 +79,30 @@ def render_map_page_html(user, search_query="", selected_tags=None):
     map_instance = create_map()
     marker_cluster = create_marker_cluster()
 
-    all_performances = list(
-        get_filtered_performance_queryset(
-            search_query=search_query,
-            selected_tags=selected_tags,
-            domain_terms=domain_terms,
-        )
+    defer_initial_map_data = (
+        bool(getattr(settings, "MAP_APP_DEFER_INITIAL_MAP_DATA", False))
+        and not search_query
+        and not selected_tags
     )
-    unvisited_locations = list(
-        get_filtered_unvisited_location_queryset(
-            search_query=search_query,
-            selected_tags=selected_tags,
-            domain_terms=domain_terms,
+    if defer_initial_map_data:
+        all_performances = []
+        unvisited_locations = []
+    else:
+        all_performances = list(
+            get_filtered_performance_queryset(
+                search_query=search_query,
+                selected_tags=selected_tags,
+                domain_terms=domain_terms,
+            )
         )
-    )
+        unvisited_locations = list(
+            get_filtered_unvisited_location_queryset(
+                search_query=search_query,
+                selected_tags=selected_tags,
+                domain_terms=domain_terms,
+            )
+        )
+
     stats = build_map_statistics(all_performances)
     stats["total_locations"] = stats["total_locations"] + len(unvisited_locations)
     stats["marker_count"] = len(all_performances) + len(unvisited_locations)
