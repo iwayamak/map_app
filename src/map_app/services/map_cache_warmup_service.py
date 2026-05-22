@@ -78,6 +78,8 @@ def _run_warmup_command(reason):
 def schedule_map_cache_warmup(reason="data_change"):
     if not getattr(settings, "MAP_CACHE_WARMUP_ENABLED", True):
         return False
+    if reason == "stale_served" and not getattr(settings, "MAP_CACHE_WARMUP_ON_STALE", False):
+        return False
 
     debounce_seconds = max(1, int(getattr(settings, "MAP_CACHE_WARMUP_DEBOUNCE_SECONDS", 3)))
     if not cache.add(MAP_PAGE_WARMUP_PENDING_KEY, "1", timeout=debounce_seconds):
