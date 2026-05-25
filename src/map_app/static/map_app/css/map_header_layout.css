@@ -12,13 +12,6 @@
 :root {
     --map-safe-top: env(safe-area-inset-top, 0px);
     --map-safe-area-bg: #667eea;
-    --map-header-logo-size: 56px;
-    --map-header-logo-size-mobile: 44px;
-    --map-header-title-size: 20px;
-    --map-header-title-size-mobile: 16px;
-    --map-header-subtitle-size: 13px;
-    --map-header-subtitle-size-mobile: 12px;
-    --map-header-brand-gap: 10px;
 }
 
 #map-header {
@@ -28,7 +21,7 @@
     right: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: calc(8px + var(--map-safe-top)) 20px 8px;
+    padding: calc(2px + var(--map-safe-top)) 20px 2px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
@@ -50,7 +43,7 @@
 .map-header-brand {
     display: flex;
     align-items: center;
-    gap: var(--map-header-brand-gap);
+    gap: 10px;
     min-width: 0;
 }
 
@@ -59,7 +52,7 @@
 }
 
 .map-header-logo {
-    height: var(--map-header-logo-size);
+    height: 80px;
     width: auto;
     object-fit: contain;
 }
@@ -70,7 +63,7 @@
 
 .map-header-title {
     margin: 0;
-    font-size: var(--map-header-title-size);
+    font-size: 20px;
     font-weight: bold;
     line-height: 1.2;
     white-space: nowrap;
@@ -78,7 +71,7 @@
 
 .map-header-subtitle {
     margin: 0;
-    font-size: var(--map-header-subtitle-size);
+    font-size: 13px;
     opacity: 0.9;
     line-height: 1.2;
     white-space: nowrap;
@@ -431,19 +424,15 @@
     }
 
     .map-header-title {
-        font-size: var(--map-header-title-size-mobile);
+        font-size: 16px;
         white-space: nowrap;
         max-width: 100%;
     }
 
     .map-header-subtitle {
-        font-size: var(--map-header-subtitle-size-mobile);
+        font-size: 12px;
         white-space: nowrap;
         max-width: 100%;
-    }
-
-    .map-header-logo {
-        height: var(--map-header-logo-size-mobile);
     }
 
     #map-search-form {
