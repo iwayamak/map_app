@@ -1,0 +1,203 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">{% endblock %}
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    #header #site-name {
+        max-width: 100%;
+        overflow: hidden;
+        min-width: 0;
+    }
+
+    #header #site-name > a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+    }
+
+    #header #site-name > a > span {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #content-main {
+        float: none;
+        width: 100%;
+        margin-right: 0;
+    }
+
+    #content-related {
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        margin-top: 16px;
+        clear: both;
+    }
+
+    .pm-data-management-panel {
+        margin-top: 24px;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .pm-data-management-title {
+        margin: 0 0 10px 0;
+    }
+
+    .pm-data-management-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        gap: 8px 18px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .pm-data-management-card {
+        background: transparent;
+        padding: 0;
+        border: 0;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .pm-data-management-card h3 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+    }
+
+    .pm-data-management-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 30px;
+        padding: 4px 9px;
+        font-size: 12px;
+        line-height: 1.2;
+        margin: 0 6px 6px 0;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 1280px) {
+        .pm-data-management-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        #header {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        #header #branding {
+            margin-bottom: 2px;
+        }
+
+        #header #user-tools {
+            margin-top: 2px !important;
+            padding-top: 0 !important;
+            line-height: 1.15;
+        }
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var titleEl = document.querySelector("#header #site-name > a > span");
+        if (!titleEl) return;
+        var maxSize = parseFloat(window.getComputedStyle(titleEl).fontSize) || 20;
+        var minSize = 14;
+
+        function fitTitle() {
+            titleEl.style.fontSize = maxSize + "px";
+            if (titleEl.clientWidth <= 0) return;
+            var current = maxSize;
+            while (titleEl.scrollWidth > titleEl.clientWidth && current > minSize) {
+                current -= 0.25;
+                titleEl.style.fontSize = current.toFixed(2) + "px";
+            }
+        }
+
+        fitTitle();
+        setTimeout(fitTitle, 120);
+        window.addEventListener("resize", fitTitle);
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="app-list">
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+
+  <div class="pm-data-management-panel">
+      <h2 class="pm-data-management-title">📥 データ管理</h2>
+      <div class="pm-data-management-grid">
+          <div class="pm-data-management-card">
+              <h3>場所</h3>
+              <a href="/admin/piano_map/location/export-csv/" class="button pm-data-management-button">📥 エクスポート</a>
+              <a href="/admin/piano_map/location/import-csv/" class="button pm-data-management-button">📤 インポート</a>
+              <a href="/admin/piano_map/location/duplicates/" class="button pm-data-management-button">🧹 重複候補を確認</a>
+          </div>
+          <div class="pm-data-management-card">
+              <h3>♫記録</h3>
+              <a href="/admin/piano_map/activitylog/export-csv/" class="button pm-data-management-button">📥 エクスポート</a>
+              <a href="/admin/piano_map/activitylog/import-csv/" class="button pm-data-management-button">📤 インポート</a>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% translate 'Recent actions' %}</h2>
+        <h3>{% translate 'My actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% translate 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                <span class="visually-hidden">{% if entry.is_addition %}{% translate 'Added:' %}{% elif entry.is_change %}{% translate 'Changed:' %}{% elif entry.is_deletion %}{% translate 'Deleted:' %}{% endif %}</span>
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% translate 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}
