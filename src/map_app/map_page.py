@@ -11,6 +11,22 @@ def get_theme_color(site_settings):
     return (terms.get("header_bg_gradient_from") or "#667eea").strip()
 
 
+def get_header_background(site_settings):
+    terms = site_settings.get_domain_terms()
+    header_bg_mode = (terms.get("header_bg_mode") or "gradient").strip()
+    if header_bg_mode == "solid":
+        return (terms.get("header_bg_solid_color") or "#667eea").strip()
+
+    gradient_from = (terms.get("header_bg_gradient_from") or "#667eea").strip()
+    gradient_to = (terms.get("header_bg_gradient_to") or "#764ba2").strip()
+    try:
+        gradient_angle = int(terms.get("header_bg_gradient_angle", 135))
+    except (TypeError, ValueError):
+        gradient_angle = 135
+    gradient_angle = max(0, min(360, gradient_angle))
+    return f"linear-gradient({gradient_angle}deg, {gradient_from} 0%, {gradient_to} 100%)"
+
+
 def normalize_document_meta(html, theme_color):
     viewport_meta = '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />'
     theme_meta = f'<meta name="theme-color" content="{theme_color}" />'
@@ -25,19 +41,22 @@ def get_css_styles(site_settings):
     if site_settings.favicon:
         favicon_tag = f'<link rel="icon" href="{site_settings.favicon.url}">'
     theme_color = get_theme_color(site_settings)
+    header_background = get_header_background(site_settings)
 
     return f"""
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="{theme_color}" />
+    {favicon_tag}
+{map_css_link_tags()}
     <style>
       :root {{
-        --map-safe-area-bg: {theme_color};
+        --map-safe-area-bg: {header_background};
       }}
       html, body {{
-        background: {theme_color} !important;
+        background: {header_background} !important;
       }}
       html::before {{
-        background: {theme_color} !important;
+        background: {header_background} !important;
       }}
     </style>
     <script>
@@ -54,8 +73,6 @@ def get_css_styles(site_settings):
         metas.forEach(function(m) {{ m.setAttribute('content', desired); }});
       }})();
     </script>
-    {favicon_tag}
-{map_css_link_tags()}
     """
 
 
