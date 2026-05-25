@@ -15,10 +15,16 @@
 
     #header {
         {{ admin_header_style|default:"" }}
+        background-color: #667eea !important;
+        border-bottom: 0 !important;
+        box-shadow: none !important;
+        align-content: flex-start;
     }
 
     #header #branding {
         min-width: 0;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
 
     #header #site-name {
@@ -26,6 +32,7 @@
         overflow: hidden;
         min-width: 0;
         margin: 0;
+        line-height: 1.2;
     }
 
     #header #site-name > a {
@@ -73,6 +80,7 @@
         display: block;
         min-width: 0;
         font-size: var(--pm-header-title-size);
+        font-weight: 700;
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
@@ -92,12 +100,12 @@
 
     @media (max-width: 767px) {
         #header {
-            padding-top: 4px;
-            padding-bottom: 4px;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
         }
 
         #header #branding {
-            margin-bottom: 2px;
+            margin-bottom: 0 !important;
         }
 
         #header #user-tools {
@@ -118,11 +126,16 @@
 
         #header #site-name > a > .pm-admin-header-text > span {
             font-size: var(--pm-header-title-size-mobile);
+            font-weight: 700;
         }
 
         #header #site-name .pm-admin-header-subtitle {
             font-size: var(--pm-header-subtitle-size-mobile);
         }
+    }
+
+    #container > .main {
+        border-top: 0 !important;
     }
 </style>
 {% endblock %}
