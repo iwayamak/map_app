@@ -4,11 +4,22 @@
         "🎵", "📅", "🌸", "🍁", "❄️", "☀️", "🌙", "⭐", "🧭", "🧱",
         "🏛️", "🙏", "🧿", "📿", "🪷", "🧳", "🚶", "🚉", "🚗", "🚌"
     ];
+    var ICON_FIELD_IDS = [
+        "id_header_logo_emoji",
+        "id_summary_title_icon",
+        "id_modal_title_icon",
+        "id_statistics_title_icon",
+        "id_statistics_monthly_title_icon",
+        "id_statistics_recent_title_icon",
+        "id_statistics_top_title_icon",
+        "id_statistics_recent_item_title_icon"
+    ];
+    var RICH_PICKER_TAG = "emoji-picker";
+    var RICH_PICKER_SRC = "https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js";
 
     function findFieldRow(inputId) {
         var el = document.getElementById(inputId);
-        if (!el) return null;
-        return el.closest(".form-row, .fieldBox, .field-" + inputId.replace(/^id_/, ""));
+        return el ? el.closest(".form-row, .fieldBox") : null;
     }
 
     function setVisible(row, visible) {
@@ -18,24 +29,9 @@
 
     var activeInputEl = null;
     var pickerOverlayEl = null;
-    var pickerDialogEl = null;
     var pickerGridEl = null;
     var richPickerMountEl = null;
-    var richPickerLoadPromise = null;
-    var richPickerTag = "emoji-picker";
-    var richPickerScriptUrl = "https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js";
-
-    function buildEmojiButton(emoji, onSelect) {
-        var button = document.createElement("button");
-        button.type = "button";
-        button.className = "emoji-picker-button";
-        button.textContent = emoji;
-        button.setAttribute("aria-label", "絵文字 " + emoji + " を選択");
-        button.addEventListener("click", function () {
-            onSelect(emoji);
-        });
-        return button;
-    }
+    var richPickerPromise = null;
 
     function setEmojiToActiveInput(emoji) {
         if (!activeInputEl) return;
@@ -57,6 +53,24 @@
         mountRichPickerIfAvailable();
     }
 
+    function buildFallbackGrid() {
+        var grid = document.createElement("div");
+        grid.className = "emoji-picker-grid";
+        EMOJI_CHOICES.forEach(function (emoji) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "emoji-picker-button";
+            button.textContent = emoji;
+            button.setAttribute("aria-label", "絵文字 " + emoji + " を選択");
+            button.addEventListener("click", function () {
+                setEmojiToActiveInput(emoji);
+                closeEmojiModal();
+            });
+            grid.appendChild(button);
+        });
+        return grid;
+    }
+
     function ensureEmojiModal() {
         if (pickerOverlayEl) return;
 
@@ -64,24 +78,20 @@
         pickerOverlayEl.className = "emoji-picker-overlay";
         pickerOverlayEl.style.display = "none";
 
-        pickerDialogEl = document.createElement("div");
-        pickerDialogEl.className = "emoji-picker-dialog";
-        pickerDialogEl.setAttribute("role", "dialog");
-        pickerDialogEl.setAttribute("aria-modal", "true");
-        pickerDialogEl.setAttribute("aria-label", "絵文字選択");
+        var dialog = document.createElement("div");
+        dialog.className = "emoji-picker-dialog";
+        dialog.setAttribute("role", "dialog");
+        dialog.setAttribute("aria-modal", "true");
+        dialog.setAttribute("aria-label", "絵文字選択");
 
         var header = document.createElement("div");
         header.className = "emoji-picker-header";
         header.textContent = "絵文字を選択";
 
-        pickerGridEl = document.createElement("div");
-        pickerGridEl.className = "emoji-picker-grid";
-        EMOJI_CHOICES.forEach(function (emoji) {
-            pickerGridEl.appendChild(buildEmojiButton(emoji, function (selected) {
-                setEmojiToActiveInput(selected);
-                closeEmojiModal();
-            }));
-        });
+        richPickerMountEl = document.createElement("div");
+        richPickerMountEl.className = "emoji-picker-rich";
+
+        pickerGridEl = buildFallbackGrid();
 
         var footer = document.createElement("div");
         footer.className = "emoji-picker-footer";
@@ -103,22 +113,16 @@
 
         footer.appendChild(clearButton);
         footer.appendChild(closeButton);
-
-        pickerDialogEl.appendChild(header);
-        richPickerMountEl = document.createElement("div");
-        richPickerMountEl.className = "emoji-picker-rich";
-        pickerDialogEl.appendChild(richPickerMountEl);
-        pickerDialogEl.appendChild(pickerGridEl);
-        pickerDialogEl.appendChild(footer);
-        pickerOverlayEl.appendChild(pickerDialogEl);
+        dialog.appendChild(header);
+        dialog.appendChild(richPickerMountEl);
+        dialog.appendChild(pickerGridEl);
+        dialog.appendChild(footer);
+        pickerOverlayEl.appendChild(dialog);
         document.body.appendChild(pickerOverlayEl);
 
         pickerOverlayEl.addEventListener("click", function (event) {
-            if (event.target === pickerOverlayEl) {
-                closeEmojiModal();
-            }
+            if (event.target === pickerOverlayEl) closeEmojiModal();
         });
-
         document.addEventListener("keydown", function (event) {
             if (event.key === "Escape" && pickerOverlayEl && pickerOverlayEl.style.display !== "none") {
                 closeEmojiModal();
@@ -127,49 +131,38 @@
     }
 
     function ensureRichPickerLoaded() {
-        if (window.customElements && window.customElements.get(richPickerTag)) {
+        if (window.customElements && window.customElements.get(RICH_PICKER_TAG)) {
             return Promise.resolve(true);
         }
-        if (richPickerLoadPromise) {
-            return richPickerLoadPromise;
-        }
-        richPickerLoadPromise = new Promise(function (resolve) {
+        if (richPickerPromise) return richPickerPromise;
+        richPickerPromise = new Promise(function (resolve) {
             var script = document.createElement("script");
             script.type = "module";
-            script.src = richPickerScriptUrl;
             script.async = true;
+            script.src = RICH_PICKER_SRC;
             script.onload = function () {
-                resolve(Boolean(window.customElements && window.customElements.get(richPickerTag)));
+                resolve(Boolean(window.customElements && window.customElements.get(RICH_PICKER_TAG)));
             };
-            script.onerror = function () {
-                resolve(false);
-            };
+            script.onerror = function () { resolve(false); };
             document.head.appendChild(script);
         });
-        return richPickerLoadPromise;
+        return richPickerPromise;
     }
 
     function mountRichPickerIfAvailable() {
-        if (!richPickerMountEl) return;
+        if (!richPickerMountEl || !pickerGridEl) return;
         ensureRichPickerLoaded().then(function (loaded) {
-            if (!loaded || !window.customElements.get(richPickerTag)) {
+            if (!loaded || !window.customElements.get(RICH_PICKER_TAG)) {
                 richPickerMountEl.style.display = "none";
                 pickerGridEl.style.display = "grid";
                 return;
             }
-            if (!richPickerMountEl.querySelector(richPickerTag)) {
-                var picker = document.createElement(richPickerTag);
+            if (!richPickerMountEl.querySelector(RICH_PICKER_TAG)) {
+                var picker = document.createElement(RICH_PICKER_TAG);
                 picker.setAttribute("locale", "ja");
                 picker.setAttribute("theme", "light");
                 picker.style.width = "100%";
                 picker.style.height = "360px";
-                picker.style.colorScheme = "light";
-                picker.style.setProperty("--background", "#ffffff");
-                picker.style.setProperty("--border-color", "#e5e7eb");
-                picker.style.setProperty("--input-border-color", "#d1d5db");
-                picker.style.setProperty("--input-font-color", "#111827");
-                picker.style.setProperty("--category-font-color", "#374151");
-                picker.style.setProperty("--button-hover-background", "#f3f4f6");
                 picker.addEventListener("emoji-click", function (event) {
                     var unicode = event && event.detail && event.detail.unicode ? event.detail.unicode : "";
                     if (!unicode) return;
@@ -186,17 +179,24 @@
     function attachEmojiPicker(inputId) {
         var inputEl = document.getElementById(inputId);
         if (!inputEl || inputEl.dataset.emojiPickerAttached === "1") return;
+
+        var formRow = inputEl.closest(".form-row");
+        if (formRow) formRow.classList.add("emoji-inline-row");
         inputEl.classList.add("emoji-picker-input");
 
-        var triggerButton = document.createElement("button");
-        triggerButton.type = "button";
-        triggerButton.className = "emoji-picker-open";
-        triggerButton.textContent = "絵文字を選ぶ";
-        triggerButton.addEventListener("click", function () {
+        var inlineWrap = document.createElement("span");
+        inlineWrap.className = "emoji-picker-inline-wrap";
+        inputEl.parentNode.insertBefore(inlineWrap, inputEl);
+        inlineWrap.appendChild(inputEl);
+
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "emoji-picker-open";
+        button.textContent = "絵文字を選ぶ";
+        button.addEventListener("click", function () {
             openEmojiModal(inputEl);
         });
-
-        inputEl.insertAdjacentElement("afterend", triggerButton);
+        inlineWrap.appendChild(button);
         inputEl.dataset.emojiPickerAttached = "1";
     }
 
@@ -205,9 +205,10 @@
         var style = document.createElement("style");
         style.id = "admin-sitesettings-emoji-style";
         style.textContent = ""
-            + ".emoji-picker-input{color:#111827 !important;}"
-            + ".emoji-picker-open{margin-left:8px;height:34px;padding:0 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;vertical-align:middle;color:#111827 !important;}"
+            + ".emoji-picker-input{color:#111827 !important;width:8ch !important;min-width:8ch !important;max-width:8ch !important;}"
+            + ".emoji-picker-open{display:inline-flex !important;align-items:center !important;justify-content:center !important;height:34px;padding:0 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:#111827 !important;white-space:nowrap !important;}"
             + ".emoji-picker-open:hover{background:#f9fafb;border-color:#94a3b8;}"
+            + ".emoji-picker-inline-wrap{display:inline-flex !important;align-items:center !important;gap:8px !important;white-space:nowrap !important;}"
             + ".emoji-picker-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:10050;align-items:center;justify-content:center;padding:20px;}"
             + ".emoji-picker-dialog{width:min(560px,100%);max-height:min(70vh,560px);overflow:auto;background:#fff;border-radius:10px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.25);}"
             + ".emoji-picker-header{font-size:14px;font-weight:700;margin-bottom:10px;color:#0f172a;}"
@@ -216,45 +217,29 @@
             + ".emoji-picker-button{height:34px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:18px;line-height:1;color:#111827 !important;}"
             + ".emoji-picker-button:hover{background:#f9fafb;border-color:#94a3b8;}"
             + ".emoji-picker-footer{display:flex;justify-content:space-between;gap:8px;margin-top:12px;}"
-            + ".emoji-picker-clear,.emoji-picker-close{height:32px;padding:0 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:#0f172a !important;}"
-            + ".emoji-picker-clear:hover,.emoji-picker-close:hover{background:#f9fafb;border-color:#94a3b8;}";
+            + ".emoji-picker-clear,.emoji-picker-close{height:32px;padding:0 12px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:#0f172a !important;}";
         document.head.appendChild(style);
     }
 
     function applyHeaderModeVisibility() {
         var modeEl = document.getElementById("id_header_bg_mode");
         if (!modeEl) return;
-        var mode = modeEl.value;
-
-        var solidRow = findFieldRow("id_header_bg_solid_color");
-        var gradientFromRow = findFieldRow("id_header_bg_gradient_from");
-        var gradientToRow = findFieldRow("id_header_bg_gradient_to");
-        var gradientAngleRow = findFieldRow("id_header_bg_gradient_angle");
-
-        var isSolid = mode === "solid";
-        setVisible(solidRow, isSolid);
-        setVisible(gradientFromRow, !isSolid);
-        setVisible(gradientToRow, !isSolid);
-        setVisible(gradientAngleRow, !isSolid);
+        var isSolid = modeEl.value === "solid";
+        setVisible(findFieldRow("id_header_bg_solid_color"), isSolid);
+        setVisible(findFieldRow("id_header_bg_gradient_from"), !isSolid);
+        setVisible(findFieldRow("id_header_bg_gradient_to"), !isSolid);
+        setVisible(findFieldRow("id_header_bg_gradient_angle"), !isSolid);
     }
 
     document.addEventListener("DOMContentLoaded", function () {
         var modeEl = document.getElementById("id_header_bg_mode");
-        if (!modeEl) return;
-        applyHeaderModeVisibility();
-        modeEl.addEventListener("change", applyHeaderModeVisibility);
+        if (modeEl) {
+            applyHeaderModeVisibility();
+            modeEl.addEventListener("change", applyHeaderModeVisibility);
+        }
 
         injectEmojiPickerStyle();
         ensureEmojiModal();
-        [
-            "id_header_logo_emoji",
-            "id_summary_title_icon",
-            "id_modal_title_icon",
-            "id_statistics_title_icon",
-            "id_statistics_monthly_title_icon",
-            "id_statistics_recent_title_icon",
-            "id_statistics_top_title_icon",
-            "id_statistics_recent_item_title_icon"
-        ].forEach(attachEmojiPicker);
+        ICON_FIELD_IDS.forEach(attachEmojiPicker);
     });
 })();

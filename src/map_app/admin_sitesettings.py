@@ -293,6 +293,7 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         form = SiteSettingsAdminForm
 
         class Media:
+            css = {"all": ("map_app/css/admin_sitesettings.css",)}
             js = ("map_app/js/admin_sitesettings.js",)
 
         def has_add_permission(self, request):

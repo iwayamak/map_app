@@ -1,0 +1,49 @@
+/* SiteSettings emoji fields layout (shared in map_app) */
+.change-form.model-sitesettings .aligned .form-row.emoji-inline-row .flex-container {
+    align-items: center;
+}
+
+.change-form.model-sitesettings .aligned .form-row.emoji-inline-row .emoji-picker-inline-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .change-form.model-sitesettings .aligned .form-row.emoji-inline-row > div {
+        display: block !important;
+        text-align: left !important;
+    }
+
+    .change-form.model-sitesettings .aligned .form-row.emoji-inline-row .flex-container {
+        display: flex !important;
+        flex-direction: column !important; /* label then controls */
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 6px !important;
+        text-align: left !important;
+    }
+
+    .change-form.model-sitesettings .aligned .form-row.emoji-inline-row .flex-container > label {
+        width: auto !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .change-form.model-sitesettings .aligned .form-row.emoji-inline-row .emoji-picker-inline-wrap {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        margin: 0 !important;
+    }
+
+    .change-form.model-sitesettings .aligned .form-row.emoji-inline-row .emoji-picker-input {
+        width: 7ch !important;
+        min-width: 7ch !important;
+        max-width: 7ch !important;
+    }
+}
