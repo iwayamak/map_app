@@ -14,15 +14,11 @@
     }
 
     #header {
-        background: #667eea !important;
         {{ admin_header_style|default:"" }}
+        background-color: #667eea !important;
         border-bottom: 0 !important;
         box-shadow: none !important;
-        padding: 2px 20px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        column-gap: 10px;
+        align-content: flex-start;
         position: relative;
     }
 
@@ -30,8 +26,6 @@
         min-width: 0;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
-        display: flex;
-        align-items: center;
     }
 
     #header #site-name {
@@ -52,13 +46,6 @@
         min-width: 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         letter-spacing: 0;
-    }
-
-    #header #user-tools {
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 1.2;
-        align-self: center;
     }
 
     .pm-admin-header-logo,
@@ -167,9 +154,7 @@
 {% block branding %}
 <h1 id="site-name">
     <a href="{% url 'admin:index' %}">
-        {% if site_settings and site_settings.site_logo %}
-            <img src="{{ site_settings.site_logo.url }}" alt="ロゴ" class="pm-admin-header-logo">
-        {% elif admin_site_logo_url %}
+        {% if admin_site_logo_url %}
             <img src="{{ admin_site_logo_url }}" alt="ロゴ" class="pm-admin-header-logo">
         {% else %}
             <span class="pm-admin-header-logo-emoji">{{ admin_header_logo_emoji|default:"🎹" }}</span>
