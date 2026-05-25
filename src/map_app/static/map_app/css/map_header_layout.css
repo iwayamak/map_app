@@ -12,6 +12,13 @@
 :root {
     --map-safe-top: env(safe-area-inset-top, 0px);
     --map-safe-area-bg: #667eea;
+    --map-header-logo-size: 56px;
+    --map-header-logo-size-mobile: 44px;
+    --map-header-title-size: 20px;
+    --map-header-title-size-mobile: 16px;
+    --map-header-subtitle-size: 13px;
+    --map-header-subtitle-size-mobile: 12px;
+    --map-header-brand-gap: 10px;
 }
 
 #map-header {
@@ -21,7 +28,7 @@
     right: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: calc(2px + var(--map-safe-top)) 20px 2px;
+    padding: calc(8px + var(--map-safe-top)) 20px 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
@@ -43,7 +50,7 @@
 .map-header-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--map-header-brand-gap);
     min-width: 0;
 }
 
@@ -52,7 +59,7 @@
 }
 
 .map-header-logo {
-    height: 80px;
+    height: var(--map-header-logo-size);
     width: auto;
     object-fit: contain;
 }
@@ -63,7 +70,7 @@
 
 .map-header-title {
     margin: 0;
-    font-size: 20px;
+    font-size: var(--map-header-title-size);
     font-weight: bold;
     line-height: 1.2;
     white-space: nowrap;
@@ -71,7 +78,7 @@
 
 .map-header-subtitle {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--map-header-subtitle-size);
     opacity: 0.9;
     line-height: 1.2;
     white-space: nowrap;
@@ -424,15 +431,19 @@
     }
 
     .map-header-title {
-        font-size: 16px;
+        font-size: var(--map-header-title-size-mobile);
         white-space: nowrap;
         max-width: 100%;
     }
 
     .map-header-subtitle {
-        font-size: 12px;
+        font-size: var(--map-header-subtitle-size-mobile);
         white-space: nowrap;
         max-width: 100%;
+    }
+
+    .map-header-logo {
+        height: var(--map-header-logo-size-mobile);
     }
 
     #map-search-form {

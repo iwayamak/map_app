@@ -3,31 +3,91 @@
 {% block extrahead %}
 {{ block.super }}
 <style>
+    :root {
+        --pm-header-logo-size: 56px;
+        --pm-header-logo-size-mobile: 44px;
+        --pm-header-title-size: 20px;
+        --pm-header-title-size-mobile: 16px;
+        --pm-header-subtitle-size: 13px;
+        --pm-header-subtitle-size-mobile: 12px;
+        --pm-header-brand-gap: 10px;
+    }
+
+    #header {
+        {{ admin_header_style|default:"" }}
+    }
+
+    #header #branding {
+        min-width: 0;
+    }
+
     #header #site-name {
         max-width: 100%;
         overflow: hidden;
         min-width: 0;
+        margin: 0;
     }
 
     #header #site-name > a {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--pm-header-brand-gap);
         white-space: nowrap;
         max-width: 100%;
         width: 100%;
         min-width: 0;
     }
 
-    #header #site-name > a > span {
+    .pm-admin-header-logo,
+    .pm-admin-header-logo-emoji {
+        flex: 0 0 auto;
+    }
+
+    .pm-admin-header-logo {
         display: block;
+        height: var(--pm-header-logo-size);
+        width: auto;
+        max-width: var(--pm-header-logo-size);
+        object-fit: contain;
+    }
+
+    .pm-admin-header-logo-emoji {
+        width: var(--pm-header-logo-size);
+        font-size: 28px;
+        line-height: 1;
+        text-align: center;
+    }
+
+    #header #site-name > a > .pm-admin-header-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
         flex: 1 1 auto;
         min-width: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: 20px;
-        line-height: 1.1;
+    }
+
+    #header #site-name > a > .pm-admin-header-text > span {
+        display: block;
+        min-width: 0;
+        font-size: var(--pm-header-title-size);
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #header #site-name .pm-admin-header-subtitle {
+        margin: 0;
+        color: currentColor;
+        opacity: 0.9;
+        font-size: var(--pm-header-subtitle-size);
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     @media (max-width: 767px) {
@@ -45,6 +105,45 @@
             padding-top: 0 !important;
             line-height: 1.15;
         }
+
+        .pm-admin-header-logo {
+            height: var(--pm-header-logo-size-mobile);
+            max-width: var(--pm-header-logo-size-mobile);
+        }
+
+        .pm-admin-header-logo-emoji {
+            width: var(--pm-header-logo-size-mobile);
+            font-size: 24px;
+        }
+
+        #header #site-name > a > .pm-admin-header-text > span {
+            font-size: var(--pm-header-title-size-mobile);
+        }
+
+        #header #site-name .pm-admin-header-subtitle {
+            font-size: var(--pm-header-subtitle-size-mobile);
+        }
     }
 </style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        {% if admin_site_logo_url %}
+            <img src="{{ admin_site_logo_url }}" alt="ロゴ" class="pm-admin-header-logo">
+        {% else %}
+            <span class="pm-admin-header-logo-emoji">{{ admin_header_logo_emoji|default:"🎹" }}</span>
+        {% endif %}
+        <span class="pm-admin-header-text">
+            <span>{{ site_header|default:"管理画面" }}</span>
+            {% if admin_header_subtitle %}
+                <small class="pm-admin-header-subtitle">{{ admin_header_subtitle }}</small>
+            {% endif %}
+        </span>
+    </a>
+</h1>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
 {% endblock %}
