@@ -25,3 +25,25 @@
 5. `python manage.py collectstatic --no-input`
 6. `python manage.py check`
 7. `systemctl restart`（app gunicorn）→ `systemctl reload nginx`
+
+## Mandatory Guardrails (Root-Cause Prevention)
+
+以下は必須ルール。
+
+1. 変更前に実効先を機械確認する  
+   - テンプレート: `get_template(...).origin`  
+   - モデル/テーマ: 実フィールド名を確認（例: `Theme._meta.fields`）
+
+2. 1パッチ1目的  
+   - 復旧、共通化、見た目調整を混在させない。
+
+3. 本番反映前に作業ツリーを clean にする  
+   - `git status` が dirty のまま pull しない。必要なら `stash`/コミット/退避を先に実施。
+
+4. 完了報告前の必須確認  
+   - `systemctl is-active`  
+   - `get_template(...).origin`  
+   - PC/モバイルでホーム・一覧・変更画面を確認
+
+5. 失敗時の rollback を先に準備  
+   - 変更前値/変更前ファイルを控えてから作業する。
