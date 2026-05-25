@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'piano_map/css/admin_location_duplicates.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'piano_map/js/admin_location_duplicates.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<h1>重複ロケーション候補</h1>
+<p class="dup-page-note">
+    名称類似度・座標距離・タグ一致率をもとに、重複の可能性がある場所を表示しています。
+</p>
+
+{% if candidates %}
+    <div class="dup-table-wrap">
+        <table class="adminlist dup-table">
+            <thead>
+                <tr>
+                    <th>残す場所</th>
+                    <th>統合する場所</th>
+                    <th>重複スコア</th>
+                    <th>名称類似度</th>
+                    <th>距離(km)</th>
+                    <th>タグ一致率</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in candidates %}
+                    <tr>
+                        <td>
+                            <a href="/admin/piano_map/location/{{ item.primary.id }}/change/">{{ item.primary.name }}</a>
+                            <div class="dup-subtext">推奨度: {{ item.primary_recommend_percent }}%</div>
+                        </td>
+                        <td>
+                            <a href="/admin/piano_map/location/{{ item.duplicate.id }}/change/">{{ item.duplicate.name }}</a>
+                            <div class="dup-subtext">推奨度: {{ item.duplicate_recommend_percent }}%</div>
+                        </td>
+                        <td>
+                            <div class="dup-score-box">
+                                <div class="dup-score-label">重複スコア</div>
+                                <div class="dup-score-row">
+                                    <span class="dup-score-value">{{ item.confidence_score }}</span>
+                                    <span class="dup-score-rank">
+                                        {% if item.confidence_score >= 85 %}高{% elif item.confidence_score >= 70 %}中{% else %}要確認{% endif %}
+                                    </span>
+                                </div>
+                                <div class="dup-score-bar">
+                                    <div class="dup-score-fill" style="width: {{ item.confidence_score }}%;"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ item.name_similarity_percent }}%</td>
+                        <td>{{ item.distance_km }} km</td>
+                        <td>{{ item.tag_overlap_percent }}%</td>
+                        <td>
+                            <form method="post" action="/admin/piano_map/location/duplicates/merge/" data-dup-form>
+                                {% csrf_token %}
+                                <input type="hidden" name="primary_id" class="dup-primary-input" value="">
+                                <input type="hidden" name="duplicate_id" class="dup-duplicate-input" value="">
+                                <div class="dup-form-fields">
+                                    <div class="dup-select-hint">残す候補を選択してください</div>
+                                    <div class="dup-choice-panels">
+                                        <button type="button" class="dup-choice-panel" data-primary-id="{{ item.primary.id }}" data-duplicate-id="{{ item.duplicate.id }}" data-primary-name="{{ item.primary.name }}">
+                                            <div class="dup-choice-name">{{ item.primary.name }}</div>
+                                        </button>
+                                        <button type="button" class="dup-choice-panel" data-primary-id="{{ item.duplicate.id }}" data-duplicate-id="{{ item.primary.id }}" data-primary-name="{{ item.duplicate.name }}">
+                                            <div class="dup-choice-name">{{ item.duplicate.name }}</div>
+                                        </button>
+                                    </div>
+                                    <div class="dup-subtext">選択中: <strong data-selected-label>未選択</strong></div>
+                                    <div class="dup-form-error" aria-live="polite"></div>
+                                </div>
+                                <button type="submit" class="button dup-submit-button">統合実行</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dup-cards">
+        {% for item in candidates %}
+            <article class="dup-card">
+                <div class="dup-card-head">
+                    <strong>重複候補</strong>
+                    <div class="dup-score-box">
+                        <div class="dup-score-label">重複スコア</div>
+                        <div class="dup-score-row">
+                            <span class="dup-score-value">{{ item.confidence_score }}</span>
+                            <span class="dup-score-rank">
+                                {% if item.confidence_score >= 85 %}高{% elif item.confidence_score >= 70 %}中{% else %}要確認{% endif %}
+                            </span>
+                        </div>
+                        <div class="dup-score-bar">
+                            <div class="dup-score-fill" style="width: {{ item.confidence_score }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <form method="post" action="/admin/piano_map/location/duplicates/merge/" data-dup-form>
+                    {% csrf_token %}
+                    <input type="hidden" name="primary_id" class="dup-primary-input" value="">
+                    <input type="hidden" name="duplicate_id" class="dup-duplicate-input" value="">
+                    <div class="dup-select-hint">残す候補を選択してください</div>
+                    <div class="dup-card-grid">
+                        <button type="button" class="dup-choice-panel" data-primary-id="{{ item.primary.id }}" data-duplicate-id="{{ item.duplicate.id }}" data-primary-name="{{ item.primary.name }}">
+                            <div class="dup-card-title">候補1</div>
+                            <div class="dup-card-name">{{ item.primary.name }}</div>
+                            <div class="dup-subtext">推奨度: {{ item.primary_recommend_percent }}%</div>
+                        </button>
+                        <button type="button" class="dup-choice-panel" data-primary-id="{{ item.duplicate.id }}" data-duplicate-id="{{ item.primary.id }}" data-primary-name="{{ item.duplicate.name }}">
+                            <div class="dup-card-title">候補2</div>
+                            <div class="dup-card-name">{{ item.duplicate.name }}</div>
+                            <div class="dup-subtext">推奨度: {{ item.duplicate_recommend_percent }}%</div>
+                        </button>
+                        <div class="dup-metric-row">
+                            <div class="dup-metric">
+                                <div class="dup-card-title">名称類似度</div>
+                                <div>{{ item.name_similarity_percent }}%</div>
+                            </div>
+                            <div class="dup-metric">
+                                <div class="dup-card-title">距離(km)</div>
+                                <div>{{ item.distance_km }} km</div>
+                            </div>
+                            <div class="dup-metric">
+                                <div class="dup-card-title">タグ一致率</div>
+                                <div>{{ item.tag_overlap_percent }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dup-form-fields">
+                        <div class="dup-subtext">選択中: <strong data-selected-label>未選択</strong></div>
+                        <div class="dup-form-error" aria-live="polite"></div>
+                    </div>
+                    <button type="submit" class="button dup-submit-button">統合実行</button>
+                </form>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>重複候補は見つかりませんでした。</p>
+{% endif %}
+<div id="dup-confirm-overlay" class="dup-confirm-overlay" aria-hidden="true">
+    <div class="dup-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="dup-confirm-title">
+        <h3 id="dup-confirm-title" class="dup-confirm-title">確認</h3>
+        <p id="dup-confirm-message" class="dup-confirm-message">実行しますか？</p>
+        <div class="dup-confirm-actions">
+            <button type="button" class="button dup-confirm-cancel" id="dup-confirm-cancel">キャンセル</button>
+            <button type="button" class="button dup-confirm-ok" id="dup-confirm-ok">実行</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

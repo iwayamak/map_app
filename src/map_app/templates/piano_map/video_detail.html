@@ -1,0 +1,77 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site_settings.site_title }} - {{ video.title }}</title>
+    {% if site_settings.favicon %}
+        <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_layout.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_interaction.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_state.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/panels.css' %}?v=20260310-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/video_library.css' %}?v=20260415-19">
+    <script src="{% static 'piano_map/js/map_layout.js' %}?v=20260310-1" defer></script>
+    <script src="{% static 'piano_map/js/video_navigation.js' %}?v=20260311-1" defer></script>
+</head>
+<body>
+{% include "piano_map/header_shared.html" with header_class="video-page-header" spacer_class="video-header-spacer" show_search=False %}
+{% include "piano_map/video_hamburger_menu.html" %}
+
+<main class="video-main video-detail-main">
+    <section class="video-detail-layout {{ video.video_orientation_class }}">
+        <article class="video-detail-primary video-detail-primary--{{ video.video_orientation_class|cut:'is-' }}">
+            <div class="video-detail-stage video-detail-stage--{{ video.video_orientation_class|cut:'is-' }}">
+                <div class="video-detail-player-wrap {{ video.video_orientation_class }}">
+                    <div class="video-detail-player-frame {{ video.video_orientation_class }}">
+                        <video
+                            class="video-detail-player {{ video.video_orientation_class }}"
+                            controls
+                            preload="metadata"
+                            playsinline
+                            controlslist="nodownload"
+                            {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}
+                        >
+                            <source src="{{ video.video_file.url }}">
+                            お使いのブラウザは動画再生に対応していません。
+                        </video>
+                    </div>
+                </div>
+                <div class="video-detail-meta">
+                    <p class="video-eyebrow">Now Playing</p>
+                    <h2>{{ video.title }}</h2>
+                    {% if video.published_at %}
+                        <p class="video-detail-date">公開日 {{ video.published_at|date:"Y年n月j日" }}</p>
+                    {% endif %}
+                    {% if video.description %}
+                        <details class="video-detail-description-block">
+                            <summary>説明をもっと見る</summary>
+                            <div class="video-detail-description-preview">{{ video.description|linebreaksbr }}</div>
+                            <div class="video-detail-description">{{ video.description|linebreaksbr }}</div>
+                        </details>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        <aside class="video-detail-sidebar">
+            <h3>次に見る動画</h3>
+            <div class="video-related-list">
+                {% if related_videos %}
+                    {% for row in related_video_rows %}
+                        <div class="video-related-row {% if row.orientation == 'portrait' %}video-related-row--portrait{% else %}video-related-row--landscape{% endif %}">
+                            {% for related in row.items %}
+                                {% include "piano_map/partials/video_related_card.html" with related=related %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="video-empty">他の公開動画はまだありません。</p>
+                {% endif %}
+            </div>
+        </aside>
+    </section>
+</main>
+</body>
+</html>

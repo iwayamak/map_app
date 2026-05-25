@@ -1,0 +1,32 @@
+<article class="video-card {% if video.is_portrait_video %}video-card--short{% endif %} {{ video.video_orientation_class }}">
+    <a class="video-card-link" href="{{ video.watch_url }}">
+        <div class="video-thumbnail-wrap {{ video.video_orientation_class }}">
+            {% if video.thumbnail %}
+                <img class="video-thumbnail" src="{{ video.thumbnail.url }}" alt="{{ video.title }}" loading="lazy">
+            {% else %}
+                <div class="video-thumbnail video-thumbnail-fallback" aria-hidden="true">
+                    <div class="video-thumbnail-fallback-glow"></div>
+                    <div class="video-thumbnail-fallback-grid"></div>
+                    <div class="video-thumbnail-fallback-note">♪</div>
+                </div>
+            {% endif %}
+            <span class="video-card-play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M8 6.5v11l9-5.5Z" fill="currentColor"></path>
+                </svg>
+            </span>
+            <div class="video-meta video-meta-overlay">
+                <h3>{{ video.title }}</h3>
+                <p class="video-meta-line">
+                    {% if video.published_at %}
+                        <span>{{ video.published_at|date:"Y/m/d" }}</span>
+                    {% endif %}
+                    {% if video.description %}
+                        <span class="video-meta-dot">•</span>
+                        <span>{{ video.description|truncatechars:desc_chars }}</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </a>
+</article>

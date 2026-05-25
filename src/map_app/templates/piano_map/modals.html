@@ -1,0 +1,15 @@
+<!-- 詳細モーダル -->
+<div id="detailModal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeDetailModal()">&times;</span>
+        <div id="detailModalContent"></div>
+    </div>
+</div>
+
+<!-- 画像モーダル -->
+<div id="imageModal" onclick="closeImageModal()">
+    <span class="close-button" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" onclick="event.stopPropagation()">
+</div>
+
+{{ domain_terms|json_script:"map-domain-terms" }}

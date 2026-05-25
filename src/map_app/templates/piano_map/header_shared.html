@@ -1,0 +1,56 @@
+<header id="map-header"{% if header_class %} class="{{ header_class }}"{% endif %}
+    style="background: {{ domain_terms.header_bg_solid_color|default:'#667eea' }};">
+    <div class="map-header-brand">
+        {% if site_settings.site_logo %}
+            <img src="{{ site_settings.site_logo.url }}" alt="ロゴ" class="map-header-logo">
+        {% else %}
+            <span class="map-header-logo-emoji">{{ domain_terms.header_logo_emoji|default:"🎹" }}</span>
+        {% endif %}
+        <div class="map-header-text">
+            <h1 class="map-header-title">{{ site_settings.site_title }}</h1>
+            <p class="map-header-subtitle">{{ domain_terms.subtitle }}</p>
+        </div>
+    </div>
+
+    {% if show_search %}
+        <button id="search-toggle-button" type="button" aria-label="検索を表示" aria-expanded="{% if search_is_open %}true{% else %}false{% endif %}">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+                <path d="M10.5 3.5a7 7 0 1 0 4.36 12.48l4.33 4.33a1 1 0 0 0 1.41-1.41l-4.33-4.33A7 7 0 0 0 10.5 3.5Zm0 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10Z" fill="currentColor"></path>
+            </svg>
+        </button>
+
+        <div id="map-search-container" class="{% if search_is_open %}is-open{% endif %}">
+            <form id="{{ search_form_id }}" method="get" action="{{ search_form_action }}">
+                <div class="map-search-field">
+                    <input
+                        type="text"
+                        name="{{ search_input_name|default:'q' }}"
+                        value="{{ search_query|default:'' }}"
+                        placeholder="{{ search_placeholder }}"
+                        class="map-search-input"
+                        aria-label="{{ search_aria_label }}"
+                    >
+                    <button
+                        type="button"
+                        id="{{ search_clear_button_id|default:'map-search-input-clear' }}"
+                        class="map-search-input-clear{% if not search_query %} is-hidden{% endif %}"
+                        aria-label="検索文字をクリア"
+                    >×</button>
+                </div>
+                {% if search_extra_template %}
+                    {% include search_extra_template %}
+                {% endif %}
+            </form>
+        </div>
+    {% endif %}
+
+    <button id="hamburger-button" type="button" aria-label="メニューを開く">
+        <div class="hamburger-icon">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </div>
+    </button>
+</header>
+
+<div id="map-header-spacer"{% if spacer_class %} class="{{ spacer_class }}"{% endif %} {% if not spacer_class %}style="height: var(--map-header-height);"{% endif %} aria-hidden="true"></div>

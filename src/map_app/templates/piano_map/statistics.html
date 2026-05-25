@@ -1,0 +1,81 @@
+<!-- 統計パネル背景オーバーレイ -->
+<div id="statistics-overlay"></div>
+
+<div id="statistics-panel">
+    <div class="statistics-header">
+        <h2 class="statistics-title">
+            {{ domain_terms.statistics_title_icon|default:"📊" }} {{ domain_terms.statistics_title|default:"統計情報" }}
+        </h2>
+        <button id="stats-close-button" type="button" aria-label="統計パネルを閉じる">
+            ×
+        </button>
+    </div>
+
+    <!-- 月別訪問グラフ -->
+    {% if domain_terms.statistics_sections.monthly|default:True %}
+    <div class="statistics-section">
+        <h3 class="statistics-section-title">{{ domain_terms.statistics_monthly_title_icon|default:"📈" }} {{ domain_terms.statistics_monthly_title|default:"月別訪問回数" }}</h3>
+        <div class="statistics-chart-wrap statistics-chart-wrap-monthly">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 最近の訪問場所 -->
+    {% if domain_terms.statistics_sections.recent|default:True %}
+    <div class="statistics-section">
+        <h3 class="statistics-section-title">{{ domain_terms.statistics_recent_title_icon|default:"🕒" }} 最近の{{ domain_terms.record_label }}</h3>
+        <div
+            id="recent-visits-list"
+            data-show-visit-title="{% if domain_terms.statistics_show_recent_item_title|default_if_none:True %}1{% else %}0{% endif %}"
+            data-visit-title-icon="{{ domain_terms.statistics_recent_item_title_icon|default:'🎵' }}"
+            data-visit-title-label="{{ domain_terms.statistics_recent_item_title_label|default:'記録' }}"
+        >
+            {% for visit in recent_visits %}
+            <button type="button" class="visit-item" data-lat="{{ visit.latitude }}" data-lng="{{ visit.longitude }}">
+                <div class="visit-name">{{ visit.location_name }}</div>
+                <div class="visit-date">
+                    📅 {{ visit.date }}
+                </div>
+                {% if domain_terms.statistics_show_recent_item_title|default_if_none:True %}
+                <div class="visit-title">
+                    {{ domain_terms.statistics_recent_item_title_icon|default:"🎵" }} {{ domain_terms.statistics_recent_item_title_label|default:"記録" }}{% if visit.title %}: {{ visit.title }}{% endif %}
+                </div>
+                {% endif %}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- よく行く場所ランキング -->
+    {% if domain_terms.statistics_sections.top|default:True %}
+    <div>
+        <h3 class="statistics-section-title">{{ domain_terms.statistics_top_title_icon|default:"🏆" }} よく行く{{ domain_terms.location_label }} TOP20</h3>
+        <div class="statistics-chart-wrap statistics-chart-wrap-top">
+            <canvas id="topLocationsChart"></canvas>
+        </div>
+        <div id="top-locations-list" style="margin-top: 15px;">
+            {% for location in top_locations %}
+            <button type="button" class="location-item" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">
+                <span class="location-main">
+                    {% if forloop.counter == 1 %}
+                    <span class="location-rank location-rank-medal" aria-label="1位">🥇</span>
+                    {% elif forloop.counter == 2 %}
+                    <span class="location-rank location-rank-medal" aria-label="2位">🥈</span>
+                    {% elif forloop.counter == 3 %}
+                    <span class="location-rank location-rank-medal" aria-label="3位">🥉</span>
+                    {% else %}
+                    <span class="location-rank location-rank-number" aria-label="{{ forloop.counter }}位">{{ forloop.counter }}</span>
+                    {% endif %}
+                    <span class="location-name">{{ location.name }}</span>
+                </span>
+                <span class="location-badge">{{ location.count }}件</span>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{{ statistics_payload|json_script:"statistics-data" }}

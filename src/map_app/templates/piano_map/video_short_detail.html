@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{{ site_settings.site_title }} - {{ video.title }}</title>
+    {% if site_settings.favicon %}
+        <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'piano_map/css/video_library.css' %}?v=20260415-19">
+    <script src="{% static 'piano_map/js/video_short_player.js' %}?v=20260403-8" defer></script>
+</head>
+<body class="video-short-body">
+<main
+    class="video-short-page"
+    data-short-player
+    style="--short-video-width: {{ video.video_width|default:9 }}; --short-video-height: {{ video.video_height|default:16 }};"
+>
+    <a class="video-short-close" href="{{ video_library_url }}" aria-label="動画一覧へ戻る">←</a>
+    <section class="video-short-stage">
+        <div class="video-short-frame">
+            <video
+                class="video-short-player"
+                preload="metadata"
+                playsinline
+                webkit-playsinline
+                {% if video.thumbnail %}poster="{{ video.thumbnail.url }}"{% endif %}
+                data-short-video
+            >
+                <source src="{{ video.video_file.url }}">
+                お使いのブラウザは動画再生に対応していません。
+            </video>
+            <button class="video-short-play" type="button" data-short-toggle aria-label="再生">
+                <span class="video-short-play-icon" data-short-icon aria-hidden="true"></span>
+            </button>
+            <div class="video-short-controls">
+                <div class="video-short-progress">
+                    <div class="video-short-progress-head">
+                        <button class="video-short-inline-toggle video-short-control-button" type="button" data-short-toggle-inline aria-label="再生">
+                            <span class="video-short-control-icon" data-short-inline-icon aria-hidden="true"></span>
+                        </button>
+                        <div class="video-short-time">
+                            <span data-short-current-time>0:00</span>
+                            <span>/</span>
+                            <span data-short-duration>0:00</span>
+                        </div>
+                        <div class="video-short-volume-pill" data-short-volume-pill>
+                            <input
+                                class="video-short-volume"
+                                type="range"
+                                min="0"
+                                max="1"
+                                value="0"
+                                step="0.05"
+                                aria-label="音量"
+                                data-short-volume
+                            >
+                            <button class="video-short-inline-toggle video-short-control-button" type="button" data-short-mute-toggle aria-label="ミュートをオン">
+                                <span class="video-short-control-icon" data-short-mute-icon aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        {% if video.description %}
+                            <button class="video-short-sheet-button video-short-sheet-button--inline" type="button" data-short-open-sheet>説明を見る</button>
+                        {% endif %}
+                    </div>
+                    <input
+                        class="video-short-seek"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="0"
+                        step="0.1"
+                        aria-label="再生位置"
+                        data-short-seek
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if video.description %}
+        <section class="video-short-sheet" data-short-sheet hidden aria-hidden="true">
+            <div class="video-short-sheet-backdrop" data-short-close-sheet></div>
+            <div class="video-short-sheet-panel" role="dialog" aria-modal="true" aria-label="動画の説明">
+                <p class="video-short-eyebrow">NOW PLAYING</p>
+                <h2>{{ video.title }}</h2>
+                {% if video.published_at %}
+                    <p class="video-short-date">公開日 {{ video.published_at|date:"Y年n月j日" }}</p>
+                {% endif %}
+                <div class="video-short-sheet-description">{{ video.description|linebreaksbr }}</div>
+            </div>
+        </section>
+    {% endif %}
+</main>
+</body>
+</html>

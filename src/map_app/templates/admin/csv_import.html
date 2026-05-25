@@ -1,0 +1,127 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .import-form {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .import-form h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .import-form .form-group {
+        margin-bottom: 20px;
+    }
+    .import-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    .import-form input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border: 2px dashed #ccc;
+        border-radius: 4px;
+    }
+    .import-form .help-text {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #666;
+    }
+    .import-form .buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+    .import-form button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .import-form button[type="submit"] {
+        background: #417690;
+        color: white;
+    }
+    .import-form button[type="submit"]:hover {
+        background: #2e5266;
+    }
+    .import-form .cancel-button {
+        background: #ccc;
+        color: #333;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 4px;
+    }
+    .import-form .cancel-button:hover {
+        background: #aaa;
+    }
+    .csv-format {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 4px;
+    }
+    .csv-format h2 {
+        margin-top: 0;
+        font-size: 16px;
+    }
+    .csv-format code {
+        display: block;
+        background: white;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+        font-family: monospace;
+        white-space: pre;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="import-form">
+    <h1>📥 CSVインポート</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="csv_file">CSVファイルを選択:</label>
+            <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+            <div class="help-text">
+                ⚠️ UTF-8エンコードのCSVファイルをアップロードしてください
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button type="submit">インポート</button>
+            <a href=".." class="cancel-button">キャンセル</a>
+        </div>
+    </form>
+
+    <div class="csv-format">
+        <h2>📋 CSVフォーマット</h2>
+        <p><strong>場所の場合:</strong></p>
+        <code>場所名,緯度,経度,画像パス
+上野駅,35.713768,139.777254,
+浜松駅,34.703744,137.734649,</code>
+
+        <p style="margin-top: 20px;"><strong>記録の場合:</strong></p>
+        <code>場所名,記録日,項目名,メモ
+上野駅,2024-01-15,項目A,メモA
+浜松駅,2024-01-20,"項目B, 項目C",複数項目</code>
+
+        <div class="help-text" style="margin-top: 15px;">
+            💡 記録をインポートする前に、必ず対応する場所を先に登録してください
+        </div>
+    </div>
+</div>
+{% endblock %}

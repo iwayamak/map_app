@@ -1,0 +1,75 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site_settings.site_title }} - 動画ライブラリ</title>
+    {% if site_settings.favicon %}
+        <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_layout.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_interaction.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_state.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/panels.css' %}?v=20260310-1">
+    <link rel="stylesheet" href="{% static 'piano_map/css/video_library.css' %}?v=20260415-19">
+    <script src="{% static 'piano_map/js/map_layout.js' %}?v=20260310-1" defer></script>
+    <script src="{% static 'piano_map/js/video_navigation.js' %}?v=20260311-1" defer></script>
+    <script src="{% static 'piano_map/js/video_library_page.js' %}?v=20260311-1" defer></script>
+</head>
+<body>
+{% include "piano_map/header_shared.html" with header_class="video-page-header video-page-header-with-search" spacer_class="video-header-spacer" show_search=True search_is_open=search_query search_form_id="video-search-form" search_form_action=video_library_url search_placeholder="タイトルで検索" search_aria_label="タイトルで検索" search_input_name="q" %}
+{% include "piano_map/video_hamburger_menu.html" %}
+
+<main class="video-main">
+    <section class="video-page-intro">
+        <div class="video-page-intro-copy">
+            <p class="video-eyebrow">Video Archive</p>
+            <h2>動画ライブラリ</h2>
+        </div>
+        <div class="video-intro-stats">
+            <span class="video-stat-label">公開本数</span>
+            <strong>{{ video_count }}</strong>
+        </div>
+    </section>
+    {% if videos %}
+        <div class="video-sections video-sections--desktop">
+            {% for row in video_rows_pc %}
+                <div class="video-grid {% if row.orientation == 'portrait' %}video-grid--shorts{% else %}video-grid--landscape{% endif %}" aria-label="動画一覧">
+                    {% for video in row.items %}
+                        {% include "piano_map/partials/video_card.html" with video=video desc_chars=52 %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="video-sections video-sections--mobile">
+            {% for row in video_rows_mobile %}
+                <div class="video-grid {% if row.orientation == 'portrait' %}video-grid--shorts{% else %}video-grid--landscape{% endif %}" aria-label="動画一覧">
+                    {% for video in row.items %}
+                        {% include "piano_map/partials/video_card.html" with video=video desc_chars=52 %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if page_obj.paginator.num_pages > 1 %}
+            <nav class="video-pagination" aria-label="動画一覧ページ送り">
+                {% if page_obj.has_previous %}
+                    <a class="video-page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}">前へ</a>
+                {% else %}
+                    <span class="video-page-link is-disabled">前へ</span>
+                {% endif %}
+                <span class="video-page-status">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a class="video-page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}">次へ</a>
+                {% else %}
+                    <span class="video-page-link is-disabled">次へ</span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <p class="video-empty">公開中の動画はまだありません。</p>
+    {% endif %}
+</main>
+</body>
+</html>

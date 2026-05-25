@@ -1,0 +1,41 @@
+<details class="map-tag-filter">
+    <summary>
+        <span class="map-tag-summary-label">タグ</span>
+        {% if selected_tag_items %}
+            <span class="map-tag-count">{{ selected_tags|length }}</span>
+        {% endif %}
+    </summary>
+    <div class="map-tag-options">
+        <div class="map-tag-live-summary">
+            <span>該当場所</span>
+            <strong id="map-live-locations-count">-</strong>
+            <span>件</span>
+            <span class="map-tag-live-divider">/</span>
+            <span>ピン</span>
+            <strong id="map-live-performances-count">-</strong>
+        </div>
+        <div class="map-tag-selected-list">
+            {% for selected_tag in selected_tag_items %}
+                <button type="button" class="map-tag-selected-item" data-tag-remove="{{ selected_tag.name }}" style="background: {{ selected_tag.color }}; color: {{ selected_tag.text_color }};">
+                    <span>{{ selected_tag.name }}</span>
+                    <span class="map-tag-selected-remove" aria-hidden="true">×</span>
+                </button>
+            {% endfor %}
+        </div>
+        <div class="map-tag-option-list">
+            {% for tag in tag_options %}
+                <label class="map-tag-option">
+                    <input
+                        type="checkbox"
+                        name="tags"
+                        value="{{ tag.name }}"
+                        data-tag-color="{{ tag.color }}"
+                        data-tag-text-color="{{ tag.text_color }}"
+                        {% if tag.name in selected_tags %}checked{% endif %}
+                    >
+                    <span class="map-tag-chip" style="background: {{ tag.color }}; color: {{ tag.text_color }};">{{ tag.name }}</span>
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+</details>

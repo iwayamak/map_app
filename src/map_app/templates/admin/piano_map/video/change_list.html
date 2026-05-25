@@ -1,0 +1,85 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block result_list %}
+    <div data-video-status-endpoint="{% url 'admin:piano_map_video_status' %}" data-video-status-page="list"></div>
+    {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+    <div class="video-admin-desktop-results">
+        {% result_list cl %}
+    </div>
+    <div class="video-admin-mobile-cards" aria-label="動画一覧">
+        {% for obj in cl.result_list %}
+            <article class="video-admin-card">
+                <a class="video-admin-card-link video-admin-card-link--{{ obj.video_orientation_class|cut:'is-' }}" href="{% url cl.opts|admin_urlname:'change' obj.pk|admin_urlquote %}">
+                    <div class="video-admin-card-media video-admin-card-media--{{ obj.video_orientation_class|cut:'is-' }}">
+                        {% if obj.thumbnail %}
+                            <img src="{{ obj.thumbnail.url }}" alt="{{ obj.title }}" loading="lazy">
+                        {% else %}
+                            <div class="video-admin-card-fallback" aria-hidden="true">VIDEO</div>
+                        {% endif %}
+                    </div>
+                    <div class="video-admin-card-body">
+                        <div class="video-admin-card-top">
+                            <h3>{{ obj.title }}</h3>
+                        </div>
+                        <div class="video-admin-chip-row">
+                            <span class="video-admin-chip video-admin-chip-status video-admin-chip-status-{{ obj.processing_status }}"
+                                  data-video-status-label="{{ obj.pk }}"
+                                  data-video-status="{{ obj.processing_status }}">
+                                {{ obj.get_processing_status_display }}
+                            </span>
+                            <span class="video-admin-chip {% if obj.is_published %}video-admin-chip-published{% else %}video-admin-chip-unpublished{% endif %}">
+                                {% if obj.is_published %}公開中{% else %}非公開{% endif %}
+                            </span>
+                        </div>
+                        <dl class="video-admin-meta-list">
+                            <div>
+                                <dt>進捗</dt>
+                                <dd>
+                                    <div class="video-admin-progress" data-video-progress-root="{{ obj.pk }}">
+                                        <div class="video-admin-progress-bar">
+                                            <span class="video-admin-progress-fill"
+                                                  data-video-progress-bar="{{ obj.pk }}"
+                                                  style="width: {{ obj.processing_progress_percent }}%;"></span>
+                                        </div>
+                                        <span class="video-admin-progress-text" data-video-progress-text="{{ obj.pk }}">
+                                            {{ obj.processing_progress_percent }}% / {{ obj.processing_step_display }}
+                                        </span>
+                                    </div>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>サイズ</dt>
+                                <dd>{{ obj.video_file_size_display }}</dd>
+                            </div>
+                            <div>
+                                <dt>おすすめ</dt>
+                                <dd>{% if obj.is_featured %}ON{% else %}-{% endif %}</dd>
+                            </div>
+                            <div>
+                                <dt>おすすめ順</dt>
+                                <dd>{{ obj.featured_order|default:"-" }}</dd>
+                            </div>
+                            <div>
+                                <dt>公開日</dt>
+                                <dd>{% if obj.published_at %}{{ obj.published_at|date:"Y/m/d H:i" }}{% else %}-{% endif %}</dd>
+                            </div>
+                            <div>
+                                <dt>更新日</dt>
+                                <dd>{{ obj.updated_at|date:"Y/m/d H:i" }}</dd>
+                            </div>
+                        </dl>
+                        {% if obj.processing_error %}
+                            <p class="video-admin-card-error" data-video-error-text="{{ obj.pk }}">{{ obj.processing_error }}</p>
+                        {% else %}
+                            <p class="video-admin-card-error" data-video-error-text="{{ obj.pk }}" hidden></p>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+        {% empty %}
+            <p class="video-admin-empty">{% translate "No videos available." %}</p>
+        {% endfor %}
+    </div>
+    {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+{% endblock %}

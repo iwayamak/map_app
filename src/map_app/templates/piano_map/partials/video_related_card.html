@@ -1,0 +1,22 @@
+<a class="video-related-card {{ related.video_orientation_class }}" href="{{ related.watch_url }}">
+    <div class="video-related-thumb-wrap {{ related.video_orientation_class }}">
+        {% if related.thumbnail %}
+            <img class="video-related-thumb" src="{{ related.thumbnail.url }}" alt="{{ related.title }}" loading="lazy">
+        {% else %}
+            <div class="video-related-thumb video-related-thumb-fallback" aria-hidden="true">
+                <div class="video-related-thumb-fallback-glow"></div>
+            </div>
+        {% endif %}
+        <span class="video-card-play video-card-play-small" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M8 6.5v11l9-5.5Z" fill="currentColor"></path>
+            </svg>
+        </span>
+    </div>
+    <div class="video-related-meta">
+        <h4>{{ related.title }}</h4>
+        {% if related.published_at %}
+            <p>{{ related.published_at|date:"Y/m/d" }}</p>
+        {% endif %}
+    </div>
+</a>

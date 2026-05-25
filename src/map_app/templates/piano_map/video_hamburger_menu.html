@@ -1,0 +1,37 @@
+<div id="hamburger-menu">
+    <button id="hamburger-close" class="hamburger-close" type="button" aria-label="メニューを閉じる">
+        ×
+    </button>
+
+    <h2 class="hamburger-title">
+        📋 メニュー
+    </h2>
+
+    <button id="open-map-button" class="menu-item" type="button">
+        <span class="menu-item-icon">🌍</span>
+        <div>
+            <div class="menu-item-title">マップ画面</div>
+            <div class="menu-item-subtitle">地図に戻る</div>
+        </div>
+    </button>
+
+    <button id="open-videos-button" class="menu-item" type="button">
+        <span class="menu-item-icon">🎬</span>
+        <div>
+            <div class="menu-item-title">動画ライブラリ</div>
+            <div class="menu-item-subtitle">公開動画を見る</div>
+        </div>
+    </button>
+
+    {% if user.is_staff %}
+        <button id="open-admin-button" class="menu-item" type="button">
+            <span class="menu-item-icon">⚙️</span>
+            <div>
+                <div class="menu-item-title">管理画面</div>
+                <div class="menu-item-subtitle">データを編集</div>
+            </div>
+        </button>
+    {% endif %}
+</div>
+
+<div id="menu-overlay"></div>
