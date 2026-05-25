@@ -10,31 +10,6 @@
 {% block extrahead %}
 {{ block.super }}
 <style>
-    #header #site-name {
-        max-width: 100%;
-        overflow: hidden;
-        min-width: 0;
-    }
-
-    #header #site-name > a {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        white-space: nowrap;
-        max-width: 100%;
-        width: 100%;
-        min-width: 0;
-    }
-
-    #header #site-name > a > span {
-        display: block;
-        flex: 1 1 auto;
-        min-width: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
     #content-main {
         float: none;
         width: 100%;
@@ -104,46 +79,7 @@
             grid-template-columns: 1fr;
         }
     }
-
-    @media (max-width: 767px) {
-        #header {
-            padding-top: 4px;
-            padding-bottom: 4px;
-        }
-
-        #header #branding {
-            margin-bottom: 2px;
-        }
-
-        #header #user-tools {
-            margin-top: 2px !important;
-            padding-top: 0 !important;
-            line-height: 1.15;
-        }
-    }
 </style>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var titleEl = document.querySelector("#header #site-name > a > span");
-        if (!titleEl) return;
-        var maxSize = parseFloat(window.getComputedStyle(titleEl).fontSize) || 20;
-        var minSize = 14;
-
-        function fitTitle() {
-            titleEl.style.fontSize = maxSize + "px";
-            if (titleEl.clientWidth <= 0) return;
-            var current = maxSize;
-            while (titleEl.scrollWidth > titleEl.clientWidth && current > minSize) {
-                current -= 0.25;
-                titleEl.style.fontSize = current.toFixed(2) + "px";
-            }
-        }
-
-        fitTitle();
-        setTimeout(fitTitle, 120);
-        window.addEventListener("resize", fitTitle);
-    });
-</script>
 {% endblock %}
 
 {% block content %}

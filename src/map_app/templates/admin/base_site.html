@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    #header #site-name {
+        max-width: 100%;
+        overflow: hidden;
+        min-width: 0;
+    }
+
+    #header #site-name > a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+    }
+
+    #header #site-name > a > span {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        line-height: 1.1;
+    }
+
+    @media (max-width: 767px) {
+        #header {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        #header #branding {
+            margin-bottom: 2px;
+        }
+
+        #header #user-tools {
+            margin-top: 2px !important;
+            padding-top: 0 !important;
+            line-height: 1.15;
+        }
+    }
+</style>
+{% endblock %}
