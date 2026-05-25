@@ -1,13 +1,59 @@
+import re
+
 from map_app.domain import map_css_link_tags, map_js_script_tags
+
+
+def get_theme_color(site_settings):
+    terms = site_settings.get_domain_terms()
+    header_bg_mode = (terms.get("header_bg_mode") or "gradient").strip()
+    if header_bg_mode == "solid":
+        return (terms.get("header_bg_solid_color") or "#667eea").strip()
+    return (terms.get("header_bg_gradient_from") or "#667eea").strip()
+
+
+def normalize_document_meta(html, theme_color):
+    viewport_meta = '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />'
+    theme_meta = f'<meta name="theme-color" content="{theme_color}" />'
+    html = re.sub(r'<meta[^>]+name=["\']viewport["\'][^>]*>', '', html, flags=re.IGNORECASE)
+    html = re.sub(r'<meta[^>]+name=["\']theme-color["\'][^>]*>', '', html, flags=re.IGNORECASE)
+    injection = f"\n    {viewport_meta}\n    {theme_meta}\n"
+    return re.sub(r'(<head[^>]*>)', r"\1" + injection, html, count=1, flags=re.IGNORECASE)
 
 
 def get_css_styles(site_settings):
     favicon_tag = ""
     if site_settings.favicon:
         favicon_tag = f'<link rel="icon" href="{site_settings.favicon.url}">'
+    theme_color = get_theme_color(site_settings)
 
     return f"""
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="{theme_color}" />
+    <style>
+      :root {{
+        --map-safe-area-bg: {theme_color};
+      }}
+      html, body {{
+        background: {theme_color} !important;
+      }}
+      html::before {{
+        background: {theme_color} !important;
+      }}
+    </style>
+    <script>
+      (function() {{
+        var desired = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
+        var metas = document.querySelectorAll('meta[name="viewport"]');
+        if (!metas.length) {{
+          var m = document.createElement('meta');
+          m.name = 'viewport';
+          m.content = desired;
+          document.head.appendChild(m);
+          return;
+        }}
+        metas.forEach(function(m) {{ m.setAttribute('content', desired); }});
+      }})();
+    </script>
     {favicon_tag}
 {map_css_link_tags()}
     """

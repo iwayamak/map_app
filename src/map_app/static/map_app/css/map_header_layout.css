@@ -9,6 +9,11 @@
 /* ---------------------------------------------------------
    Header Shell / Brand
    --------------------------------------------------------- */
+:root {
+    --map-safe-top: env(safe-area-inset-top, 0px);
+    --map-safe-area-bg: #667eea;
+}
+
 #map-header {
     position: fixed;
     top: 0;
@@ -16,12 +21,23 @@
     right: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 2px 20px;
+    padding: calc(2px + var(--map-safe-top)) 20px 2px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+#map-header::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--map-safe-top);
+    background: var(--map-safe-area-bg);
+    pointer-events: none;
 }
 
 .map-header-brand {

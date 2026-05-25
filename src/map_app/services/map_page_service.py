@@ -4,6 +4,7 @@ from map_app.contracts.map_search_contract import (
     MapSearchPayload,
 )
 from map_app.domain import get_statistics_builder
+from map_app.map_page import get_theme_color, normalize_document_meta
 from map_app.services.map_marker_service import (
     add_performance_markers,
     add_unvisited_markers,
@@ -134,8 +135,11 @@ def render_map_page_html(user, search_query="", selected_tags=None):
         modals_html,
     )
 
+    rendered_html = map_instance.get_root().render()
+    rendered_html = normalize_document_meta(rendered_html, get_theme_color(site_settings))
+
     return {
-        "html": map_instance.get_root().render(),
+        "html": rendered_html,
         "performance_count": len(all_performances),
         "search_query": search_query,
         "selected_tags": selected_tags,
