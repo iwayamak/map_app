@@ -103,35 +103,8 @@
         text-overflow: ellipsis;
     }
 
-    #user-tools > .theme-toggle {
+    .theme-toggle {
         display: none !important;
-    }
-
-    .pm-admin-theme-toggle {
-        position: absolute;
-        top: calc(env(safe-area-inset-top, 0px) + 104px);
-        right: max(16px, env(safe-area-inset-right, 0px) + 16px);
-        z-index: 2000;
-    }
-
-    .pm-admin-theme-toggle .theme-toggle {
-        width: 34px;
-        height: 34px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        background: rgba(255, 255, 255, 0.18);
-        color: #fff;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-
-    .pm-admin-theme-toggle .theme-toggle svg {
-        width: 18px;
-        height: 18px;
     }
 
     @media (max-width: 767px) {
@@ -170,15 +143,6 @@
             font-size: var(--pm-header-subtitle-size-mobile);
         }
 
-        .pm-admin-theme-toggle {
-            top: calc(env(safe-area-inset-top, 0px) + 118px);
-            right: max(16px, env(safe-area-inset-right, 0px) + 16px);
-        }
-
-        .pm-admin-theme-toggle .theme-toggle {
-            width: 32px;
-            height: 32px;
-        }
     }
 
     #container > .main {
@@ -203,7 +167,4 @@
         </span>
     </a>
 </h1>
-<div class="pm-admin-theme-toggle" aria-label="表示テーマ">
-  {% include "admin/color_theme_toggle.html" %}
-</div>
 {% endblock %}
