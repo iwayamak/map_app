@@ -148,6 +148,28 @@
     #container > .main {
         border-top: 0 !important;
     }
+
+    @media (min-width: 768px) {
+        #header {
+            padding: 2px 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            column-gap: 10px;
+        }
+
+        #header #branding {
+            display: flex;
+            align-items: center;
+        }
+
+        #header #user-tools {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1.2;
+            align-self: center;
+        }
+    }
 </style>
 {% endblock %}
 
