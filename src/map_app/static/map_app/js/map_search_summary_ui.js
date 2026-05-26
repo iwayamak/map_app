@@ -2,9 +2,10 @@
     function createSummaryUi(elements) {
         function apply(summary) {
             if (!summary || typeof summary !== "object") return;
+            var totalActivityLogs = summary.total_activity_logs || summary.total_performances || 0;
             if (elements.summaryTotalLocations) elements.summaryTotalLocations.textContent = String(summary.total_locations || 0);
             if (elements.summaryTaggedLocations) elements.summaryTaggedLocations.textContent = String(summary.tagged_locations || 0);
-            if (elements.summaryTotalPerformances) elements.summaryTotalPerformances.textContent = String(summary.total_performances || 0);
+            if (elements.summaryTotalPerformances) elements.summaryTotalPerformances.textContent = String(totalActivityLogs);
             if (elements.liveLocationsCount) elements.liveLocationsCount.textContent = String(summary.total_locations || 0);
             if (elements.livePerformancesCount) elements.livePerformancesCount.textContent = String(summary.marker_count || 0);
         }

@@ -43,8 +43,9 @@ function handleMarkerClick(marker, markerIdentity) {
 }
 
 function buildLiveMarkerTooltipHtml(markerPayload) {
+    var activityLogId = markerPayload.activity_log_id || markerPayload.performance_id || "";
     return (
-        "<span data-performance-id='" + escapeHtml(markerPayload.performance_id || "") + "'>" +
+        "<span data-activity-log-id='" + escapeHtml(activityLogId) + "' data-performance-id='" + escapeHtml(activityLogId) + "'>" +
             escapeHtml(markerPayload.location_name || "") + " / " + escapeHtml(markerPayload.date || "") +
         "</span>"
     );
@@ -69,20 +70,21 @@ function replaceMapMarkers(markers) {
     markers.forEach(function(item) {
         var lat = Number(item.lat);
         var lng = Number(item.lng);
-        var performanceId = parseInt(item.performance_id, 10);
+        var activityLogId = parseInt(item.activity_log_id || item.performance_id, 10);
         var locationId = parseInt(item.location_id, 10);
-        if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(performanceId) || Number.isNaN(locationId)) return;
+        if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(activityLogId) || Number.isNaN(locationId)) return;
 
         var marker = L.marker(
             [lat, lng],
             {
                 icon: L.divIcon({ html: buildLiveMarkerIconHtml(item.icon_color), className: "" }),
-                performanceId: performanceId,
+                activityLogId: activityLogId,
+                performanceId: activityLogId,
                 locationId: locationId
             }
         );
         marker.bindTooltip(buildLiveMarkerTooltipHtml(item), { direction: "top" });
-        handleMarkerClick(marker, buildMarkerIdentity(performanceId, locationId));
+        handleMarkerClick(marker, buildMarkerIdentity(activityLogId, locationId));
         globalMarkerClusterGroup.addLayer(marker);
     });
     return true;

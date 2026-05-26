@@ -11,6 +11,7 @@ def serialize_map_summary(stats, markers, unvisited_locations):
     total_activity_logs = stats.get("total_activity_logs", stats["total_performances"])
     return MapSearchSummary(
         total_locations=stats["total_locations"] + len(unvisited_locations),
+        total_activity_logs=total_activity_logs,
         total_performances=total_activity_logs,
         marker_count=len(markers),
         tagged_locations=tagged_locations,

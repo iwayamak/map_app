@@ -40,8 +40,8 @@ function bindClusterMarkerEvents(clusterGroup) {
         var isClusterMarker = typeof layer.getAllChildMarkers === "function";
         if (!isMarker || isClusterMarker) return;
 
-        var performanceId = resolvePerformanceId(layer);
+        var activityLogId = resolveActivityLogId(layer);
         var locationId = resolveLocationId(layer);
-        handleMarkerClick(layer, buildMarkerIdentity(performanceId, locationId));
+        handleMarkerClick(layer, buildMarkerIdentity(activityLogId, locationId));
     });
 }

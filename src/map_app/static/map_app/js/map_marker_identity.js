@@ -1,27 +1,30 @@
-function extractPerformanceIdFromTooltip(marker) {
+function extractActivityLogIdFromTooltip(marker) {
     var tooltip = marker.getTooltip();
     if (!tooltip || !tooltip._content) return null;
 
     var container = document.createElement("div");
     container.innerHTML = tooltip._content;
-    var element = container.querySelector("[data-performance-id]");
-    if (!element || !element.dataset.performanceId) return null;
+    var element = container.querySelector("[data-activity-log-id], [data-performance-id]");
+    if (!element) return null;
 
-    var performanceId = parseInt(element.dataset.performanceId, 10);
-    if (Number.isNaN(performanceId)) return null;
-    return performanceId;
+    var activityLogId = parseInt(element.dataset.activityLogId || element.dataset.performanceId, 10);
+    if (Number.isNaN(activityLogId)) return null;
+    return activityLogId;
 }
 
-function resolvePerformanceId(marker) {
+function resolveActivityLogId(marker) {
     if (marker && marker.options) {
-        var optionPerformanceId = marker.options.performanceId || marker.options.performance_id;
-        var parsedOptionId = parseInt(optionPerformanceId, 10);
+        var optionActivityLogId = marker.options.activityLogId || marker.options.activity_log_id || marker.options.performanceId || marker.options.performance_id;
+        var parsedOptionId = parseInt(optionActivityLogId, 10);
         if (!Number.isNaN(parsedOptionId)) {
             return parsedOptionId;
         }
     }
-    return extractPerformanceIdFromTooltip(marker);
+    return extractActivityLogIdFromTooltip(marker);
 }
+
+var extractPerformanceIdFromTooltip = extractActivityLogIdFromTooltip;
+var resolvePerformanceId = resolveActivityLogId;
 
 function resolveLocationId(marker) {
     if (marker && marker.options) {
@@ -34,9 +37,9 @@ function resolveLocationId(marker) {
     return null;
 }
 
-function buildMarkerIdentity(performanceId, locationId) {
-    if (performanceId && performanceId > 0) {
-        return { type: "performance", id: performanceId };
+function buildMarkerIdentity(activityLogId, locationId) {
+    if (activityLogId && activityLogId > 0) {
+        return { type: "activity_log", id: activityLogId };
     }
     if (locationId && locationId > 0) {
         return { type: "location", id: locationId };

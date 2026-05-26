@@ -1,5 +1,6 @@
 (function(global) {
     var MARKER_FIELDS = [
+        "activity_log_id",
         "performance_id",
         "location_id",
         "location_name",
@@ -11,6 +12,7 @@
 
     var SUMMARY_FIELDS = [
         "total_locations",
+        "total_activity_logs",
         "total_performances",
         "marker_count",
         "tagged_locations",
@@ -49,6 +51,7 @@
                     required: MARKER_FIELDS.slice(),
                     additionalProperties: false,
                     properties: {
+                        activity_log_id: { type: "integer" },
                         performance_id: { type: "integer" },
                         location_id: { type: "integer" },
                         location_name: { type: "string" },
@@ -65,6 +68,7 @@
                 additionalProperties: false,
                 properties: {
                     total_locations: { type: "integer" },
+                    total_activity_logs: { type: "integer" },
                     total_performances: { type: "integer" },
                     marker_count: { type: "integer" },
                     tagged_locations: { type: "integer" },
@@ -158,6 +162,7 @@
             if (!hasExactlyKeys(marker, MARKER_FIELDS)) {
                 throw new Error("Invalid map search payload: marker keys mismatch.");
             }
+            assertInteger(marker.activity_log_id, "activity_log_id");
             assertInteger(marker.performance_id, "performance_id");
             assertInteger(marker.location_id, "location_id");
             assertString(marker.location_name, "location_name");
@@ -175,6 +180,7 @@
             throw new Error("Invalid map search payload: summary keys mismatch.");
         }
         assertInteger(summary.total_locations, "total_locations");
+        assertInteger(summary.total_activity_logs, "total_activity_logs");
         assertInteger(summary.total_performances, "total_performances");
         assertInteger(summary.marker_count, "marker_count");
         assertInteger(summary.tagged_locations, "tagged_locations");

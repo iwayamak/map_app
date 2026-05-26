@@ -30,7 +30,7 @@ function getLocationModalApiUrl(locationId) {
 }
 
 function fetchModalContent(markerIdentity) {
-    var cacheKey = (markerIdentity.type || "performance") + ":" + String(markerIdentity.id || "");
+    var cacheKey = (markerIdentity.type || "activity_log") + ":" + String(markerIdentity.id || "");
     var cached = getCachedModalPayload(cacheKey);
     if (cached) return Promise.resolve(cached);
 

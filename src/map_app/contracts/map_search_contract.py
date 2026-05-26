@@ -5,6 +5,7 @@ from typing import Any
 @dataclass(frozen=True)
 class MapSearchSummary:
     total_locations: int
+    total_activity_logs: int
     total_performances: int
     marker_count: int
     tagged_locations: int
@@ -14,6 +15,7 @@ class MapSearchSummary:
 
 @dataclass(frozen=True)
 class MapSearchMarker:
+    activity_log_id: int
     performance_id: int
     location_id: int
     location_name: str
@@ -80,6 +82,7 @@ MAP_SEARCH_RESPONSE_SCHEMA = {
                 "required": list(MAP_SEARCH_MARKER_FIELDS),
                 "additionalProperties": False,
                 "properties": {
+                    "activity_log_id": {"type": "integer"},
                     "performance_id": {"type": "integer"},
                     "location_id": {"type": "integer"},
                     "location_name": {"type": "string"},
@@ -94,9 +97,10 @@ MAP_SEARCH_RESPONSE_SCHEMA = {
             "type": "object",
             "required": list(MAP_SEARCH_SUMMARY_FIELDS),
             "additionalProperties": False,
-            "properties": {
-                "total_locations": {"type": "integer"},
-                "total_performances": {"type": "integer"},
+                "properties": {
+                    "total_locations": {"type": "integer"},
+                    "total_activity_logs": {"type": "integer"},
+                    "total_performances": {"type": "integer"},
                 "marker_count": {"type": "integer"},
                 "tagged_locations": {"type": "integer"},
                 "new_count": {"type": "integer"},
