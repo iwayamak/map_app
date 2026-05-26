@@ -17,3 +17,13 @@ def require_redis_url_for_production(redis_url, *, debug, is_test):
         raise RuntimeError(
             "REDIS_URL must be set when DEBUG=False to avoid per-process cache fragmentation"
         )
+
+
+def require_env_values_for_production(required_values, *, debug, is_test):
+    if debug or is_test:
+        return
+    missing = [name for name, value in required_values.items() if not value]
+    if missing:
+        raise RuntimeError(
+            "Missing required production settings: " + ", ".join(sorted(missing))
+        )
