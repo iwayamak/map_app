@@ -300,13 +300,13 @@
     }
 }
 
-.performance-modal-content {
+.activity-modal-content {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     max-width: 600px;
     margin: 0 auto;
 }
 
-.performance-modal-loading {
+.activity-modal-loading {
     min-height: 220px;
     display: flex;
     flex-direction: column;
@@ -315,28 +315,28 @@
     gap: 14px;
 }
 
-.performance-modal-spinner {
+.activity-modal-spinner {
     width: 44px;
     height: 44px;
     border-radius: 50%;
     border: 4px solid #dbeafe;
     border-top-color: #2563eb;
-    animation: performanceModalSpin 0.8s linear infinite;
+    animation: activityModalSpin 0.8s linear infinite;
 }
 
-.performance-modal-loading-text {
+.activity-modal-loading-text {
     margin: 0;
     font-size: 15px;
     color: #475569;
 }
 
-@keyframes performanceModalSpin {
+@keyframes activityModalSpin {
     to {
         transform: rotate(360deg);
     }
 }
 
-.performance-modal-header {
+.activity-modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 24px 64px 24px 24px;
@@ -346,7 +346,7 @@
     margin-bottom: 20px;
 }
 
-.performance-modal-title {
+.activity-modal-title {
     font-size: 26px;
     font-weight: bold;
     margin-bottom: 10px;
@@ -355,18 +355,18 @@
     overflow: hidden;
 }
 
-.performance-modal-date {
+.activity-modal-date {
     font-size: 17px;
     opacity: 0.95;
 }
 
-.performance-modal-guide {
+.activity-modal-guide {
     display: grid;
     gap: 6px;
     margin-top: 12px;
 }
 
-.performance-modal-guide-item {
+.activity-modal-guide-item {
     display: grid;
     grid-template-columns: 78px minmax(0, 1fr);
     gap: 12px;
@@ -374,7 +374,7 @@
     color: rgba(255, 255, 255, 0.96);
 }
 
-.performance-modal-guide-label {
+.activity-modal-guide-label {
     font-size: 17px;
     font-weight: 500;
     letter-spacing: 0;
@@ -382,33 +382,33 @@
     white-space: nowrap;
 }
 
-.performance-modal-guide-value,
-.performance-modal-guide-note-text {
+.activity-modal-guide-value,
+.activity-modal-guide-note-text {
     font-size: 17px;
     font-weight: 400;
     line-height: 1.4;
     min-width: 0;
 }
 
-.performance-modal-guide-note-text {
+.activity-modal-guide-note-text {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.performance-modal-guide-detail {
+.activity-modal-guide-detail {
     margin-bottom: 20px;
 }
 
-.performance-modal-guide-detail-text {
+.activity-modal-guide-detail-text {
     font-size: 14px;
     line-height: 1.7;
     color: #334155;
     white-space: pre-wrap;
 }
 
-.performance-modal-meta {
+.activity-modal-meta {
     background: transparent;
     padding: 0;
     border-radius: 0;
@@ -416,31 +416,31 @@
     border: 0;
 }
 
-.performance-modal-meta-row {
+.activity-modal-meta-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.performance-modal-meta-row + .performance-modal-meta-row {
+.activity-modal-meta-row + .activity-modal-meta-row {
     margin-top: 16px;
 }
 
-.performance-modal-label {
+.activity-modal-label {
     font-size: 13px;
     color: var(--modal-meta-label-color);
     font-weight: 700;
     letter-spacing: 0.02em;
 }
 
-.performance-modal-count {
+.activity-modal-count {
     font-size: 28px;
     font-weight: 800;
     color: var(--modal-meta-count-color);
     line-height: 1;
 }
 
-.performance-modal-badge {
+.activity-modal-badge {
     color: white;
     padding: 8px 14px;
     border-radius: 999px;
@@ -450,13 +450,13 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 2px 6px rgba(15, 23, 42, 0.18);
 }
 
-.performance-modal-meta-row-inline {
+.activity-modal-meta-row-inline {
     display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
     gap: 10px;
 }
 
-.performance-modal-meta-item {
+.activity-modal-meta-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -469,35 +469,35 @@
     box-shadow: none;
 }
 
-.performance-modal-meta-row-inline .performance-modal-label,
-.performance-modal-meta-row-inline .performance-modal-count,
-.performance-modal-meta-row-inline .performance-modal-badge {
+.activity-modal-meta-row-inline .activity-modal-label,
+.activity-modal-meta-row-inline .activity-modal-count,
+.activity-modal-meta-row-inline .activity-modal-badge {
     white-space: nowrap;
 }
 
-.performance-modal-meta-row-inline .performance-modal-label {
+.activity-modal-meta-row-inline .activity-modal-label {
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.performance-modal-meta-row-inline .performance-modal-count {
+.activity-modal-meta-row-inline .activity-modal-count {
     flex-shrink: 1;
     font-size: clamp(22px, 6.2vw, 30px);
 }
 
-.performance-modal-meta-row-inline .performance-modal-badge {
+.activity-modal-meta-row-inline .activity-modal-badge {
     flex-shrink: 0;
 }
 
-.performance-modal-songs {
+.activity-modal-items {
     margin-bottom: 20px;
 }
 
-.performance-modal-detail-note {
+.activity-modal-detail-note {
     margin-bottom: 20px;
 }
 
-.performance-modal-detail-note-body {
+.activity-modal-detail-note-body {
     color: #334155;
     font-size: 15px;
     line-height: 1.8;
@@ -505,7 +505,7 @@
     overflow-wrap: anywhere;
 }
 
-.performance-modal-detail-note-link {
+.activity-modal-detail-note-link {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -522,18 +522,18 @@
     box-sizing: border-box;
 }
 
-.performance-modal-detail-note-link:hover {
+.activity-modal-detail-note-link:hover {
     border-color: #bfdbfe;
     background: linear-gradient(180deg, #ffffff 0%, #f1f7ff 100%);
 }
 
-.performance-modal-detail-note-link:focus-visible {
+.activity-modal-detail-note-link:focus-visible {
     outline: 2px solid rgba(37, 99, 235, 0.28);
     outline-offset: 2px;
     border-radius: 4px;
 }
 
-.performance-modal-detail-note-link-icon {
+.activity-modal-detail-note-link-icon {
     flex: 0 0 auto;
     width: 22px;
     height: 22px;
@@ -548,7 +548,7 @@
     line-height: 1;
 }
 
-.performance-modal-detail-note-favicon {
+.activity-modal-detail-note-favicon {
     flex: 0 0 auto;
     width: 22px;
     height: 22px;
@@ -558,14 +558,14 @@
     box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
 }
 
-.performance-modal-detail-note-link-copy {
+.activity-modal-detail-note-link-copy {
     display: inline-flex;
     flex-direction: column;
     flex: 1 1 auto;
     min-width: 0;
 }
 
-.performance-modal-detail-note-link-title {
+.activity-modal-detail-note-link-title {
     color: #0f172a;
     font-size: 13px;
     font-weight: 600;
@@ -575,7 +575,7 @@
     text-overflow: ellipsis;
 }
 
-.performance-modal-detail-note-link-host {
+.activity-modal-detail-note-link-host {
     color: #64748b;
     font-size: 11px;
     line-height: 1.2;
@@ -584,18 +584,18 @@
     text-overflow: ellipsis;
 }
 
-.performance-modal-tags {
+.activity-modal-tags {
     margin-bottom: 20px;
 }
 
-.performance-modal-tag-list {
+.activity-modal-tag-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
 /* Tag Chip: Base (flat) */
-.performance-modal-tag-chip {
+.activity-modal-tag-chip {
     display: inline-flex;
     align-items: center;
     padding: 6px 12px;
@@ -617,57 +617,57 @@
 }
 
 /* Tag Chip: Interaction */
-.performance-modal-tag-chip:hover {
+.activity-modal-tag-chip:hover {
     filter: brightness(0.94);
 }
 
-.performance-modal-tag-chip:focus,
-.performance-modal-tag-chip:active {
+.activity-modal-tag-chip:focus,
+.activity-modal-tag-chip:active {
     box-shadow: none !important;
     text-shadow: none !important;
     outline: none;
 }
 
-.performance-modal-tag-chip:active {
+.activity-modal-tag-chip:active {
     transform: translateY(1px);
     filter: brightness(0.88);
 }
 
-.performance-modal-tag-chip:focus-visible {
+.activity-modal-tag-chip:focus-visible {
     outline: 2px solid rgba(15, 23, 42, 0.35);
     outline-offset: 1px;
 }
 
-.performance-modal-section-title {
+.activity-modal-section-title {
     font-size: 18px;
     font-weight: bold;
     color: #1e293b;
     margin-bottom: 12px;
 }
 
-.performance-modal-song-list {
+.activity-modal-item-list {
     margin: 0;
     padding-left: 28px;
     color: #475569;
     font-size: 16px;
 }
 
-.performance-modal-song-list li {
+.activity-modal-item-list li {
     margin: 8px 0;
 }
 
-.performance-modal-gallery {
+.activity-modal-gallery {
     margin: 20px 0;
 }
 
-.performance-modal-photo-hint {
+.activity-modal-photo-hint {
     font-size: 14px;
     color: #64748b;
     margin: 10px 0 0 0;
     text-align: center;
 }
 
-.performance-modal-map-link {
+.activity-modal-map-link {
     display: block;
     text-align: center;
     background: #10b981;
@@ -680,7 +680,7 @@
     transition: background 0.2s;
 }
 
-.performance-modal-map-link:hover {
+.activity-modal-map-link:hover {
     background: #059669;
 }
 
@@ -701,59 +701,59 @@
         right: 10px;
     }
 
-    .performance-modal-header {
+    .activity-modal-header {
         margin: -20px -20px 16px -20px;
         width: calc(100% + 40px);
         border-radius: 12px 12px 0 0;
         padding: 20px 63px 20px 20px;
     }
 
-    .performance-modal-title {
+    .activity-modal-title {
         font-size: 24px;
     }
 
-    .performance-modal-date {
+    .activity-modal-date {
         font-size: 16px;
     }
 
-    .performance-modal-guide {
+    .activity-modal-guide {
         gap: 6px;
         margin-top: 10px;
     }
 
-    .performance-modal-guide-item {
+    .activity-modal-guide-item {
         grid-template-columns: 72px minmax(0, 1fr);
         gap: 8px;
     }
 
-    .performance-modal-guide-value,
-    .performance-modal-guide-note-text {
+    .activity-modal-guide-value,
+    .activity-modal-guide-note-text {
         font-size: 16px;
     }
 
-    .performance-modal-guide-label {
+    .activity-modal-guide-label {
         font-size: 16px;
         font-weight: 500;
     }
 
-    .performance-modal-meta-row-inline {
+    .activity-modal-meta-row-inline {
         gap: 8px;
     }
 
-    .performance-modal-meta-item {
+    .activity-modal-meta-item {
         --modal-meta-item-radius: 11px;
         --modal-meta-item-padding: 9px;
     }
 
-    .performance-modal-meta-row-inline .performance-modal-label {
+    .activity-modal-meta-row-inline .activity-modal-label {
         font-size: 12px;
     }
 
-    .performance-modal-meta-row-inline .performance-modal-count {
+    .activity-modal-meta-row-inline .activity-modal-count {
         font-size: clamp(18px, 6.6vw, 28px);
     }
 
-    .performance-modal-meta-row-inline .performance-modal-badge {
+    .activity-modal-meta-row-inline .activity-modal-badge {
         font-size: 13px;
         padding: 7px 12px;
     }

@@ -132,6 +132,3 @@ def get_filtered_unvisited_location_queryset(search_query="", selected_tags=None
         selected_tags=selected_tags,
         domain_terms=domain_terms,
     )
-
-
-get_filtered_performance_queryset = get_filtered_activity_log_queryset

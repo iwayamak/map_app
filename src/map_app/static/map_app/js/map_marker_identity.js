@@ -4,17 +4,17 @@ function extractActivityLogIdFromTooltip(marker) {
 
     var container = document.createElement("div");
     container.innerHTML = tooltip._content;
-    var element = container.querySelector("[data-activity-log-id], [data-performance-id]");
+    var element = container.querySelector("[data-activity-log-id]");
     if (!element) return null;
 
-    var activityLogId = parseInt(element.dataset.activityLogId || element.dataset.performanceId, 10);
+    var activityLogId = parseInt(element.dataset.activityLogId, 10);
     if (Number.isNaN(activityLogId)) return null;
     return activityLogId;
 }
 
 function resolveActivityLogId(marker) {
     if (marker && marker.options) {
-        var optionActivityLogId = marker.options.activityLogId || marker.options.activity_log_id || marker.options.performanceId || marker.options.performance_id;
+        var optionActivityLogId = marker.options.activityLogId || marker.options.activity_log_id;
         var parsedOptionId = parseInt(optionActivityLogId, 10);
         if (!Number.isNaN(parsedOptionId)) {
             return parsedOptionId;
@@ -22,9 +22,6 @@ function resolveActivityLogId(marker) {
     }
     return extractActivityLogIdFromTooltip(marker);
 }
-
-var extractPerformanceIdFromTooltip = extractActivityLogIdFromTooltip;
-var resolvePerformanceId = resolveActivityLogId;
 
 function resolveLocationId(marker) {
     if (marker && marker.options) {

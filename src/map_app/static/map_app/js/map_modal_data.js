@@ -47,7 +47,7 @@ function fetchModalContent(markerIdentity) {
             return response.json();
         })
         .then(function(payload) {
-            var activity = payload && (payload.activity || payload.performance);
+            var activity = payload && payload.activity;
             if (!activity) throw new Error("Invalid modal payload");
             setCachedModalPayload(cacheKey, activity);
             return activity;

@@ -89,7 +89,7 @@ def build_activity_log_admin(
         inlines = [ActivityLogItemInline]
         csv_import_url_name = "activitylog_import_csv"
         csv_export_url_name = "activitylog_export_all_csv"
-        delete_button_css_class = "admin-delete-x performance-delete-x"
+        delete_button_css_class = "admin-delete-x activity-log-delete-x"
 
         class Media:
             css = {
@@ -97,7 +97,7 @@ def build_activity_log_admin(
                     "map_app/css/admin_calendar.css?v=1",
                     "map_app/css/admin_mobile.css?v=18",
                     "map_app/css/admin_simple_list_base.css?v=1",
-                    "map_app/css/admin_performance_simple_list.css?v=4",
+                    "map_app/css/admin_activity_log_simple_list.css?v=1",
                 )
             }
 
@@ -231,7 +231,7 @@ def build_activity_log_admin(
                 [location_name, date_text, *item_names, *([""] * (max_activity_item_count - len(item_names)))]
                 for location_name, date_text, item_names in row_data
             ]
-            return build_csv_response("performances", header, rows)
+            return build_csv_response("activity_logs", header, rows)
 
         export_as_csv.short_description = "選択した記録をCSVエクスポート"
 

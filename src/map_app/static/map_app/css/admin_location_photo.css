@@ -24,7 +24,7 @@
     border: none !important;
 }
 
-/* performancelogに合わせて文字サイズを14px基準へ */
+/* 記録管理画面に合わせて文字サイズを14px基準へ */
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group),
 body.popup :is(#locationphoto_set-group, #photos-group) {
 }

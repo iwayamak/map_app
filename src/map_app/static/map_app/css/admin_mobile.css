@@ -170,7 +170,7 @@ td.field-item img,
     display: none !important;
 }
 
-#activitylogitem_set-group tr#performancesong_set-empty {
+#activitylogitem_set-group tr#activitylogitem_set-empty {
     display: none !important;
 }
 
@@ -181,7 +181,7 @@ td.field-item img,
 /* 記録項目Inlineをコンパクトに表示（スマホのみ） */
 @media (max-width: 768px) {
 
-    /* PerformanceSongのインラインフォーム - カード風レイアウト */
+    /* 記録項目のインラインフォーム - カード風レイアウト */
     #activitylogitem_set-group .tabular {
         display: block !important;
         overflow: visible !important;

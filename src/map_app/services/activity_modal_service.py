@@ -56,11 +56,10 @@ def _build_common_modal_payload(
     date,
     current_count,
     activity_items=None,
-    songs=None,
     build_link_preview_map_func=build_link_preview_map,
 ):
     if activity_items is None:
-        activity_items = songs or []
+        activity_items = []
     DomainFieldDefinition = get_domain_field_definition_model()
     location_prefetched = getattr(location, "_prefetched_objects_cache", {})
     prefetched_photos = location_prefetched.get("photos")
@@ -108,7 +107,6 @@ def _build_common_modal_payload(
             for tag in location_tags
         ],
         "activity_items": activity_items,
-        "songs": activity_items,
         "custom_fields": _build_custom_fields_payload(
             DomainFieldDefinition.TARGET_LOCATION,
             location.custom_data,
@@ -190,13 +188,6 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
     return payload
 
 
-def build_performance_modal_payload(performance_id, *, build_link_preview_map_func=build_link_preview_map):
-    return build_activity_modal_payload(
-        performance_id,
-        build_link_preview_map_func=build_link_preview_map_func,
-    )
-
-
 def build_location_modal_payload(location_id, *, build_link_preview_map_func=build_link_preview_map):
     Location = get_location_model()
     LocationPhoto = get_location_photo_model()
@@ -260,7 +251,6 @@ def build_location_modal_payload(location_id, *, build_link_preview_map_func=bui
             for tag in location_tags
         ],
         "activity_items": [],
-        "songs": [],
         "custom_fields": _build_custom_fields_payload(
             DomainFieldDefinition.TARGET_LOCATION,
             location.custom_data,

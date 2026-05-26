@@ -108,8 +108,8 @@ class ServiceInjectionTests(TestCase):
         fake_connection.cursor.assert_called_once()
         fake_cache.set.assert_called_once()
 
-    def test_performance_modal_uses_injected_link_preview_builder(self):
-        from map_app.services.performance_modal_service import _build_common_modal_payload
+    def test_activity_modal_uses_injected_link_preview_builder(self):
+        from map_app.services.activity_modal_service import _build_common_modal_payload
 
         location = SimpleNamespace(
             name="loc",
@@ -126,7 +126,7 @@ class ServiceInjectionTests(TestCase):
         location.tags.only.return_value.order_by.return_value = []
         build_link_preview_map_func = MagicMock(return_value={"k": "v"})
 
-        with patch("map_app.services.performance_modal_service.get_domain_field_definition_model") as mock_model:
+        with patch("map_app.services.activity_modal_service.get_domain_field_definition_model") as mock_model:
             mock_manager = MagicMock()
             mock_manager.filter.return_value.order_by.return_value = []
             mock_model.return_value = SimpleNamespace(
@@ -138,7 +138,7 @@ class ServiceInjectionTests(TestCase):
                 location=location,
                 date=SimpleNamespace(strftime=lambda _fmt: "2026-01-01"),
                 current_count=1,
-                songs=[],
+                activity_items=[],
                 build_link_preview_map_func=build_link_preview_map_func,
             )
 

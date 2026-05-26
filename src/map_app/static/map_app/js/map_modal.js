@@ -9,7 +9,7 @@ document.addEventListener("click", function(event) {
     if (event.target.id === "detailModal") closeDetailModal();
     if (event.target.id === "imageModal") closeImageModal();
 
-    var tagChip = event.target.closest(".activity-modal-tag-chip[data-tag-name], .performance-modal-tag-chip[data-tag-name]");
+    var tagChip = event.target.closest(".activity-modal-tag-chip[data-tag-name]");
     if (!tagChip) return;
 
     event.preventDefault();
@@ -33,8 +33,8 @@ function handleMarkerClick(marker, markerIdentity) {
 
         showDetailModal(buildLoadingModalHtml());
         fetchModalContent(markerIdentity)
-            .then(function(performance) {
-                showDetailModal(renderPerformanceModal(performance));
+            .then(function(activity) {
+                showDetailModal(renderActivityModal(activity));
             })
             .catch(function() {
                 showDetailModal(buildErrorModalHtml());
@@ -43,9 +43,9 @@ function handleMarkerClick(marker, markerIdentity) {
 }
 
 function buildLiveMarkerTooltipHtml(markerPayload) {
-    var activityLogId = markerPayload.activity_log_id || markerPayload.performance_id || "";
+    var activityLogId = markerPayload.activity_log_id || "";
     return (
-        "<span data-activity-log-id='" + escapeHtml(activityLogId) + "' data-performance-id='" + escapeHtml(activityLogId) + "'>" +
+        "<span data-activity-log-id='" + escapeHtml(activityLogId) + "'>" +
             escapeHtml(markerPayload.location_name || "") + " / " + escapeHtml(markerPayload.date || "") +
         "</span>"
     );
@@ -70,7 +70,7 @@ function replaceMapMarkers(markers) {
     markers.forEach(function(item) {
         var lat = Number(item.lat);
         var lng = Number(item.lng);
-        var activityLogId = parseInt(item.activity_log_id || item.performance_id, 10);
+        var activityLogId = parseInt(item.activity_log_id, 10);
         var locationId = parseInt(item.location_id, 10);
         if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(activityLogId) || Number.isNaN(locationId)) return;
 
@@ -79,7 +79,6 @@ function replaceMapMarkers(markers) {
             {
                 icon: L.divIcon({ html: buildLiveMarkerIconHtml(item.icon_color), className: "" }),
                 activityLogId: activityLogId,
-                performanceId: activityLogId,
                 locationId: locationId
             }
         );

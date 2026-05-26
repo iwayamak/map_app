@@ -18,7 +18,6 @@ def serialize_activity_log_marker(activity_log, icon_color):
     location = activity_log.location
     return MapSearchMarker(
         activity_log_id=activity_log.id,
-        performance_id=activity_log.id,
         location_id=location.id,
         location_name=location.name,
         date=activity_log.date.strftime("%Y/%m/%d"),
@@ -31,7 +30,6 @@ def serialize_activity_log_marker(activity_log, icon_color):
 def serialize_unvisited_marker(location):
     return MapSearchMarker(
         activity_log_id=0,
-        performance_id=0,
         location_id=location.id,
         location_name=location.name,
         date="未訪問",
@@ -58,7 +56,7 @@ def add_activity_log_markers(marker_cluster, activity_logs):
                 f"{activity_log.date.year}/{activity_log.date.month}/{activity_log.date.day}",
             ),
             icon=folium.DivIcon(html=build_marker_icon_html(icon_color)),
-            **{"activityLogId": activity_log.id, "performanceId": activity_log.id, "locationId": location.id},
+            **{"activityLogId": activity_log.id, "locationId": location.id},
         )
         marker.add_to(marker_cluster)
 
@@ -69,10 +67,6 @@ def add_unvisited_markers(marker_cluster, locations):
             [location.latitude, location.longitude],
             tooltip=build_marker_tooltip(location.name, "未訪問"),
             icon=folium.DivIcon(html=build_marker_icon_html(UNVISITED_ICON_COLOR)),
-            **{"activityLogId": 0, "performanceId": 0, "locationId": location.id},
+            **{"activityLogId": 0, "locationId": location.id},
         )
         marker.add_to(marker_cluster)
-
-
-serialize_performance_marker = serialize_activity_log_marker
-add_performance_markers = add_activity_log_markers

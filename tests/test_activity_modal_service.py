@@ -2,13 +2,13 @@ from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from map_app.services.performance_modal_service import _build_common_modal_payload
+from map_app.services.activity_modal_service import _build_common_modal_payload
 
 
-class PerformanceModalServiceTests(TestCase):
-    @patch("map_app.services.performance_modal_service.build_link_preview_map", return_value={})
-    @patch("map_app.services.performance_modal_service._build_custom_fields_payload", return_value=[])
-    @patch("map_app.services.performance_modal_service.get_domain_field_definition_model")
+class ActivityModalServiceTests(TestCase):
+    @patch("map_app.services.activity_modal_service.build_link_preview_map", return_value={})
+    @patch("map_app.services.activity_modal_service._build_custom_fields_payload", return_value=[])
+    @patch("map_app.services.activity_modal_service.get_domain_field_definition_model")
     def test_build_common_modal_payload_resolves_domain_field_definition(
         self,
         mock_get_domain_field_definition_model,
@@ -35,7 +35,7 @@ class PerformanceModalServiceTests(TestCase):
             location=location,
             date=SimpleNamespace(strftime=lambda _fmt: "2026年05月08日"),
             current_count=1,
-            songs=[],
+            activity_items=[],
         )
 
         self.assertEqual(payload["id"], 1)
