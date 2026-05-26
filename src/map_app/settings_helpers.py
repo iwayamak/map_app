@@ -27,3 +27,15 @@ def require_env_values_for_production(required_values, *, debug, is_test):
         raise RuntimeError(
             "Missing required production settings: " + ", ".join(sorted(missing))
         )
+
+
+def require_non_local_allowed_hosts(allowed_hosts, *, debug, is_test):
+    if debug or is_test:
+        return
+    non_local_hosts = [
+        host.strip()
+        for host in allowed_hosts
+        if host.strip() and host.strip() not in {"localhost", "127.0.0.1"}
+    ]
+    if not non_local_hosts:
+        raise RuntimeError("ALLOWED_HOSTS must include at least one non-local host when DEBUG=False")
