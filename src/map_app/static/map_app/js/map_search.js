@@ -25,8 +25,10 @@ function setupAutoSearch() {
         selectedTagList: form.querySelector(".map-tag-selected-list"),
         summaryTotalLocations: document.getElementById("summary-total-locations"),
         summaryTaggedLocations: document.getElementById("summary-tagged-locations"),
+        summaryTotalActivityLogs: document.getElementById("summary-total-activity-logs"),
         summaryTotalPerformances: document.getElementById("summary-total-performances"),
         liveLocationsCount: document.getElementById("map-live-locations-count"),
+        liveActivityLogsCount: document.getElementById("map-live-activity-logs-count"),
         livePerformancesCount: document.getElementById("map-live-performances-count"),
     };
 

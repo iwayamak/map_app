@@ -70,15 +70,15 @@ function getModalPhotoConfig() {
 
 function buildLoadingModalHtml() {
     return (
-        "<div class='performance-modal-content performance-modal-loading'>" +
-            "<div class='performance-modal-spinner' aria-hidden='true'></div>" +
-            "<p class='performance-modal-loading-text'>読み込み中...</p>" +
+        "<div class='activity-modal-content performance-modal-content activity-modal-loading performance-modal-loading'>" +
+            "<div class='activity-modal-spinner performance-modal-spinner' aria-hidden='true'></div>" +
+            "<p class='activity-modal-loading-text performance-modal-loading-text'>読み込み中...</p>" +
         "</div>"
     );
 }
 
 function buildErrorModalHtml() {
-    return "<div class='performance-modal-content'>詳細の読み込みに失敗しました。</div>";
+    return "<div class='activity-modal-content performance-modal-content'>詳細の読み込みに失敗しました。</div>";
 }
 
 function escapeHtml(value) {
@@ -150,10 +150,10 @@ function getReadableUrlLabel(rawUrl, previewMap) {
 function getLinkIconHtml(rawUrl, previewMap) {
     var faviconUrl = previewMap && previewMap[rawUrl] ? previewMap[rawUrl].favicon_url : "";
     if (faviconUrl) {
-        return "<img class='performance-modal-detail-note-favicon' src='" + escapeHtml(faviconUrl) + "' alt='' loading='lazy' referrerpolicy='no-referrer' onerror='this.style.display=\"none\"; this.nextElementSibling.style.display=\"inline-flex\";' />" +
-            "<span class='performance-modal-detail-note-link-icon performance-modal-detail-note-link-icon--fallback' aria-hidden='true' style='display:none;'>↗</span>";
+        return "<img class='activity-modal-detail-note-favicon performance-modal-detail-note-favicon' src='" + escapeHtml(faviconUrl) + "' alt='' loading='lazy' referrerpolicy='no-referrer' onerror='this.style.display=\"none\"; this.nextElementSibling.style.display=\"inline-flex\";' />" +
+            "<span class='activity-modal-detail-note-link-icon performance-modal-detail-note-link-icon activity-modal-detail-note-link-icon--fallback performance-modal-detail-note-link-icon--fallback' aria-hidden='true' style='display:none;'>↗</span>";
     }
-    return "<span class='performance-modal-detail-note-link-icon' aria-hidden='true'>↗</span>";
+    return "<span class='activity-modal-detail-note-link-icon performance-modal-detail-note-link-icon' aria-hidden='true'>↗</span>";
 }
 
 function renderTextWithLinksAndLineBreaks(value) {
@@ -172,11 +172,11 @@ function renderTextWithLinksAndLineBreaks(value) {
         var urlLabel = getReadableUrlLabel(url, previewMap);
 
         html += escapeHtmlWithLineBreaks(text.slice(lastIndex, match.index));
-        html += "<a class='performance-modal-detail-note-link' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>" +
+        html += "<a class='activity-modal-detail-note-link performance-modal-detail-note-link' href='" + escapeHtml(url) + "' target='_blank' rel='noopener noreferrer'>" +
             getLinkIconHtml(url, previewMap) +
-            "<span class='performance-modal-detail-note-link-copy'>" +
-                "<span class='performance-modal-detail-note-link-title'>" + escapeHtml(urlLabel.summary) + "</span>" +
-                "<span class='performance-modal-detail-note-link-host'>" + escapeHtml(urlLabel.host) + "</span>" +
+            "<span class='activity-modal-detail-note-link-copy performance-modal-detail-note-link-copy'>" +
+                "<span class='activity-modal-detail-note-link-title performance-modal-detail-note-link-title'>" + escapeHtml(urlLabel.summary) + "</span>" +
+                "<span class='activity-modal-detail-note-link-host performance-modal-detail-note-link-host'>" + escapeHtml(urlLabel.host) + "</span>" +
             "</span>" +
         "</a>";
         html += escapeHtml(trailing);
@@ -208,17 +208,17 @@ function renderHeaderGuideHtml(performance) {
                 : "徒歩 " + escapeHtml(walkingMinutes) + "分";
         }
         items.push(
-            "<div class='performance-modal-guide-item'>" +
-                "<span class='performance-modal-guide-label'>アクセス</span>" +
-                "<span class='performance-modal-guide-value'>" + accessValue + "</span>" +
+            "<div class='activity-modal-guide-item performance-modal-guide-item'>" +
+                "<span class='activity-modal-guide-label performance-modal-guide-label'>アクセス</span>" +
+                "<span class='activity-modal-guide-value performance-modal-guide-value'>" + accessValue + "</span>" +
             "</div>"
         );
     }
     if (scheduleNote) {
         items.push(
-            "<div class='performance-modal-guide-item performance-modal-guide-item--wide'>" +
-                "<span class='performance-modal-guide-label'>利用案内</span>" +
-                "<span class='performance-modal-guide-note-text'>" + scheduleNote + "</span>" +
+            "<div class='activity-modal-guide-item performance-modal-guide-item activity-modal-guide-item--wide performance-modal-guide-item--wide'>" +
+                "<span class='activity-modal-guide-label performance-modal-guide-label'>利用案内</span>" +
+                "<span class='activity-modal-guide-note-text performance-modal-guide-note-text'>" + scheduleNote + "</span>" +
             "</div>"
         );
     }
@@ -226,7 +226,7 @@ function renderHeaderGuideHtml(performance) {
     if (items.length === 0) {
         return "";
     }
-    return "<div class='performance-modal-guide'>" + items.join("") + "</div>";
+    return "<div class='activity-modal-guide performance-modal-guide'>" + items.join("") + "</div>";
 }
 
 function renderActivityItemsSection(performance) {
@@ -245,16 +245,16 @@ function renderActivityItemsSection(performance) {
     }
     if (activityItems.length === 0) {
         return (
-            "<div class='performance-modal-songs'>" +
-                "<div class='performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
-                "<div class='performance-modal-empty-text'>" + escapeHtml(terms.modal_empty_records_text) + "</div>" +
+            "<div class='activity-modal-songs performance-modal-songs'>" +
+                "<div class='activity-modal-section-title performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
+                "<div class='activity-modal-empty-text performance-modal-empty-text'>" + escapeHtml(terms.modal_empty_records_text) + "</div>" +
             "</div>"
         );
     }
     return (
-        "<div class='performance-modal-songs'>" +
-            "<div class='performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
-            "<ol class='performance-modal-song-list'>" + activityItems.map(function(itemName) {
+        "<div class='activity-modal-songs performance-modal-songs'>" +
+            "<div class='activity-modal-section-title performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
+            "<ol class='activity-modal-song-list performance-modal-song-list'>" + activityItems.map(function(itemName) {
                 return "<li>" + escapeHtml(itemName) + "</li>";
             }).join("") + "</ol>" +
         "</div>"
@@ -273,9 +273,9 @@ function renderDetailNoteSection(performance) {
     }
 
     return (
-        "<div class='performance-modal-detail-note'>" +
-            "<div class='performance-modal-section-title'>📝 " + escapeHtml(terms.modal_note_title) + "</div>" +
-            "<div class='performance-modal-detail-note-body'>" + renderTextWithLinksAndLineBreaks(detailNote, detailNoteLinkPreviews) + "</div>" +
+        "<div class='activity-modal-detail-note performance-modal-detail-note'>" +
+            "<div class='activity-modal-section-title performance-modal-section-title'>📝 " + escapeHtml(terms.modal_note_title) + "</div>" +
+            "<div class='activity-modal-detail-note-body performance-modal-detail-note-body'>" + renderTextWithLinksAndLineBreaks(detailNote, detailNoteLinkPreviews) + "</div>" +
         "</div>"
     );
 }
@@ -302,16 +302,16 @@ function renderTagsHtml(tags) {
             textColor = tag.text_color || textColor;
         }
         return (
-            "<button type='button' class='performance-modal-tag-chip' data-tag-name='" + escapeHtml(name) + "' style='background:" + escapeHtml(color) + ";color:" + escapeHtml(textColor) + ";' aria-label='タグ " + escapeHtml(name) + " で検索'>" +
+            "<button type='button' class='activity-modal-tag-chip performance-modal-tag-chip' data-tag-name='" + escapeHtml(name) + "' style='background:" + escapeHtml(color) + ";color:" + escapeHtml(textColor) + ";' aria-label='タグ " + escapeHtml(name) + " で検索'>" +
                 escapeHtml(name) +
             "</button>"
         );
     }).join("");
 
     return (
-        "<div class='performance-modal-tags'>" +
-            "<div class='performance-modal-section-title'>🏷️ タグ</div>" +
-            "<div class='performance-modal-tag-list'>" + chips + "</div>" +
+        "<div class='activity-modal-tags performance-modal-tags'>" +
+            "<div class='activity-modal-section-title performance-modal-section-title'>🏷️ タグ</div>" +
+            "<div class='activity-modal-tag-list performance-modal-tag-list'>" + chips + "</div>" +
         "</div>"
     );
 }
@@ -355,8 +355,8 @@ function renderPhotosHtml(performance) {
         var firstFull = first.full_url || firstMedium;
 
         return (
-            "<div class='location-photo-gallery performance-modal-gallery'>" +
-                "<div class='performance-modal-section-title'>📸 写真（" + photoAssets.length + "枚）</div>" +
+            "<div class='location-photo-gallery activity-modal-gallery performance-modal-gallery'>" +
+                "<div class='activity-modal-section-title performance-modal-section-title'>📸 写真（" + photoAssets.length + "枚）</div>" +
                 "<div class='location-photo-main-wrapper location-photo-main-wrapper--" + photoConfig.profile + "'" +
                     " style='height:clamp(260px,48vh,520px);--photo-stage-max-height:" + photoConfig.maxHeightVh + "vh;'>" +
                     "<div id='" + galleryId + "-bg' class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(firstMedium) + "\")'></div>" +
@@ -369,15 +369,15 @@ function renderPhotosHtml(performance) {
                         " onclick='showImageModal(this.dataset.fullUrl || this.src)' />" +
                 "</div>" +
                 "<div class='location-photo-thumbs'>" + thumbsHtml + "</div>" +
-                "<p class='performance-modal-photo-hint'>📷 下の写真で切り替え / タップで拡大表示</p>" +
+                "<p class='activity-modal-photo-hint performance-modal-photo-hint'>📷 下の写真で切り替え / タップで拡大表示</p>" +
             "</div>"
         );
     }
 
     if (performance.legacy_image_url) {
         return (
-            "<div class='location-photo-gallery performance-modal-gallery'>" +
-                "<div class='performance-modal-section-title'>📸 写真</div>" +
+            "<div class='location-photo-gallery activity-modal-gallery performance-modal-gallery'>" +
+                "<div class='activity-modal-section-title performance-modal-section-title'>📸 写真</div>" +
                 "<div class='location-photo-main-wrapper' style='height:clamp(260px,48vh,520px)'>" +
                     "<div class='location-photo-main-stage-bg' style='background-image:url(\"" + escapeHtml(performance.legacy_image_url) + "\")'></div>" +
                     "<img class='location-photo-main'" +
@@ -386,7 +386,7 @@ function renderPhotosHtml(performance) {
                         " data-full-url='" + escapeHtml(performance.legacy_image_url) + "'" +
                         " onclick='showImageModal(this.dataset.fullUrl || this.src)' />" +
                 "</div>" +
-                "<p class='performance-modal-photo-hint'>📷 タップして拡大表示</p>" +
+                "<p class='activity-modal-photo-hint performance-modal-photo-hint'>📷 タップして拡大表示</p>" +
             "</div>"
         );
     }
@@ -415,15 +415,15 @@ function renderMetaSection(performance) {
         return "";
     }
     return (
-        "<div class='performance-modal-meta'>" +
-            "<div class='performance-modal-meta-row performance-modal-meta-row-inline'>" +
-                "<div class='performance-modal-meta-item'>" +
-                    "<span class='performance-modal-label'>" + escapeHtml(terms.modal_count_label) + "</span>" +
-                    "<span class='performance-modal-count'>" + escapeHtml(performance.current_count || 0) + "回</span>" +
+        "<div class='activity-modal-meta performance-modal-meta'>" +
+            "<div class='activity-modal-meta-row performance-modal-meta-row activity-modal-meta-row-inline performance-modal-meta-row-inline'>" +
+                "<div class='activity-modal-meta-item performance-modal-meta-item'>" +
+                    "<span class='activity-modal-label performance-modal-label'>" + escapeHtml(terms.modal_count_label) + "</span>" +
+                    "<span class='activity-modal-count performance-modal-count'>" + escapeHtml(performance.current_count || 0) + "回</span>" +
                 "</div>" +
-                "<div class='performance-modal-meta-item'>" +
-                    "<span class='performance-modal-label'>訪問区分</span>" +
-                    "<span class='performance-modal-badge' style='background: " + escapeHtml(performance.badge_color || "#3b82f6") + ";'>" +
+                "<div class='activity-modal-meta-item performance-modal-meta-item'>" +
+                    "<span class='activity-modal-label performance-modal-label'>訪問区分</span>" +
+                    "<span class='activity-modal-badge performance-modal-badge' style='background: " + escapeHtml(performance.badge_color || "#3b82f6") + ";'>" +
                         escapeHtml(performance.status_badge || "") +
                     "</span>" +
                 "</div>" +
@@ -458,12 +458,12 @@ function renderPerformanceModal(performance) {
         modalTitleIcon = "📍";
     }
     return (
-        "<div class='performance-modal-content'>" +
-            "<div class='performance-modal-header' style='" + buildModalHeaderStyle(terms) + "'>" +
-                "<div class='performance-modal-title'>" +
+        "<div class='activity-modal-content performance-modal-content'>" +
+            "<div class='activity-modal-header performance-modal-header' style='" + buildModalHeaderStyle(terms) + "'>" +
+                "<div class='activity-modal-title performance-modal-title'>" +
                     escapeHtml(modalTitleIcon) + " " + escapeHtml(performance.location_name || "") +
                 "</div>" +
-                "<div class='performance-modal-date'>📅 " + escapeHtml(performance.date || "") + "</div>" +
+                "<div class='activity-modal-date performance-modal-date'>📅 " + escapeHtml(performance.date || "") + "</div>" +
                 renderHeaderGuideHtml(performance) +
             "</div>" +
             renderMetaSection(performance) +

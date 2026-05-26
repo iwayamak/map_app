@@ -9,7 +9,7 @@ document.addEventListener("click", function(event) {
     if (event.target.id === "detailModal") closeDetailModal();
     if (event.target.id === "imageModal") closeImageModal();
 
-    var tagChip = event.target.closest(".performance-modal-tag-chip[data-tag-name]");
+    var tagChip = event.target.closest(".activity-modal-tag-chip[data-tag-name], .performance-modal-tag-chip[data-tag-name]");
     if (!tagChip) return;
 
     event.preventDefault();

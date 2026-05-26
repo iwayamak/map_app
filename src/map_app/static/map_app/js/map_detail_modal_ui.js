@@ -22,7 +22,7 @@ function showDetailModal(content) {
 }
 
 function fitModalTitleToSingleLine(container) {
-    var title = container.querySelector(".performance-modal-title");
+    var title = container.querySelector(".activity-modal-title, .performance-modal-title");
     if (!title) return;
 
     var isMobile = window.matchMedia("(max-width: 768px)").matches;
