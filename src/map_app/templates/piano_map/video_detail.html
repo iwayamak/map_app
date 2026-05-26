@@ -8,13 +8,13 @@
     {% if site_settings.favicon %}
         <link rel="icon" href="{{ site_settings.favicon.url }}">
     {% endif %}
-    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_layout.css' %}?v=20260309-1">
-    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_interaction.css' %}?v=20260309-1">
-    <link rel="stylesheet" href="{% static 'piano_map/css/map_header_state.css' %}?v=20260309-1">
-    <link rel="stylesheet" href="{% static 'piano_map/css/panels.css' %}?v=20260310-1">
-    <link rel="stylesheet" href="{% static 'piano_map/css/video_library.css' %}?v=20260415-19">
-    <script src="{% static 'piano_map/js/map_layout.js' %}?v=20260310-1" defer></script>
-    <script src="{% static 'piano_map/js/video_navigation.js' %}?v=20260311-1" defer></script>
+    <link rel="stylesheet" href="{% static 'map_app/css/map_header_layout.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'map_app/css/map_header_interaction.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'map_app/css/map_header_state.css' %}?v=20260309-1">
+    <link rel="stylesheet" href="{% static 'map_app/css/panels.css' %}?v=20260310-1">
+    <link rel="stylesheet" href="{% static 'map_app/css/video_library.css' %}?v=20260415-19">
+    <script src="{% static 'map_app/js/map_layout.js' %}?v=20260310-1" defer></script>
+    <script src="{% static 'map_app/js/video_navigation.js' %}?v=20260311-1" defer></script>
 </head>
 <body>
 {% include "piano_map/header_shared.html" with header_class="video-page-header" spacer_class="video-header-spacer" show_search=False %}

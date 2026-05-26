@@ -69,13 +69,13 @@ def build_activity_log_admin(
 
         class Media:
             css = {
-                "all": ("piano_map/css/admin_order_display.css?v=30",)
+                "all": ("map_app/css/admin_order_display.css?v=30",)
             }
             js = (
                 "admin/js/jquery.init.js",
                 "admin/js/inlines.js",
-                "piano_map/js/admin_date_fix.js?v=2",
-                "piano_map/js/admin_inline_fix.js?v=5",
+                "map_app/js/admin_date_fix.js?v=2",
+                "map_app/js/admin_inline_fix.js?v=5",
             )
 
     class ActivityLogAdmin(csv_admin_mixin, simple_delete_list_admin_mixin, admin.ModelAdmin):
@@ -94,10 +94,10 @@ def build_activity_log_admin(
         class Media:
             css = {
                 "all": (
-                    "piano_map/css/admin_calendar.css?v=1",
-                    "piano_map/css/admin_mobile.css?v=18",
-                    "piano_map/css/admin_simple_list_base.css?v=1",
-                    "piano_map/css/admin_performance_simple_list.css?v=4",
+                    "map_app/css/admin_calendar.css?v=1",
+                    "map_app/css/admin_mobile.css?v=18",
+                    "map_app/css/admin_simple_list_base.css?v=1",
+                    "map_app/css/admin_performance_simple_list.css?v=4",
                 )
             }
 

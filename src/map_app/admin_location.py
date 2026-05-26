@@ -125,16 +125,16 @@ def build_location_admin(
         class Media:
             css = {
                 "all": (
-                    "piano_map/css/admin_mobile.css?v=18",
-                    "piano_map/css/admin_location_photo.css?v=17",
-                    "piano_map/css/admin_location_tag.css?v=4",
-                    "piano_map/css/admin_simple_list_base.css?v=1",
-                    "piano_map/css/admin_location_simple_list.css?v=2",
+                    "map_app/css/admin_mobile.css?v=18",
+                    "map_app/css/admin_location_photo.css?v=17",
+                    "map_app/css/admin_location_tag.css?v=4",
+                    "map_app/css/admin_simple_list_base.css?v=1",
+                    "map_app/css/admin_location_simple_list.css?v=2",
                 )
             }
             js = (
-                "piano_map/js/admin_geocoding.js?v=20",
-                "piano_map/js/admin_location_simple_list.js?v=1",
+                "map_app/js/admin_geocoding.js?v=20",
+                "map_app/js/admin_location_simple_list.js?v=1",
             )
 
         fieldsets = (

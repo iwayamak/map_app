@@ -22,7 +22,7 @@ def build_activity_item_admin(
 
         class Media:
             css = {
-                "all": ("piano_map/css/admin_simple_list_base.css?v=1",)
+                "all": ("map_app/css/admin_simple_list_base.css?v=1",)
             }
 
         @staticmethod
@@ -66,8 +66,8 @@ def build_tag_admin(
         class Media:
             css = {
                 "all": (
-                    "piano_map/css/admin_simple_list_base.css?v=1",
-                    "piano_map/css/admin_tag_sortable.css?v=5",
+                    "map_app/css/admin_simple_list_base.css?v=1",
+                    "map_app/css/admin_tag_sortable.css?v=5",
                 )
             }
 
