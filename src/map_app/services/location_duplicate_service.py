@@ -57,11 +57,11 @@ def _tag_overlap_ratio(left_tags, right_tags):
 
 
 def _location_detail_score(location):
-    performance_count = getattr(location, "_dup_performance_count", 0) or 0
+    activity_log_count = getattr(location, "_dup_activity_log_count", 0) or 0
     photo_count = getattr(location, "_dup_photo_count", 0) or 0
     has_image = 1 if getattr(location, "image", None) else 0
     tag_count = len(getattr(location, "_dup_tags", ()))
-    return (performance_count * 3) + (photo_count * 2) + tag_count + has_image
+    return (activity_log_count * 3) + (photo_count * 2) + tag_count + has_image
 
 
 def _candidate_confidence(*, name_similarity, distance_km, distance_threshold_km, tag_overlap_ratio, exact_name_match):
@@ -98,7 +98,7 @@ def detect_location_duplicates(
     max_distance_km = max(distance_threshold_km, nearby_threshold_km)
     lat_window_deg = max_distance_km / 111.0
     location_ids = [location.id for location in location_list]
-    performance_counts = dict(
+    activity_log_counts = dict(
         ActivityLog.objects.filter(location_id__in=location_ids)
         .values("location_id")
         .annotate(count=Count("id"))
@@ -114,9 +114,9 @@ def detect_location_duplicates(
     for location in location_list:
         location._dup_tags = tuple(sorted(tag.name for tag in location.tags.all()))
         location._dup_norm_name = normalize_location_name(location.name)
-        location._dup_performance_count = getattr(location, "performance_count", None)
-        if location._dup_performance_count is None:
-            location._dup_performance_count = performance_counts.get(location.id, 0)
+        location._dup_activity_log_count = getattr(location, "activity_log_count", None)
+        if location._dup_activity_log_count is None:
+            location._dup_activity_log_count = activity_log_counts.get(location.id, 0)
         location._dup_photo_count = getattr(location, "photo_count", None)
         if location._dup_photo_count is None:
             location._dup_photo_count = photo_counts.get(location.id, 0)

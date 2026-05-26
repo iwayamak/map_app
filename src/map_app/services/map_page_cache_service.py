@@ -14,11 +14,11 @@ from map_app.cache_keys import (
 def get_unfiltered_map_page_html(render_func):
     cached_html = cache.get(MAP_PAGE_CACHE_KEY)
     if cached_html:
-        return {"status": "cache_hit", "html": cached_html, "performance_count": None}
+        return {"status": "cache_hit", "html": cached_html, "record_count": None}
 
     stale_html = cache.get(MAP_PAGE_STALE_CACHE_KEY)
     if stale_html:
-        return {"status": "stale_hit", "html": stale_html, "performance_count": None}
+        return {"status": "stale_hit", "html": stale_html, "record_count": None}
 
     lock_seconds = max(30, int(getattr(settings, "MAP_PAGE_RENDER_LOCK_SECONDS", 900)))
     if not cache.add(MAP_PAGE_RENDER_LOCK_KEY, "1", timeout=lock_seconds):
@@ -28,11 +28,11 @@ def get_unfiltered_map_page_html(render_func):
             time.sleep(0.2)
             cached_html = cache.get(MAP_PAGE_CACHE_KEY)
             if cached_html:
-                return {"status": "cache_wait_hit", "html": cached_html, "performance_count": None}
+                return {"status": "cache_wait_hit", "html": cached_html, "record_count": None}
             stale_html = cache.get(MAP_PAGE_STALE_CACHE_KEY)
             if stale_html:
-                return {"status": "cache_wait_stale", "html": stale_html, "performance_count": None}
-        return {"status": "cache_wait_timeout", "html": None, "performance_count": None}
+                return {"status": "cache_wait_stale", "html": stale_html, "record_count": None}
+        return {"status": "cache_wait_timeout", "html": None, "record_count": None}
 
     try:
         rendered = render_func()
@@ -46,9 +46,9 @@ def get_unfiltered_map_page_html(render_func):
         return {
             "status": "cache_miss",
             "html": html_string,
-            "performance_count": rendered.get("performance_count"),
+            "record_count": rendered.get("record_count"),
         }
     except DatabaseError:
-        return {"status": "db_error", "html": None, "performance_count": None}
+        return {"status": "db_error", "html": None, "record_count": None}
     finally:
         cache.delete(MAP_PAGE_RENDER_LOCK_KEY)

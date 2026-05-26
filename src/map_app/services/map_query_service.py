@@ -43,7 +43,7 @@ def filter_locations_queryset(location_qs, search_query="", selected_tags=None, 
     return location_qs.distinct()
 
 
-def get_filtered_performance_queryset(search_query="", selected_tags=None, domain_terms=None):
+def get_filtered_activity_log_queryset(search_query="", selected_tags=None, domain_terms=None):
     ActivityLog = get_activity_log_model()
     ActivityLogItem = get_activity_log_item_model()
     Location = get_location_model()
@@ -55,20 +55,20 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
     if include_unvisited_only:
         return ActivityLog.objects.none()
 
-    performance_qs = ActivityLog.objects.select_related("location").order_by("date", "id")
+    activity_log_qs = ActivityLog.objects.select_related("location").order_by("date", "id")
 
     if include_domain_info_only:
-        first_perf_id_subquery = (
+        first_activity_log_id_subquery = (
             ActivityLog.objects.filter(location_id=OuterRef("location_id"))
             .order_by("date", "id")
             .values("id")[:1]
         )
-        performance_qs = performance_qs.annotate(
-            first_perf_id=Subquery(first_perf_id_subquery)
-        ).filter(id=F("first_perf_id"))
+        activity_log_qs = activity_log_qs.annotate(
+            first_activity_log_id=Subquery(first_activity_log_id_subquery)
+        ).filter(id=F("first_activity_log_id"))
 
     if selected_tags:
-        performance_qs = performance_qs.filter(
+        activity_log_qs = activity_log_qs.filter(
             location_id__in=filter_locations_queryset(
                 Location.objects.all(),
                 selected_tags=selected_tags,
@@ -78,7 +78,7 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
 
     use_record_items = get_domain_term_bool(domain_terms, "use_record_items", default=True)
     if use_record_items:
-        performance_qs = performance_qs.prefetch_related(
+        activity_log_qs = activity_log_qs.prefetch_related(
             Prefetch(
                 "activitylogitem_set",
                 queryset=ActivityLogItem.objects.select_related("item").order_by("order"),
@@ -87,7 +87,7 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
 
     if search_query:
         escaped_search_query = json.dumps(search_query, ensure_ascii=True).strip('"')
-        performance_qs = performance_qs.annotate(
+        activity_log_qs = activity_log_qs.annotate(
             activity_custom_data_text=Cast("custom_data", output_field=TextField()),
             location_custom_data_text=Cast("location__custom_data", output_field=TextField()),
         )
@@ -102,8 +102,8 @@ def get_filtered_performance_queryset(search_query="", selected_tags=None, domai
         )
         if use_record_items:
             query |= Q(activitylogitem__item__name__icontains=search_query)
-        performance_qs = performance_qs.filter(query)
-    return performance_qs.distinct()
+        activity_log_qs = activity_log_qs.filter(query)
+    return activity_log_qs.distinct()
 
 
 def get_filtered_unvisited_location_queryset(search_query="", selected_tags=None, domain_terms=None):
@@ -116,8 +116,8 @@ def get_filtered_unvisited_location_queryset(search_query="", selected_tags=None
     if include_domain_info_only and not include_unvisited:
         return Location.objects.none()
     base_qs = (
-        Location.objects.annotate(performance_count=Count("activity_logs", distinct=True))
-        .filter(performance_count=0)
+        Location.objects.annotate(activity_log_count=Count("activity_logs", distinct=True))
+        .filter(activity_log_count=0)
         .prefetch_related(
             Prefetch(
                 "tags",
@@ -132,3 +132,6 @@ def get_filtered_unvisited_location_queryset(search_query="", selected_tags=None
         selected_tags=selected_tags,
         domain_terms=domain_terms,
     )
+
+
+get_filtered_performance_queryset = get_filtered_activity_log_queryset

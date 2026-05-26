@@ -37,9 +37,9 @@ def _warm_map_cache(reason):
             getattr(settings, "MAP_PAGE_STALE_CACHE_TIMEOUT_SECONDS", 1800),
         )
         logger.info(
-            "map_cache_warmup done reason=%s performances=%s",
+            "map_cache_warmup done reason=%s records=%s",
             reason,
-            rendered["performance_count"],
+            rendered["record_count"],
         )
     except (DatabaseError, AttributeError, ValueError, TypeError, OSError, ConnectionError, TimeoutError):
         logger.exception("map_cache_warmup failed reason=%s", reason)

@@ -276,7 +276,7 @@ def build_location_admin(
             locations = (
                 location_model.objects.all()
                 .annotate(
-                    performance_count=Count("activity_logs", distinct=True),
+                    activity_log_count=Count("activity_logs", distinct=True),
                     photo_count=Count("photos", distinct=True),
                 )
                 .prefetch_related(Prefetch("tags", queryset=tag_model.objects.only("id", "name").order_by("order", "name")))

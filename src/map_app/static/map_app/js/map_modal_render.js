@@ -229,7 +229,7 @@ function renderHeaderGuideHtml(performance) {
     return "<div class='performance-modal-guide'>" + items.join("") + "</div>";
 }
 
-function renderSongsSection(performance) {
+function renderActivityItemsSection(performance) {
     if (!isModalSectionActive("records")) {
         return "";
     }
@@ -237,11 +237,13 @@ function renderSongsSection(performance) {
     if (!coerceBoolean(terms.use_record_items, true)) {
         return "";
     }
-    var songs = performance && Array.isArray(performance.songs) ? performance.songs : [];
+    var activityItems = performance && Array.isArray(performance.activity_items)
+        ? performance.activity_items
+        : (performance && Array.isArray(performance.songs) ? performance.songs : []);
     if (performance && (performance.status_badge === "未訪問" || isPianoInfoOnlyMode())) {
         return "";
     }
-    if (songs.length === 0) {
+    if (activityItems.length === 0) {
         return (
             "<div class='performance-modal-songs'>" +
                 "<div class='performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
@@ -252,8 +254,8 @@ function renderSongsSection(performance) {
     return (
         "<div class='performance-modal-songs'>" +
             "<div class='performance-modal-section-title'>🎵 " + escapeHtml(terms.modal_records_title) + "</div>" +
-            "<ol class='performance-modal-song-list'>" + songs.map(function(song) {
-                return "<li>" + escapeHtml(song) + "</li>";
+            "<ol class='performance-modal-song-list'>" + activityItems.map(function(itemName) {
+                return "<li>" + escapeHtml(itemName) + "</li>";
             }).join("") + "</ol>" +
         "</div>"
     );
@@ -467,7 +469,7 @@ function renderPerformanceModal(performance) {
             renderMetaSection(performance) +
             renderCustomFieldsSection(performance) +
             renderDetailNoteSection(performance) +
-            renderSongsSection(performance) +
+            renderActivityItemsSection(performance) +
             renderTagsHtml(performance.tags) +
             renderPhotosHtml(performance) +
         "</div>"

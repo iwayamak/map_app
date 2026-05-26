@@ -6,14 +6,14 @@ from map_app.contracts.map_search_contract import (
 from map_app.domain import get_statistics_builder
 from map_app.map_page import get_theme_color, normalize_document_meta
 from map_app.services.map_marker_service import (
-    add_performance_markers,
+    add_activity_log_markers,
     add_unvisited_markers,
     resolve_icon_color,
-    serialize_performance_marker,
+    serialize_activity_log_marker,
     serialize_unvisited_marker,
 )
 from map_app.services.map_query_service import (
-    get_filtered_performance_queryset,
+    get_filtered_activity_log_queryset,
     get_filtered_unvisited_location_queryset,
 )
 from map_app.services.map_render_service import (
@@ -37,8 +37,8 @@ def build_map_search_payload(search_query="", selected_tags=None):
     site_settings, domain_terms = load_site_context()
     selected_tags = normalize_selected_tags(selected_tags, domain_terms=domain_terms)
 
-    performances = list(
-        get_filtered_performance_queryset(
+    activity_logs = list(
+        get_filtered_activity_log_queryset(
             search_query=search_query,
             selected_tags=selected_tags,
             domain_terms=domain_terms,
@@ -51,15 +51,15 @@ def build_map_search_payload(search_query="", selected_tags=None):
             domain_terms=domain_terms,
         )
     )
-    stats = build_map_statistics(performances)
+    stats = build_map_statistics(activity_logs)
 
     running_visit_count = {}
     markers = []
-    for perf in performances:
-        location = perf.location
+    for activity_log in activity_logs:
+        location = activity_log.location
         running_visit_count[location.id] = running_visit_count.get(location.id, 0) + 1
         icon_color = resolve_icon_color(running_visit_count[location.id])
-        markers.append(serialize_performance_marker(perf, icon_color))
+        markers.append(serialize_activity_log_marker(activity_log, icon_color))
     for location in unvisited_locations:
         markers.append(serialize_unvisited_marker(location))
 
@@ -86,11 +86,11 @@ def render_map_page_html(user, search_query="", selected_tags=None):
         and not selected_tags
     )
     if defer_initial_map_data:
-        all_performances = []
+        all_activity_logs = []
         unvisited_locations = []
     else:
-        all_performances = list(
-            get_filtered_performance_queryset(
+        all_activity_logs = list(
+            get_filtered_activity_log_queryset(
                 search_query=search_query,
                 selected_tags=selected_tags,
                 domain_terms=domain_terms,
@@ -104,11 +104,11 @@ def render_map_page_html(user, search_query="", selected_tags=None):
             )
         )
 
-    stats = build_map_statistics(all_performances)
+    stats = build_map_statistics(all_activity_logs)
     stats["total_locations"] = stats["total_locations"] + len(unvisited_locations)
-    stats["marker_count"] = len(all_performances) + len(unvisited_locations)
+    stats["marker_count"] = len(all_activity_logs) + len(unvisited_locations)
     tag_options, selected_tag_items = build_tag_context(selected_tags, domain_terms=domain_terms)
-    add_performance_markers(marker_cluster, all_performances)
+    add_activity_log_markers(marker_cluster, all_activity_logs)
     add_unvisited_markers(marker_cluster, unvisited_locations)
 
     marker_cluster.add_to(map_instance)
@@ -140,7 +140,7 @@ def render_map_page_html(user, search_query="", selected_tags=None):
 
     return {
         "html": rendered_html,
-        "performance_count": len(all_performances),
+        "record_count": len(all_activity_logs),
         "search_query": search_query,
         "selected_tags": selected_tags,
     }

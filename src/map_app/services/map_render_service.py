@@ -40,11 +40,13 @@ def create_marker_cluster():
 
 
 def render_summary_html(stats, domain_terms):
+    total_activity_logs = stats.get("total_activity_logs", stats["total_performances"])
     return render_to_string(
         template_name("MAP_APP_TEMPLATE_SUMMARY_BOX", ""),
         {
             "total_locations": stats["total_locations"],
-            "total_performances": stats["total_performances"],
+            "total_activity_logs": total_activity_logs,
+            "total_performances": total_activity_logs,
             "tagged_locations": stats.get("tagged_locations", 0),
             "new_count": stats["new_count"],
             "revisit_count": stats["revisit_count"],
