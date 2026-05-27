@@ -124,7 +124,8 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
     DomainFieldDefinition = get_domain_field_definition_model()
     SiteSettings = get_site_settings_model()
     default_terms = get_default_domain_terms_func()()
-    site_settings = SiteSettings.load()
+    loader = getattr(SiteSettings, "load_cached", SiteSettings.load)
+    site_settings = loader()
     domain_terms = site_settings.get_domain_terms() if site_settings else default_terms
     use_record_items = get_domain_term_bool(domain_terms, "use_record_items", default=True)
 

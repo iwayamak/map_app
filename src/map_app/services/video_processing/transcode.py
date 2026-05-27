@@ -9,6 +9,8 @@ from .files import build_content_file_from_path, build_generated_media_name, wri
 
 def resolve_transcode_profile(uploaded_file):
     size_bytes = getattr(uploaded_file, "size", 0) or 0
+    if not isinstance(size_bytes, (int, float)):
+        size_bytes = 0
     huge_file_above_mb = max(0, int(getattr(settings, "VIDEO_TRANSCODE_HUGE_FILE_ABOVE_MB", 0) or 0))
     if huge_file_above_mb > 0 and size_bytes >= huge_file_above_mb * 1024 * 1024:
         return {
