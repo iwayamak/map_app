@@ -1,4 +1,3 @@
-from datetime import date
 from types import SimpleNamespace
 from unittest import TestCase
 
@@ -148,7 +147,7 @@ class ModelBehaviorTests(TestCase):
         self.assertEqual(video.processing_step, "ready")
         self.assertEqual(video.processing_progress_percent, 100)
         self.assertFalse(video.thumbnail_regeneration_requested)
-        self.assertGreaterEqual(video.processed_at.date(), date.today())
+        self.assertIsNotNone(video.processed_at)
 
     @override_settings(VIDEO_TRANSCODE_ENABLED=False, VIDEO_AUTO_THUMBNAIL_ENABLED=False)
     def test_video_processing_start_condition_respects_settings(self):

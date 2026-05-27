@@ -20,6 +20,7 @@ from map_app.cache_keys import (
     MAP_SEARCH_API_CACHE_VERSION_KEY,
 )
 from map_app.contracts.map_search_contract import validate_map_search_payload
+from map_app.domain import get_activity_log_model
 from map_app.services.activity_modal_service import (
     build_activity_modal_payload,
     build_location_modal_payload,
@@ -49,6 +50,21 @@ def _build_search_cache_key(prefix, search_query, selected_tags, version_key):
     material = f"v={cache_version}|q={normalized_query}|tags={','.join(normalized_tags)}"
     digest = hashlib.sha256(material.encode("utf-8")).hexdigest()[:20]
     return f"{prefix}:{digest}"
+
+
+def _is_unfiltered_search_cache_fresh(cached_payload, search_query, selected_tags):
+    if search_query or selected_tags:
+        return True
+    if not isinstance(cached_payload, dict):
+        return False
+    summary = cached_payload.get("summary")
+    if not isinstance(summary, dict):
+        return False
+    cached_total = summary.get("total_activity_logs")
+    if not isinstance(cached_total, int):
+        return False
+    ActivityLog = get_activity_log_model()
+    return cached_total == ActivityLog.objects.count()
 
 
 def healthz_view(request):
@@ -258,17 +274,25 @@ def map_search_api_view(request):
         if settings.MAP_SEARCH_API_CACHE_TIMEOUT_SECONDS > 0:
             cached_payload = cache.get(search_cache_key)
         if cached_payload:
-            elapsed_ms = int((time.perf_counter() - started_at) * 1000)
-            level = logger.warning if elapsed_ms >= settings.API_SLOW_LOG_THRESHOLD_MS else logger.info
-            level(
-                "map_search_api_view cache_hit elapsed_ms=%s q=%s tags=%s cache_key=%s markers=%s",
-                elapsed_ms,
+            if _is_unfiltered_search_cache_fresh(cached_payload, search_query, selected_tags):
+                elapsed_ms = int((time.perf_counter() - started_at) * 1000)
+                level = logger.warning if elapsed_ms >= settings.API_SLOW_LOG_THRESHOLD_MS else logger.info
+                level(
+                    "map_search_api_view cache_hit elapsed_ms=%s q=%s tags=%s cache_key=%s markers=%s",
+                    elapsed_ms,
+                    search_query,
+                    ",".join(selected_tags),
+                    search_cache_key,
+                    len(cached_payload.get("markers", [])),
+                )
+                return JsonResponse(cached_payload)
+            cache.delete(search_cache_key)
+            logger.info(
+                "map_search_api_view stale_cache_deleted q=%s tags=%s cache_key=%s",
                 search_query,
                 ",".join(selected_tags),
                 search_cache_key,
-                len(cached_payload.get("markers", [])),
             )
-            return JsonResponse(cached_payload)
 
         payload = build_map_search_payload(search_query=search_query, selected_tags=selected_tags)
         validate_map_search_payload(payload)
