@@ -3,10 +3,12 @@ from types import SimpleNamespace
 from unittest import TestCase
 
 from django.core.exceptions import ValidationError
+from django.test import override_settings
 
 from map_app.model_behaviors import (
     ActivityLogBehavior,
     DomainFieldDefinitionBehavior,
+    LocationPhotoBehavior,
     SiteSettingsBehavior,
     TagBehavior,
     VideoBehavior,
@@ -42,6 +44,22 @@ class ActivityLogStub(ActivityLogBehavior):
         }
 
 
+class LocationPhotoStub(LocationPhotoBehavior):
+    def __init__(self):
+        self.pk = 123
+        self.image = SimpleNamespace(name="location_photos/original.jpg", _committed=True)
+
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        return SimpleNamespace(
+            source=image,
+            max_width=max_width,
+            max_height=max_height,
+            quality=quality,
+            output_format=output_format,
+            name="",
+        )
+
+
 class DomainFieldDefinitionStub(DomainFieldDefinitionBehavior):
     TYPE_SELECT = "select"
     TYPE_MULTISELECT = "multiselect"
@@ -70,6 +88,12 @@ class VideoStub(VideoBehavior):
         self.video_width = 720
         self.video_height = 1280
         self.video_file = SimpleNamespace(size=1536)
+        self.pk = None
+        self.is_published = False
+        self.published_at = None
+
+    def _schedule_video_processing(self, video_id):
+        return None
 
 
 class ModelBehaviorTests(TestCase):
@@ -89,6 +113,15 @@ class ModelBehaviorTests(TestCase):
 
     def test_activity_log_uses_prefetched_items(self):
         self.assertEqual(ActivityLogStub().get_item_names(), "Item A, Item B")
+
+    def test_location_photo_builds_thumbnail_file(self):
+        photo = LocationPhotoStub()
+
+        thumbnail = photo._build_thumbnail_file(256, 256, 75, "sm")
+
+        self.assertEqual(thumbnail.name, "location_photos/thumbs/original_123_sm.webp")
+        self.assertEqual(thumbnail.output_format, "WEBP")
+        self.assertEqual(thumbnail.max_width, 256)
 
     def test_domain_field_definition_validation(self):
         definition = DomainFieldDefinitionStub(key=" Field_1 ")
@@ -116,3 +149,14 @@ class ModelBehaviorTests(TestCase):
         self.assertEqual(video.processing_progress_percent, 100)
         self.assertFalse(video.thumbnail_regeneration_requested)
         self.assertGreaterEqual(video.processed_at.date(), date.today())
+
+    @override_settings(VIDEO_TRANSCODE_ENABLED=False, VIDEO_AUTO_THUMBNAIL_ENABLED=False)
+    def test_video_processing_start_condition_respects_settings(self):
+        video = VideoStub()
+        video.video_file = SimpleNamespace(name="video.mp4", _committed=False)
+
+        self.assertFalse(video._should_start_video_processing())
+
+        video._force_video_processing = True
+
+        self.assertTrue(video._should_start_video_processing())

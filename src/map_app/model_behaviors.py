@@ -1,9 +1,12 @@
 import hashlib
 import re
 import sys
+from pathlib import Path
 
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 
@@ -190,6 +193,72 @@ class ActivityLogBehavior:
         return self.title or ""
 
 
+class LocationPhotoBehavior:
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        raise NotImplementedError("LocationPhotoBehavior requires _compress_uploaded_image().")
+
+    def _build_thumbnail_name(self, suffix):
+        stem = Path(self.image.name).stem
+        return f"location_photos/thumbs/{stem}_{self.pk}_{suffix}.webp"
+
+    def _build_thumbnail_file(self, max_width, max_height, quality, suffix):
+        try:
+            thumbnail = self._compress_uploaded_image(
+                self.image,
+                max_width=max_width,
+                max_height=max_height,
+                quality=quality,
+                output_format="WEBP",
+            )
+        except FileNotFoundError:
+            return None
+        if not thumbnail:
+            return None
+        # If compression falls back to the original FieldFile, thumbnail generation is not possible.
+        if thumbnail is self.image or hasattr(thumbnail, "storage"):
+            return None
+        thumbnail.name = self._build_thumbnail_name(suffix)
+        return thumbnail
+
+    def _regenerate_thumbnails(self):
+        if not self.image:
+            return
+
+        small_quality = min(getattr(settings, "IMAGE_QUALITY", 82), 75)
+        medium_quality = min(getattr(settings, "IMAGE_QUALITY", 82), 80)
+        small = self._build_thumbnail_file(256, 256, small_quality, "sm")
+        medium = self._build_thumbnail_file(720, 720, medium_quality, "md")
+        if small:
+            self.thumbnail_small.save(small.name, small, save=False)
+        if medium:
+            self.thumbnail_medium.save(medium.name, medium, save=False)
+
+    def ensure_thumbnails(self):
+        if not self.image:
+            return
+        if self.thumbnail_small and self.thumbnail_medium:
+            return
+        self._regenerate_thumbnails()
+        self.save(update_fields=["thumbnail_small", "thumbnail_medium"])
+
+    def save(self, *args, **kwargs):
+        regenerate_thumbnails = bool(self.image and not self.image._committed)
+
+        if settings.COMPRESS_IMAGES and self.image and not self.image._committed:
+            self.image = self._compress_uploaded_image(
+                self.image,
+                max_width=settings.IMAGE_MAX_WIDTH,
+                max_height=settings.IMAGE_MAX_HEIGHT,
+                quality=settings.IMAGE_QUALITY,
+                output_format=settings.IMAGE_OUTPUT_FORMAT,
+            )
+        super().save(*args, **kwargs)
+
+        if regenerate_thumbnails or not self.thumbnail_small or not self.thumbnail_medium:
+            self._regenerate_thumbnails()
+            super().save(update_fields=["thumbnail_small", "thumbnail_medium"])
+
+
 class DomainFieldDefinitionBehavior:
     def clean(self):
         if self.key:
@@ -206,6 +275,9 @@ class DomainFieldDefinitionBehavior:
 
 
 class VideoBehavior:
+    def _schedule_video_processing(self, video_id):
+        raise NotImplementedError("VideoBehavior requires _schedule_video_processing().")
+
     @property
     def is_processing_pending(self):
         return self.processing_status == self.PROCESSING_PENDING
@@ -305,3 +377,48 @@ class VideoBehavior:
                 break
             value /= 1024
         return f"{value:.1f} {unit}"
+
+    def _should_start_video_processing(self):
+        if getattr(self, "_skip_video_processing", False):
+            return False
+        if not self.video_file:
+            return False
+        if getattr(self, "_force_video_processing", False):
+            return True
+        if not (settings.VIDEO_TRANSCODE_ENABLED or settings.VIDEO_AUTO_THUMBNAIL_ENABLED):
+            return False
+
+        if not getattr(self.video_file, "_committed", False):
+            return True
+
+        if not self.pk:
+            return False
+
+        existing_name = (
+            type(self).objects.filter(pk=self.pk).values_list("video_file", flat=True).first()
+        )
+        return existing_name != self.video_file.name
+
+    @staticmethod
+    def _delete_storage_file(file_field, expected_name):
+        if not file_field or not expected_name:
+            return
+        try:
+            file_field.storage.delete(expected_name)
+        except Exception:
+            pass
+
+    def save(self, *args, **kwargs):
+        should_process_video = self._should_start_video_processing()
+
+        if should_process_video:
+            self.mark_processing_pending()
+        elif not self.processing_status:
+            self.processing_status = self.PROCESSING_READY
+
+        if self.is_published and not self.published_at:
+            self.published_at = timezone.now()
+        super().save(*args, **kwargs)
+
+        if should_process_video:
+            transaction.on_commit(lambda: self._schedule_video_processing(self.pk))
