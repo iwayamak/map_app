@@ -7,6 +7,7 @@ from django.test import override_settings
 from map_app.model_behaviors import (
     ActivityLogBehavior,
     DomainFieldDefinitionBehavior,
+    LocationBehavior,
     LocationPhotoBehavior,
     SiteSettingsBehavior,
     TagBehavior,
@@ -23,8 +24,22 @@ def default_domain_terms():
     }
 
 
-class SiteSettingsStub(SiteSettingsBehavior):
+class SaveRecorder:
+    def save(self, *args, **kwargs):
+        self.saved_args = args
+        self.saved_kwargs = kwargs
+
+
+class SiteSettingsStub(SiteSettingsBehavior, SaveRecorder):
     domain_terms = {"use_record_items": "false", "modal_sections": {"photos": False}}
+
+    def __init__(self):
+        self.pk = None
+        self.site_logo = None
+        self.favicon = None
+
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        return image
 
 
 class TagStub(TagBehavior):
@@ -41,6 +56,22 @@ class ActivityLogStub(ActivityLogBehavior):
                 SimpleNamespace(item=SimpleNamespace(name="Item B")),
             ]
         }
+
+
+class LocationStub(LocationBehavior, SaveRecorder):
+    def __init__(self):
+        self.name = "  東京駅  "
+        self.image = SimpleNamespace(name="photo.jpg", _committed=False)
+
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        return SimpleNamespace(
+            source=image,
+            max_width=max_width,
+            max_height=max_height,
+            quality=quality,
+            output_format=output_format,
+            _committed=False,
+        )
 
 
 class LocationPhotoStub(LocationPhotoBehavior):
@@ -105,6 +136,15 @@ class ModelBehaviorTests(TestCase):
         self.assertFalse(terms["modal_sections"]["records"])
         self.assertFalse(terms["modal_sections"]["photos"])
 
+    @override_settings(COMPRESS_IMAGES=False)
+    def test_site_settings_save_forces_singleton_pk_and_clears_cache(self):
+        site_settings = SiteSettingsStub()
+
+        site_settings.save(update_fields=["site_title"])
+
+        self.assertEqual(site_settings.pk, 1)
+        self.assertEqual(site_settings.saved_kwargs, {"update_fields": ["site_title"]})
+
     def test_tag_color_helpers(self):
         self.assertEqual(TagStub().text_color, "#111827")
         self.assertEqual(TagStub._hex_to_rgb_tuple("#0f766e"), (15, 118, 110))
@@ -112,6 +152,23 @@ class ModelBehaviorTests(TestCase):
 
     def test_activity_log_uses_prefetched_items(self):
         self.assertEqual(ActivityLogStub().get_item_names(), "Item A, Item B")
+
+    @override_settings(
+        COMPRESS_IMAGES=True,
+        IMAGE_MAX_WIDTH=1200,
+        IMAGE_MAX_HEIGHT=900,
+        IMAGE_QUALITY=82,
+        IMAGE_OUTPUT_FORMAT="WEBP",
+    )
+    def test_location_save_trims_name_and_compresses_image(self):
+        location = LocationStub()
+
+        location.save()
+
+        self.assertEqual(location.name, "東京駅")
+        self.assertEqual(location.image.output_format, "WEBP")
+        self.assertEqual(location.image.max_width, 1200)
+        self.assertEqual(location.saved_kwargs, {})
 
     def test_location_photo_builds_thumbnail_file(self):
         photo = LocationPhotoStub()

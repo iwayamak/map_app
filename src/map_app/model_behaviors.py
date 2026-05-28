@@ -30,6 +30,9 @@ def get_model_default_domain_terms(model_cls):
 
 
 class SiteSettingsBehavior:
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        raise NotImplementedError("SiteSettingsBehavior requires _compress_uploaded_image().")
+
     @classmethod
     def clear_site_settings_cache(cls):
         from map_app.cache_keys import SITE_SETTINGS_CACHE_KEY, SITE_SETTINGS_DOMAIN_TERMS_CACHE_KEY
@@ -90,6 +93,29 @@ class SiteSettingsBehavior:
             modal_sections["records"] = False
         terms["modal_sections"] = modal_sections
         return terms
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+
+        if settings.COMPRESS_IMAGES:
+            if self.site_logo and not self.site_logo._committed:
+                self.site_logo = self._compress_uploaded_image(
+                    self.site_logo,
+                    max_width=settings.IMAGE_MAX_WIDTH,
+                    max_height=settings.IMAGE_MAX_HEIGHT,
+                    quality=settings.IMAGE_QUALITY,
+                    output_format=settings.IMAGE_OUTPUT_FORMAT,
+                )
+            if self.favicon and not self.favicon._committed:
+                self.favicon = self._compress_uploaded_image(
+                    self.favicon,
+                    max_width=settings.IMAGE_MAX_WIDTH,
+                    max_height=settings.IMAGE_MAX_HEIGHT,
+                    quality=settings.IMAGE_QUALITY,
+                    output_format=settings.IMAGE_OUTPUT_FORMAT,
+                )
+        super().save(*args, **kwargs)
+        self.clear_site_settings_cache()
 
 
 class TagBehavior:
@@ -191,6 +217,25 @@ class ActivityLogBehavior:
         if items:
             return ", ".join([item.item.name for item in items])
         return self.title or ""
+
+
+class LocationBehavior:
+    def _compress_uploaded_image(self, image, *, max_width, max_height, quality, output_format):
+        raise NotImplementedError("LocationBehavior requires _compress_uploaded_image().")
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.strip()
+
+        if settings.COMPRESS_IMAGES and self.image and not self.image._committed:
+            self.image = self._compress_uploaded_image(
+                self.image,
+                max_width=settings.IMAGE_MAX_WIDTH,
+                max_height=settings.IMAGE_MAX_HEIGHT,
+                quality=settings.IMAGE_QUALITY,
+                output_format=settings.IMAGE_OUTPUT_FORMAT,
+            )
+        super().save(*args, **kwargs)
 
 
 class LocationPhotoBehavior:
