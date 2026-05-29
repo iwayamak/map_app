@@ -86,7 +86,7 @@ class SiteSettings(SiteSettingsBehavior, BaseSiteSettings):
     )
 
     class Meta:
-        db_table = "piano_map_sitesettings"
+        db_table = "map_app_sitesettings"
         verbose_name = "サイト設定"
         verbose_name_plural = "サイト設定"
 
@@ -98,7 +98,7 @@ class SiteSettings(SiteSettingsBehavior, BaseSiteSettings):
 
 class Tag(TagBehavior, BaseTag):
     class Meta:
-        db_table = "piano_map_tag"
+        db_table = "map_app_tag"
         verbose_name = "タグ"
         verbose_name_plural = "タグ"
         ordering = ["order", "name"]
@@ -111,13 +111,13 @@ class Location(LocationBehavior, BaseLocation):
     tags = models.ManyToManyField(
         "map_app.Tag",
         blank=True,
-        db_table="piano_map_location_tags",
+        db_table="map_app_location_tags",
         related_name="locations",
         verbose_name="タグ",
     )
 
     class Meta:
-        db_table = "piano_map_location"
+        db_table = "map_app_location"
         verbose_name = "場所"
         verbose_name_plural = "場所"
         ordering = ["name"]
@@ -150,7 +150,7 @@ class LocationPhoto(LocationPhotoBehavior, BaseLocationPhoto):
     )
 
     class Meta:
-        db_table = "piano_map_locationphoto"
+        db_table = "map_app_locationphoto"
         verbose_name = "場所写真"
         verbose_name_plural = "場所写真"
         ordering = ["order", "id"]
@@ -166,7 +166,7 @@ class LocationPhoto(LocationPhotoBehavior, BaseLocationPhoto):
 
 class ActivityItem(BaseActivityItem):
     class Meta:
-        db_table = "piano_map_activityitem"
+        db_table = "map_app_activityitem"
         verbose_name = "記録項目マスター"
         verbose_name_plural = "記録項目マスター"
         ordering = ["name"]
@@ -184,7 +184,7 @@ class ActivityLog(ActivityLogBehavior, BaseActivityLog):
     )
 
     class Meta:
-        db_table = "piano_map_activitylog"
+        db_table = "map_app_activitylog"
         verbose_name = "記録"
         verbose_name_plural = "記録"
         ordering = ["-date", "-created_at"]
@@ -212,7 +212,7 @@ class ActivityLogItem(BaseActivityLogItem):
     )
 
     class Meta:
-        db_table = "piano_map_activitylogitem"
+        db_table = "map_app_activitylogitem"
         verbose_name = "記録項目"
         verbose_name_plural = "記録項目"
         ordering = ["order"]
@@ -227,7 +227,7 @@ class ActivityLogItem(BaseActivityLogItem):
 
 class DomainFieldDefinition(DomainFieldDefinitionBehavior, BaseDomainFieldDefinition):
     class Meta:
-        db_table = "piano_map_domainfielddefinition"
+        db_table = "map_app_domainfielddefinition"
         verbose_name = "追加項目テンプレート"
         verbose_name_plural = "追加項目テンプレート"
         ordering = ["target", "order", "id"]
@@ -244,7 +244,7 @@ class Video(VideoBehavior, BaseVideo):
     thumbnail = models.ImageField(upload_to="videos/thumbs/", blank=True, null=True, verbose_name="サムネイル")
 
     class Meta:
-        db_table = "piano_map_video"
+        db_table = "map_app_video"
         verbose_name = "動画"
         verbose_name_plural = "動画"
         ordering = ["-is_featured", "featured_order", "-published_at", "-created_at"]
