@@ -57,7 +57,7 @@ def connect_map_cache_invalidation(
     schedule_link_preview_cache_warmup,
 ):
     app_label = location_model._meta.app_label
-    watched_models = (
+    primary_models = (
         site_settings_model,
         location_model,
         location_photo_model,
@@ -66,14 +66,23 @@ def connect_map_cache_invalidation(
         activity_item_model,
         tag_model,
     )
+    watched_models = []
+    for model in primary_models:
+        if model not in watched_models:
+            watched_models.append(model)
+        concrete_model = model._meta.concrete_model
+        if concrete_model not in watched_models:
+            watched_models.append(concrete_model)
+    site_settings_senders = {site_settings_model, site_settings_model._meta.concrete_model}
+    location_senders = {location_model, location_model._meta.concrete_model}
 
     def invalidate_cache_on_data_change(sender, **kwargs):
         if kwargs.get("raw"):
             return
 
-        if sender is site_settings_model:
+        if sender in site_settings_senders:
             invalidate_site_context_cache()
-        preserve_stale = sender is not site_settings_model
+        preserve_stale = sender not in site_settings_senders
         invalidate_map_cache(preserve_stale=preserve_stale)
         instance = kwargs.get("instance")
 
@@ -82,7 +91,7 @@ def connect_map_cache_invalidation(
                 schedule_map_cache_warmup(reason=f"{sender.__name__}_updated")
             except (AttributeError, ValueError, TypeError, OSError, ConnectionError, TimeoutError):
                 logger.exception("failed to schedule map cache warmup sender=%s", sender.__name__)
-            if sender is location_model and instance and getattr(instance, "detail_note", "").strip():
+            if sender in location_senders and instance and getattr(instance, "detail_note", "").strip():
                 try:
                     schedule_link_preview_cache_warmup(instance.detail_note)
                 except (AttributeError, ValueError, TypeError, OSError, ConnectionError, TimeoutError):
@@ -94,12 +103,12 @@ def connect_map_cache_invalidation(
         post_save.connect(
             invalidate_cache_on_data_change,
             sender=model,
-            dispatch_uid=f"{app_label}:invalidate_cache:{model.__name__}:save",
+            dispatch_uid=f"{app_label}:invalidate_cache:{model._meta.label_lower}:save",
         )
         post_delete.connect(
             invalidate_cache_on_data_change,
             sender=model,
-            dispatch_uid=f"{app_label}:invalidate_cache:{model.__name__}:delete",
+            dispatch_uid=f"{app_label}:invalidate_cache:{model._meta.label_lower}:delete",
         )
 
     def invalidate_cache_on_location_tags_changed(sender, action, **kwargs):

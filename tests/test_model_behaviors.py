@@ -1,8 +1,29 @@
 from types import SimpleNamespace
 from unittest import TestCase
 
+import django
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import override_settings
+
+if not settings.configured:
+    settings.configure(
+        SECRET_KEY="test",
+        INSTALLED_APPS=[],
+        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}},
+        STATIC_URL="/static/",
+        USE_TZ=True,
+        MAP_APP_MAP_ASSETS_MODULE="map_app.map_assets",
+        MAP_APP_CACHE_KEY_NAMESPACE="test",
+        COMPRESS_IMAGES=False,
+        IMAGE_MAX_WIDTH=1200,
+        IMAGE_MAX_HEIGHT=900,
+        IMAGE_QUALITY=82,
+        IMAGE_OUTPUT_FORMAT="WEBP",
+        VIDEO_TRANSCODE_ENABLED=False,
+        VIDEO_AUTO_THUMBNAIL_ENABLED=False,
+    )
+    django.setup()
 
 from map_app.model_behaviors import (
     ActivityLogBehavior,
