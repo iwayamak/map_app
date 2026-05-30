@@ -365,7 +365,7 @@ def video_library_view(request):
             "search_query": search_query,
             "site_settings": site_settings,
             "domain_terms": domain_terms,
-            "video_library_url": reverse("piano_map:video_library"),
+            "video_library_url": reverse(f"{getattr(settings, 'MAP_APP_URL_NAMESPACE', 'map_app')}:video_library"),
         },
     )
 
@@ -409,6 +409,6 @@ def video_short_detail_view(request, video_id):
             "video": video,
             "site_settings": site_settings,
             "domain_terms": domain_terms,
-            "video_library_url": reverse("piano_map:video_library"),
+            "video_library_url": reverse(f"{getattr(settings, 'MAP_APP_URL_NAMESPACE', 'map_app')}:video_library"),
         },
     )

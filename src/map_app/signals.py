@@ -130,3 +130,29 @@ def connect_map_cache_invalidation(
         sender=location_model.tags.through,
         dispatch_uid=f"{app_label}:invalidate_cache:location_tags:m2m",
     )
+
+
+def connect_default_map_cache_invalidation():
+    from map_app.models import (
+        ActivityItem,
+        ActivityLog,
+        ActivityLogItem,
+        Location,
+        LocationPhoto,
+        SiteSettings,
+        Tag,
+    )
+    from map_app.services.link_preview_service import schedule_link_preview_cache_warmup
+    from map_app.services.map_cache_warmup_service import schedule_map_cache_warmup
+
+    connect_map_cache_invalidation(
+        site_settings_model=SiteSettings,
+        location_model=Location,
+        location_photo_model=LocationPhoto,
+        activity_log_model=ActivityLog,
+        activity_log_item_model=ActivityLogItem,
+        activity_item_model=ActivityItem,
+        tag_model=Tag,
+        schedule_map_cache_warmup=lambda reason: schedule_map_cache_warmup(reason=reason),
+        schedule_link_preview_cache_warmup=lambda text: schedule_link_preview_cache_warmup(text),
+    )

@@ -2,7 +2,7 @@
 {% load i18n admin_urls static admin_list %}
 
 {% block result_list %}
-    <div data-video-status-endpoint="{% url 'admin:piano_map_video_status' %}" data-video-status-page="list"></div>
+    <div data-video-status-endpoint="{% url 'admin:map_app_video_status' %}" data-video-status-page="list"></div>
     {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
     <div class="video-admin-desktop-results">
         {% result_list cl %}

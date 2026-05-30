@@ -26,15 +26,22 @@
 
 /* 記録管理画面に合わせて文字サイズを14px基準へ */
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group),
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group),
 body.popup :is(#locationphoto_set-group, #photos-group) {
 }
 
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) th,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) th,
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) td,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) td,
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) label,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) label,
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) input,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) input,
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) select,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) select,
 body.app-piano_map.model-location :is(#locationphoto_set-group, #photos-group) textarea,
+body.app-map_app.model-location :is(#locationphoto_set-group, #photos-group) textarea,
 body.popup :is(#locationphoto_set-group, #photos-group) th,
 body.popup :is(#locationphoto_set-group, #photos-group) td,
 body.popup :is(#locationphoto_set-group, #photos-group) label,

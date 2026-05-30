@@ -54,7 +54,7 @@ def install_admin_site_context(
 
     def _patched_get_app_list(request, app_label=None):
         app_list = original_get_app_list(request, app_label=app_label)
-        if getattr(settings, "MAP_APP_HIDE_SHARED_ADMIN_APP", True):
+        if getattr(settings, "MAP_APP_HIDE_SHARED_ADMIN_APP", False):
             app_list = hide_shared_admin_app_entries(app_list, app_label=app_label)
         terms = getattr(request, "_piano_map_domain_terms", None)
         if terms is None:
@@ -72,7 +72,7 @@ def install_admin_site_context(
         }
 
         for app in app_list:
-            if app.get("app_label") != "piano_map":
+            if app.get("app_label") not in {"map_app", "piano_map"}:
                 continue
             for model in app.get("models", []):
                 object_name = model.get("object_name")

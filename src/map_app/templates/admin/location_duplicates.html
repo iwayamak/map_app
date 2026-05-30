@@ -35,11 +35,11 @@
                 {% for item in candidates %}
                     <tr>
                         <td>
-                            <a href="/admin/piano_map/location/{{ item.primary.id }}/change/">{{ item.primary.name }}</a>
+                            <a href="/admin/map_app/location/{{ item.primary.id }}/change/">{{ item.primary.name }}</a>
                             <div class="dup-subtext">推奨度: {{ item.primary_recommend_percent }}%</div>
                         </td>
                         <td>
-                            <a href="/admin/piano_map/location/{{ item.duplicate.id }}/change/">{{ item.duplicate.name }}</a>
+                            <a href="/admin/map_app/location/{{ item.duplicate.id }}/change/">{{ item.duplicate.name }}</a>
                             <div class="dup-subtext">推奨度: {{ item.duplicate_recommend_percent }}%</div>
                         </td>
                         <td>
@@ -60,7 +60,7 @@
                         <td>{{ item.distance_km }} km</td>
                         <td>{{ item.tag_overlap_percent }}%</td>
                         <td>
-                            <form method="post" action="/admin/piano_map/location/duplicates/merge/" data-dup-form>
+                            <form method="post" action="/admin/map_app/location/duplicates/merge/" data-dup-form>
                                 {% csrf_token %}
                                 <input type="hidden" name="primary_id" class="dup-primary-input" value="">
                                 <input type="hidden" name="duplicate_id" class="dup-duplicate-input" value="">
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-                <form method="post" action="/admin/piano_map/location/duplicates/merge/" data-dup-form>
+                <form method="post" action="/admin/map_app/location/duplicates/merge/" data-dup-form>
                     {% csrf_token %}
                     <input type="hidden" name="primary_id" class="dup-primary-input" value="">
                     <input type="hidden" name="duplicate_id" class="dup-duplicate-input" value="">

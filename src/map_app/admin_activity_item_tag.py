@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import DatabaseError, ProgrammingError
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.utils.html import format_html
@@ -27,7 +28,10 @@ def build_activity_item_admin(
 
         @staticmethod
         def _use_record_items_enabled():
-            settings_obj = site_settings_loader()
+            try:
+                settings_obj = site_settings_loader()
+            except (DatabaseError, ProgrammingError):
+                return True
             terms = settings_obj.get_domain_terms() if settings_obj else {}
             return get_domain_term_bool(terms, "use_record_items", default=True)
 

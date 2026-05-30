@@ -400,7 +400,8 @@ class VideoBehavior:
 
     @property
     def watch_url(self):
-        route_name = "piano_map:video_short_detail" if self.is_portrait_video else "piano_map:video_detail"
+        route_namespace = getattr(settings, "MAP_APP_URL_NAMESPACE", "map_app")
+        route_name = f"{route_namespace}:video_short_detail" if self.is_portrait_video else f"{route_namespace}:video_detail"
         return reverse(route_name, args=[self.id])
 
     @property

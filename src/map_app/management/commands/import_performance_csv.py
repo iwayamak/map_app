@@ -1,0 +1,1 @@
+from map_app.management.commands.import_activity_log_csv import Command

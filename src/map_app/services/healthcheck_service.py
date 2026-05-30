@@ -5,7 +5,9 @@ from django.db import connection
 from django.db.utils import DatabaseError
 
 
-def run_health_checks(*, cache_backend=cache, db_connection=connection):
+def run_health_checks(*, cache_backend=None, db_connection=None):
+    cache_backend = cache if cache_backend is None else cache_backend
+    db_connection = connection if db_connection is None else db_connection
     started_at = time.perf_counter()
     checks = {"db": "ok", "cache": "ok"}
     details = {}

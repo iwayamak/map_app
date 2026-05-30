@@ -56,8 +56,9 @@ def _build_common_modal_payload(
     date,
     current_count,
     activity_items=None,
-    build_link_preview_map_func=build_link_preview_map,
+    build_link_preview_map_func=None,
 ):
+    build_link_preview_map_func = build_link_preview_map if build_link_preview_map_func is None else build_link_preview_map_func
     if activity_items is None:
         activity_items = []
     DomainFieldDefinition = get_domain_field_definition_model()
@@ -116,7 +117,8 @@ def _build_common_modal_payload(
     }
 
 
-def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=build_link_preview_map):
+def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=None):
+    build_link_preview_map_func = build_link_preview_map if build_link_preview_map_func is None else build_link_preview_map_func
     ActivityLog = get_activity_log_model()
     ActivityLogItem = get_activity_log_item_model()
     LocationPhoto = get_location_photo_model()
@@ -189,7 +191,8 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=bui
     return payload
 
 
-def build_location_modal_payload(location_id, *, build_link_preview_map_func=build_link_preview_map):
+def build_location_modal_payload(location_id, *, build_link_preview_map_func=None):
+    build_link_preview_map_func = build_link_preview_map if build_link_preview_map_func is None else build_link_preview_map_func
     Location = get_location_model()
     LocationPhoto = get_location_photo_model()
     Tag = get_tag_model()

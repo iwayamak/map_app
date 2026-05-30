@@ -4,6 +4,7 @@ import hashlib
 from django import forms
 from django.contrib import admin, messages
 from django.core.cache import cache
+from django.db import DatabaseError, ProgrammingError
 from django.db.models import Count, Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -27,7 +28,7 @@ def build_activity_log_admin(
     site_settings_loader,
     build_dynamic_form_field=None,
     include_dynamic_declared_fields=False,
-    changelist_url_name="admin:piano_map_activitylog_changelist",
+    changelist_url_name="admin:map_app_activitylog_changelist",
 ):
     if include_dynamic_declared_fields and build_dynamic_form_field is None:
         raise ValueError("build_dynamic_form_field is required when include_dynamic_declared_fields is enabled.")
@@ -103,7 +104,10 @@ def build_activity_log_admin(
 
         @staticmethod
         def _use_record_items_enabled():
-            settings_obj = site_settings_loader()
+            try:
+                settings_obj = site_settings_loader()
+            except (DatabaseError, ProgrammingError):
+                return True
             terms = settings_obj.get_domain_terms() if settings_obj else {}
             return get_domain_term_bool(terms, "use_record_items", default=True)
 
@@ -195,7 +199,7 @@ def build_activity_log_admin(
                     payload_parts.append(f"{key}={value}")
             payload = "&".join(payload_parts)
             digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-            return f"piano_map:admin:activitylog:submit_guard:{request.user.pk}:{digest}"
+            return f"map_app:admin:activitylog:submit_guard:{request.user.pk}:{digest}"
 
         def _is_duplicate_add_submit(self, request):
             key = self._build_submit_guard_key(request)
