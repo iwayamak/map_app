@@ -18,8 +18,8 @@
     <script src="{% static 'map_app/js/video_library_page.js' %}?v=20260311-1" defer></script>
 </head>
 <body>
-{% include "piano_map/header_shared.html" with header_class="video-page-header video-page-header-with-search" spacer_class="video-header-spacer" show_search=True search_is_open=search_query search_form_id="video-search-form" search_form_action=video_library_url search_placeholder="タイトルで検索" search_aria_label="タイトルで検索" search_input_name="q" %}
-{% include "piano_map/video_hamburger_menu.html" %}
+{% include "map_app/header_shared.html" with header_class="video-page-header video-page-header-with-search" spacer_class="video-header-spacer" show_search=True search_is_open=search_query search_form_id="video-search-form" search_form_action=video_library_url search_placeholder="タイトルで検索" search_aria_label="タイトルで検索" search_input_name="q" %}
+{% include "map_app/video_hamburger_menu.html" %}
 
 <main class="video-main">
     <section class="video-page-intro">
@@ -37,7 +37,7 @@
             {% for row in video_rows_pc %}
                 <div class="video-grid {% if row.orientation == 'portrait' %}video-grid--shorts{% else %}video-grid--landscape{% endif %}" aria-label="動画一覧">
                     {% for video in row.items %}
-                        {% include "piano_map/partials/video_card.html" with video=video desc_chars=52 %}
+                        {% include "map_app/partials/video_card.html" with video=video desc_chars=52 %}
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -47,7 +47,7 @@
             {% for row in video_rows_mobile %}
                 <div class="video-grid {% if row.orientation == 'portrait' %}video-grid--shorts{% else %}video-grid--landscape{% endif %}" aria-label="動画一覧">
                     {% for video in row.items %}
-                        {% include "piano_map/partials/video_card.html" with video=video desc_chars=52 %}
+                        {% include "map_app/partials/video_card.html" with video=video desc_chars=52 %}
                     {% endfor %}
                 </div>
             {% endfor %}

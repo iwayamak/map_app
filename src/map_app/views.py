@@ -355,7 +355,7 @@ def video_library_view(request):
 
     return render(
         request,
-        "piano_map/video_library.html",
+        "map_app/video_library.html",
         {
             "videos": videos,
             "video_rows_pc": video_rows_pc,
@@ -385,7 +385,7 @@ def video_detail_view(request, video_id):
     )
     return render(
         request,
-        "piano_map/video_detail.html",
+        "map_app/video_detail.html",
         {
             "video": video,
             "related_videos": related_videos,
@@ -404,7 +404,7 @@ def video_short_detail_view(request, video_id):
 
     return render(
         request,
-        "piano_map/video_short_detail.html",
+        "map_app/video_short_detail.html",
         {
             "video": video,
             "site_settings": site_settings,

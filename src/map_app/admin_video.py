@@ -134,8 +134,8 @@ def build_s3_client():
 
 class VideoAdmin(admin.ModelAdmin):
     form = VideoAdminForm
-    change_list_template = "admin/piano_map/video/change_list.html"
-    change_form_template = "admin/piano_map/video/change_form.html"
+    change_list_template = "admin/map_app/video/change_list.html"
+    change_form_template = "admin/map_app/video/change_form.html"
     actions = None
     list_display = (
         "title",

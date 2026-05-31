@@ -119,7 +119,7 @@ def build_location_admin(
         inlines = [LocationPhotoInline, LocationTagInline]
         csv_import_url_name = "location_import_csv"
         csv_export_url_name = "location_export_all_csv"
-        delete_confirmation_template = "admin/piano_map/location/delete_confirmation.html"
+        delete_confirmation_template = "admin/map_app/location/delete_confirmation.html"
         delete_button_css_class = "admin-delete-x location-delete-x"
 
         class Media:

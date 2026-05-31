@@ -17,8 +17,8 @@
     <script src="{% static 'map_app/js/video_navigation.js' %}?v=20260311-1" defer></script>
 </head>
 <body>
-{% include "piano_map/header_shared.html" with header_class="video-page-header" spacer_class="video-header-spacer" show_search=False %}
-{% include "piano_map/video_hamburger_menu.html" %}
+{% include "map_app/header_shared.html" with header_class="video-page-header" spacer_class="video-header-spacer" show_search=False %}
+{% include "map_app/video_hamburger_menu.html" %}
 
 <main class="video-main video-detail-main">
     <section class="video-detail-layout {{ video.video_orientation_class }}">
@@ -62,7 +62,7 @@
                     {% for row in related_video_rows %}
                         <div class="video-related-row {% if row.orientation == 'portrait' %}video-related-row--portrait{% else %}video-related-row--landscape{% endif %}">
                             {% for related in row.items %}
-                                {% include "piano_map/partials/video_related_card.html" with related=related %}
+                                {% include "map_app/partials/video_related_card.html" with related=related %}
                             {% endfor %}
                         </div>
                     {% endfor %}

@@ -56,10 +56,10 @@ def install_admin_site_context(
         app_list = original_get_app_list(request, app_label=app_label)
         if getattr(settings, "MAP_APP_HIDE_SHARED_ADMIN_APP", False):
             app_list = hide_shared_admin_app_entries(app_list, app_label=app_label)
-        terms = getattr(request, "_piano_map_domain_terms", None)
+        terms = getattr(request, "_map_app_domain_terms", None)
         if terms is None:
             _, terms = _resolve_site_context()
-            request._piano_map_domain_terms = terms
+            request._map_app_domain_terms = terms
         _apply_admin_labels(terms)
 
         model_label_map = {
@@ -82,13 +82,13 @@ def install_admin_site_context(
 
     def _patched_each_context(request):
         context = original_each_context(request)
-        terms = getattr(request, "_piano_map_domain_terms", None)
+        terms = getattr(request, "_map_app_domain_terms", None)
         if terms is None:
             settings_obj, terms = _resolve_site_context()
-            request._piano_map_domain_terms = terms
-            request._piano_map_site_settings = settings_obj
+            request._map_app_domain_terms = terms
+            request._map_app_site_settings = settings_obj
         else:
-            settings_obj = getattr(request, "_piano_map_site_settings", None)
+            settings_obj = getattr(request, "_map_app_site_settings", None)
         _apply_admin_labels(terms)
         try:
             if settings_obj is None:

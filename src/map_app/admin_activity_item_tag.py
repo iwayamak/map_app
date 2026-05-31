@@ -64,7 +64,7 @@ def build_tag_admin(
         search_fields = ("name",)
         ordering = ("order",)
         readonly_fields = ("color_chip", "created_at")
-        delete_confirmation_template = "admin/piano_map/tag/delete_confirmation.html"
+        delete_confirmation_template = "admin/map_app/tag/delete_confirmation.html"
         delete_button_css_class = "admin-delete-x tag-delete-x"
 
         class Media:

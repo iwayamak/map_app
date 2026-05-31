@@ -92,7 +92,7 @@ class SimpleDeleteListAdminMixin:
 
     actions = None
     delete_button_css_class = 'admin-delete-x'
-    change_list_template = 'admin/piano_map/shared/simple_list_change_list.html'
+    change_list_template = 'admin/map_app/shared/simple_list_change_list.html'
 
     def get_simple_list_tools(self, request):
         return []
