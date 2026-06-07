@@ -9,6 +9,21 @@ def hide_shared_admin_app_entries(app_list, app_label=None):
     return app_list
 
 
+def build_admin_header_background(terms):
+    header_bg_mode = (terms.get("header_bg_mode") or "gradient").strip()
+    if header_bg_mode == "solid":
+        return (terms.get("header_bg_solid_color") or "#667eea").strip()
+
+    angle = terms.get("header_bg_gradient_angle", 135)
+    try:
+        angle = int(angle)
+    except (TypeError, ValueError):
+        angle = 135
+    start = (terms.get("header_bg_gradient_from") or "#667eea").strip()
+    end = (terms.get("header_bg_gradient_to") or "#764ba2").strip()
+    return f"linear-gradient({angle}deg, {start} 0%, {end} 100%)"
+
+
 def install_admin_site_context(
     *,
     site_settings_model,
@@ -98,21 +113,7 @@ def install_admin_site_context(
             context["admin_site_logo_url"] = ""
         context["admin_header_logo_emoji"] = (terms.get("header_logo_emoji") or "🎹").strip()
         context["admin_header_subtitle"] = (terms.get("subtitle") or "").strip()
-        header_bg_mode = (terms.get("header_bg_mode") or "gradient").strip()
-        if header_bg_mode == "solid":
-            color = (terms.get("header_bg_solid_color") or "#667eea").strip()
-            context["admin_header_style"] = f"background: {color} !important;"
-        else:
-            angle = terms.get("header_bg_gradient_angle", 135)
-            try:
-                angle = int(angle)
-            except (TypeError, ValueError):
-                angle = 135
-            start = (terms.get("header_bg_gradient_from") or "#667eea").strip()
-            end = (terms.get("header_bg_gradient_to") or "#764ba2").strip()
-            context["admin_header_style"] = (
-                f"background: linear-gradient({angle}deg, {start} 0%, {end} 100%) !important;"
-            )
+        context["admin_header_background"] = build_admin_header_background(terms)
         return context
 
     admin.site.get_app_list = _patched_get_app_list
