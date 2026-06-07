@@ -55,6 +55,74 @@ body.keyboard-focus-active .folium-map {
     background: var(--map-base-bg) !important;
 }
 
+.map-initial-loading {
+    position: fixed;
+    top: var(--map-header-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 950;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.map-initial-loading.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.map-initial-loading-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    color: #111827;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 999px;
+    box-shadow: 0 14px 40px rgba(17, 24, 39, 0.2);
+    backdrop-filter: blur(12px);
+}
+
+.map-initial-loading-spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(102, 126, 234, 0.2);
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: mapInitialLoadingSpin 0.8s linear infinite;
+}
+
+.map-initial-loading-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.map-initial-loading.is-error .map-initial-loading-card {
+    color: #7f1d1d;
+    background: rgba(254, 242, 242, 0.94);
+    border-color: rgba(248, 113, 113, 0.45);
+}
+
+.map-initial-loading.is-error .map-initial-loading-spinner {
+    border-color: rgba(239, 68, 68, 0.25);
+    border-top-color: #ef4444;
+}
+
+@keyframes mapInitialLoadingSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* 地図タイルに紫がかった色調を適用 */
 .leaflet-tile-pane {
     filter: hue-rotate(20deg) saturate(0.9);

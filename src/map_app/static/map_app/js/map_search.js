@@ -1,6 +1,8 @@
 function setupAutoSearch() {
     var form = document.getElementById("map-search-form");
     if (!form) return;
+    var initialHydrationLoading = false;
+    var initialLoadingShowTimer = null;
 
     var config = {
         searchApiUrl: "/api/map/search/",
@@ -13,6 +15,62 @@ function setupAutoSearch() {
             submit: 0,
         },
     };
+
+    function ensureInitialMapLoadingOverlay() {
+        var existing = document.getElementById("map-initial-loading");
+        if (existing) return existing;
+
+        var overlay = document.createElement("div");
+        overlay.id = "map-initial-loading";
+        overlay.className = "map-initial-loading";
+        overlay.setAttribute("role", "status");
+        overlay.setAttribute("aria-live", "polite");
+        overlay.innerHTML =
+            "<div class='map-initial-loading-card'>" +
+                "<div class='map-initial-loading-spinner' aria-hidden='true'></div>" +
+                "<p class='map-initial-loading-text'>ピンを読み込み中...</p>" +
+            "</div>";
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    function showInitialMapLoading(message) {
+        var overlay = ensureInitialMapLoadingOverlay();
+        var text = overlay.querySelector(".map-initial-loading-text");
+        if (text && message) {
+            text.textContent = message;
+        }
+        overlay.classList.remove("is-error");
+        overlay.classList.add("is-visible");
+    }
+
+    function hideInitialMapLoading() {
+        if (initialLoadingShowTimer) {
+            clearTimeout(initialLoadingShowTimer);
+            initialLoadingShowTimer = null;
+        }
+        initialHydrationLoading = false;
+
+        var overlay = document.getElementById("map-initial-loading");
+        if (overlay) {
+            overlay.classList.remove("is-visible", "is-error");
+        }
+    }
+
+    function showInitialMapLoadingError() {
+        if (initialLoadingShowTimer) {
+            clearTimeout(initialLoadingShowTimer);
+            initialLoadingShowTimer = null;
+        }
+        initialHydrationLoading = false;
+
+        var overlay = ensureInitialMapLoadingOverlay();
+        var text = overlay.querySelector(".map-initial-loading-text");
+        if (text) {
+            text.textContent = "ピンの読み込みに失敗しました。再読み込みしてください。";
+        }
+        overlay.classList.add("is-visible", "is-error");
+    }
 
     var elements = {
         form: form,
@@ -73,9 +131,15 @@ function setupAutoSearch() {
         onSuccess: function(payload, params) {
             applySearchPayload(payload);
             urlSync.replaceFromParams(params);
+            if (initialHydrationLoading) {
+                hideInitialMapLoading();
+            }
         },
         onError: function(error) {
             console.error(error);
+            if (initialHydrationLoading) {
+                showInitialMapLoadingError();
+            }
         },
     });
 
@@ -151,14 +215,25 @@ function setupAutoSearch() {
             globalMarkerClusterGroup &&
             typeof globalMarkerClusterGroup.getLayers === "function";
         if (!hasCluster) {
+            if (attempt === 6) {
+                initialLoadingShowTimer = setTimeout(function() {
+                    showInitialMapLoading("地図とピンを準備中...");
+                }, 0);
+            }
             if (attempt < 20) {
                 setTimeout(function() { hydrateDeferredInitialMarkers(attempt + 1); }, 100);
+            } else {
+                showInitialMapLoadingError();
             }
             return;
         }
         if (globalMarkerClusterGroup.getLayers().length === 0) {
+            initialHydrationLoading = true;
+            showInitialMapLoading("ピンを読み込み中...");
             scheduleSearch(0);
+            return;
         }
+        hideInitialMapLoading();
     })(0);
 
     window.MapSearchPublicApi = window.MapSearchPublicApi || {};
