@@ -1,0 +1,115 @@
+:root {
+    --map-loading-overlay-glow: rgba(255, 255, 255, 0.18);
+    --map-loading-overlay-color: rgba(15, 23, 42, 0.22);
+    --map-loading-card-width: min(220px, calc(100vw - 48px));
+    --map-loading-card-padding: 18px 22px;
+    --map-loading-card-gap: 11px;
+    --map-loading-card-radius: 24px;
+    --map-loading-card-background: rgba(255, 255, 255, 0.88);
+    --map-loading-card-border: rgba(255, 255, 255, 0.72);
+    --map-loading-card-shadow: 0 22px 70px rgba(15, 23, 42, 0.26);
+    --map-loading-card-text: #1f2937;
+    --map-loading-font-family: "Hiragino Sans", "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --map-loading-font-size: 12px;
+    --map-loading-line-height: 1.3;
+    --map-loading-font-weight: 700;
+    --map-loading-letter-spacing: 0.08em;
+    --map-loading-spinner-size: 38px;
+    --map-loading-spinner-start: #667eea;
+    --map-loading-spinner-end: #22c55e;
+    --map-loading-spinner-shadow: rgba(102, 126, 234, 0.28);
+}
+
+.map-page-loading,
+.map-initial-loading,
+.pm-admin-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 50%, var(--map-loading-overlay-glow), transparent 34%),
+        var(--map-loading-overlay-color);
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.map-page-loading.is-visible,
+.map-initial-loading.is-visible,
+.pm-admin-loading.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.map-page-loading.is-visible,
+.pm-admin-loading.is-visible {
+    pointer-events: auto;
+}
+
+.map-page-loading-card,
+.map-initial-loading-card,
+.pm-admin-loading-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--map-loading-card-gap);
+    width: var(--map-loading-card-width);
+    max-width: 100%;
+    padding: var(--map-loading-card-padding);
+    color: var(--map-loading-card-text);
+    text-align: center;
+    background: var(--map-loading-card-background);
+    border: 1px solid var(--map-loading-card-border);
+    border-radius: var(--map-loading-card-radius);
+    box-shadow: var(--map-loading-card-shadow);
+    backdrop-filter: blur(18px) saturate(1.2);
+    box-sizing: border-box;
+}
+
+.map-page-loading-spinner,
+.map-initial-loading-spinner,
+.pm-admin-loading-spinner,
+.activity-modal-spinner {
+    width: var(--map-loading-spinner-size);
+    height: var(--map-loading-spinner-size);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.96) 0 34%, transparent 36%),
+        conic-gradient(
+            from 90deg,
+            transparent 0 18%,
+            var(--map-loading-spinner-start) 18% 42%,
+            var(--map-loading-spinner-end) 58%,
+            transparent 78% 100%
+        );
+    filter: drop-shadow(0 8px 16px var(--map-loading-spinner-shadow));
+    animation: mapLoadingOrbit 0.95s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+}
+
+.map-page-loading-title,
+.map-initial-loading-text,
+.pm-admin-loading-title,
+.activity-modal-loading-text {
+    margin: 0;
+    color: var(--map-loading-card-text);
+    font-family: var(--map-loading-font-family);
+    font-size: var(--map-loading-font-size);
+    line-height: var(--map-loading-line-height);
+    font-weight: var(--map-loading-font-weight);
+    letter-spacing: var(--map-loading-letter-spacing);
+}
+
+.map-page-loading-copy,
+.pm-admin-loading-copy {
+    display: none;
+}
+
+@keyframes mapLoadingOrbit {
+    to {
+        transform: rotate(360deg);
+    }
+}

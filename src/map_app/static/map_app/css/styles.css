@@ -57,77 +57,12 @@ body.keyboard-focus-active .folium-map {
 
 .map-page-loading,
 .map-initial-loading {
-    inset: 0;
-    position: fixed;
     z-index: 3000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    background:
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18), transparent 34%),
-        rgba(15, 23, 42, 0.22);
-    transition: opacity 0.18s ease, visibility 0.18s ease;
 }
 
 .map-initial-loading {
     z-index: 950;
     background: transparent;
-}
-
-.map-page-loading.is-visible,
-.map-initial-loading.is-visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.map-page-loading.is-visible {
-    pointer-events: auto;
-}
-
-.map-page-loading-card,
-.map-initial-loading-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 11px;
-    min-width: 148px;
-    padding: 18px 22px;
-    color: #0f172a;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    border-radius: 24px;
-    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.24);
-    backdrop-filter: blur(18px) saturate(1.2);
-}
-
-.map-page-loading-spinner,
-.map-initial-loading-spinner {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at center, rgba(255,255,255,0.95) 0 34%, transparent 36%),
-        conic-gradient(from 90deg, transparent 0 18%, #667eea 18% 42%, #22c55e 58%, transparent 78% 100%);
-    filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.28));
-    animation: mapLoadingOrbit 0.95s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
-}
-
-.map-page-loading-title,
-.map-initial-loading-text {
-    margin: 0;
-    color: #1f2937;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.16em;
-}
-
-.map-page-loading-copy {
-    display: none;
 }
 
 .map-initial-loading.is-error .map-initial-loading-card {
@@ -137,15 +72,8 @@ body.keyboard-focus-active .folium-map {
 }
 
 .map-initial-loading.is-error .map-initial-loading-spinner {
-    background:
-        radial-gradient(circle at center, rgba(255,255,255,0.95) 0 34%, transparent 36%),
-        conic-gradient(from 90deg, transparent 0 18%, #ef4444 18% 52%, transparent 78% 100%);
-}
-
-@keyframes mapLoadingOrbit {
-    to {
-        transform: rotate(360deg);
-    }
+    --map-loading-spinner-start: #ef4444;
+    --map-loading-spinner-end: #ef4444;
 }
 
 /* 地図タイルに紫がかった色調を適用 */

@@ -3,12 +3,13 @@
 
 {% block extrastyle %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'map_app/css/loading.css' %}?v=20260608-7">
 <link rel="stylesheet" href="{% static 'map_app/css/admin_base_site.css' %}">
 {% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
-<script src="{% static 'map_app/js/admin_loading.js' %}?v=20260608-6" defer></script>
+<script src="{% static 'map_app/js/admin_loading.js' %}?v=20260608-7" defer></script>
 <style>
     :root {
         --pm-admin-header-background: {{ admin_header_background|default:"linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }};
