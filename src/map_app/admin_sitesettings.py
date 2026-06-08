@@ -49,6 +49,11 @@ MODAL_PHOTO_PROFILE_CHOICES = (
     ("fill", "モーダル写真: ステージ充填（トリミングあり）"),
 )
 
+LOADING_SPINNER_STYLE_CHOICES = (
+    ("simple_ring", "ローディング: シンプルリング"),
+    ("piano_keys", "ローディング: 鍵盤アニメーション"),
+)
+
 ADMIN_LABEL_FIELDS = (
     ("admin_label_location", "管理画面: 場所"),
     ("admin_label_tag", "管理画面: タグ"),
@@ -116,6 +121,12 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
         modal_note_title = forms.CharField(max_length=120, required=False, label="モーダル: メモ見出し", widget=_wide_text_widget)
         modal_count_label = forms.CharField(max_length=120, required=False, label="モーダル: 回数ラベル", widget=_wide_text_widget)
         modal_title_icon = forms.CharField(max_length=8, required=False, label="モーダル: タイトルアイコン", widget=forms.TextInput(attrs={"style": "width: 8ch;"}))
+        loading_spinner_style = forms.ChoiceField(
+            required=False,
+            label="ローディングデザイン",
+            choices=LOADING_SPINNER_STYLE_CHOICES,
+            initial="simple_ring",
+        )
         modal_photo_profile = forms.ChoiceField(
             required=False,
             label="モーダル写真: 表示プロファイル",
@@ -192,6 +203,7 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
                 self.fields[key].initial = terms.get(key, "")
             for key, _label in DOMAIN_TERM_BOOLEAN_FIELDS:
                 self.fields[key].initial = bool(terms.get(key, False))
+            self.fields["loading_spinner_style"].initial = terms.get("loading_spinner_style", "simple_ring")
             self.fields["modal_photo_profile"].initial = terms.get("modal_photo_profile", "preserve")
             max_height = terms.get("modal_photo_stage_max_height_vh", 70)
             try:
@@ -235,6 +247,9 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
                 merged_terms["system_piano_info_only_tag_label"] = merged_terms["system_info_only_tag_label"]
             for key, _label in DOMAIN_TERM_BOOLEAN_FIELDS:
                 merged_terms[key] = bool(cleaned.get(key))
+            spinner_style = (cleaned.get("loading_spinner_style") or "simple_ring").strip()
+            valid_spinner_styles = {key for key, _label in LOADING_SPINNER_STYLE_CHOICES}
+            merged_terms["loading_spinner_style"] = spinner_style if spinner_style in valid_spinner_styles else "simple_ring"
             photo_profile = (cleaned.get("modal_photo_profile") or "preserve").strip()
             valid_profiles = {key for key, _label in MODAL_PHOTO_PROFILE_CHOICES}
             merged_terms["modal_photo_profile"] = photo_profile if photo_profile in valid_profiles else "preserve"
@@ -323,6 +338,10 @@ def build_sitesettings_admin(site_settings_model, default_domain_terms_func):
             ("メニュー表示制御", {
                 "fields": tuple(field_name for field_name, _ in DOMAIN_TERM_BOOLEAN_FIELDS),
                 "description": "ハンバーガーメニュー項目の表示/非表示を切り替えます。",
+            }),
+            ("ローディング表示", {
+                "fields": ("loading_spinner_style",),
+                "description": "共通ローディングのくるくるデザインを切り替えます。",
             }),
             ("モーダル写真表示", {
                 "fields": ("modal_photo_profile", "modal_photo_stage_max_height_vh"),

@@ -69,6 +69,7 @@ class MapPageThemeTests(TestCase):
             get_domain_terms=lambda: {
                 "header_bg_mode": "solid",
                 "header_bg_solid_color": "#123456",
+                "loading_spinner_style": "piano_keys",
             },
         )
 
@@ -79,6 +80,7 @@ class MapPageThemeTests(TestCase):
         self.assertIn('<meta name="theme-color" content="#123456" />', css)
         self.assertIn("--map-safe-area-bg: #123456;", css)
         self.assertIn("background: #123456 !important;", css)
+        self.assertIn('document.documentElement.dataset.loadingStyle = "piano_keys";', css)
 
     def test_get_css_styles_defines_safe_area_after_css_links(self):
         site_settings = SimpleNamespace(

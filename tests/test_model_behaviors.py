@@ -38,6 +38,7 @@ from map_app.model_behaviors import (
 
 def default_domain_terms():
     return {
+        "app_title": "ストリートピアノマップ",
         "use_record_items": True,
         "show_video_library_menu": "off",
         "statistics_show_recent_item_title": "yes",
@@ -154,6 +155,7 @@ class ModelBehaviorTests(TestCase):
         self.assertFalse(terms["use_record_items"])
         self.assertFalse(terms["show_video_library_menu"])
         self.assertTrue(terms["statistics_show_recent_item_title"])
+        self.assertEqual(terms["loading_spinner_style"], "piano_keys")
         self.assertFalse(terms["modal_sections"]["records"])
         self.assertFalse(terms["modal_sections"]["photos"])
 

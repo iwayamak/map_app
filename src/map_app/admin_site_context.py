@@ -111,6 +111,7 @@ def install_admin_site_context(
             context["admin_site_logo_url"] = settings_obj.site_logo.url if settings_obj and settings_obj.site_logo else ""
         except Exception:
             context["admin_site_logo_url"] = ""
+        context["admin_loading_spinner_style"] = (terms.get("loading_spinner_style") or "simple_ring").strip()
         context["admin_header_logo_emoji"] = (terms.get("header_logo_emoji") or "🎹").strip()
         context["admin_header_subtitle"] = (terms.get("subtitle") or "").strip()
         context["admin_header_background"] = build_admin_header_background(terms)

@@ -40,8 +40,10 @@ def get_css_styles(site_settings):
     favicon_tag = ""
     if site_settings.favicon:
         favicon_tag = f'<link rel="icon" href="{site_settings.favicon.url}">'
+    terms = site_settings.get_domain_terms()
     theme_color = get_theme_color(site_settings)
     header_background = get_header_background(site_settings)
+    loading_spinner_style = (terms.get("loading_spinner_style") or "simple_ring").strip()
 
     return f"""
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -61,6 +63,7 @@ def get_css_styles(site_settings):
     </style>
     <script>
       (function() {{
+        document.documentElement.dataset.loadingStyle = "{loading_spinner_style}";
         var desired = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover";
         var metas = document.querySelectorAll('meta[name="viewport"]');
         if (!metas.length) {{

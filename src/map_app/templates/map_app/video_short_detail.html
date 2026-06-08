@@ -1,6 +1,6 @@
 {% load static %}
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-loading-style="{{ domain_terms.loading_spinner_style|default:'simple_ring' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,9 +8,10 @@
     {% if site_settings.favicon %}
         <link rel="icon" href="{{ site_settings.favicon.url }}">
     {% endif %}
-    <link rel="stylesheet" href="{% static 'map_app/css/loading.css' %}?v=20260608-7">
-    <link rel="stylesheet" href="{% static 'map_app/css/video_library.css' %}?v=20260608-7">
-    <script src="{% static 'map_app/js/page_loading.js' %}?v=20260608-7" defer></script>
+    <link rel="stylesheet" href="{% static 'map_app/css/loading.css' %}?v=20260608-8">
+    <link rel="stylesheet" href="{% static 'map_app/css/video_library.css' %}?v=20260608-8">
+    <script src="{% static 'map_app/js/loading_spinner.js' %}?v=20260608-8" defer></script>
+    <script src="{% static 'map_app/js/page_loading.js' %}?v=20260608-8" defer></script>
     <script src="{% static 'map_app/js/video_short_player.js' %}?v=20260403-8" defer></script>
 </head>
 <body class="video-short-body">

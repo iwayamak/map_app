@@ -12,9 +12,10 @@
         overlay.setAttribute("aria-live", "polite");
         overlay.innerHTML =
             "<div class='pm-admin-loading-card'>" +
-                "<div class='pm-admin-loading-spinner' aria-hidden='true'></div>" +
+                (window.MapAppLoadingSpinner ? window.MapAppLoadingSpinner.render("pm-admin-loading-spinner") : "<div class='pm-admin-loading-spinner' aria-hidden='true'><span class='map-loading-ring'></span></div>") +
                 "<p class='pm-admin-loading-title'>読み込み中</p>" +
             "</div>";
+        if (window.MapAppLoadingSpinner) window.MapAppLoadingSpinner.applyToNode(overlay);
         document.body.appendChild(overlay);
         return overlay;
     }

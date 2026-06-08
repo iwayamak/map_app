@@ -12,9 +12,10 @@
         overlay.setAttribute("aria-live", "polite");
         overlay.innerHTML =
             "<div class='map-page-loading-card'>" +
-                "<div class='map-page-loading-spinner' aria-hidden='true'></div>" +
+                (global.MapAppLoadingSpinner ? global.MapAppLoadingSpinner.render("map-page-loading-spinner") : "<div class='map-page-loading-spinner' aria-hidden='true'><span class='map-loading-ring'></span></div>") +
                 "<p class='map-page-loading-title'>読み込み中</p>" +
             "</div>";
+        if (global.MapAppLoadingSpinner) global.MapAppLoadingSpinner.applyToNode(overlay);
         document.body.appendChild(overlay);
         return overlay;
     }

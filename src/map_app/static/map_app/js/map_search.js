@@ -27,9 +27,10 @@ function setupAutoSearch() {
         overlay.setAttribute("aria-live", "polite");
         overlay.innerHTML =
             "<div class='map-initial-loading-card'>" +
-                "<div class='map-initial-loading-spinner' aria-hidden='true'></div>" +
+                (window.MapAppLoadingSpinner ? window.MapAppLoadingSpinner.render("map-initial-loading-spinner") : "<div class='map-initial-loading-spinner' aria-hidden='true'><span class='map-loading-ring'></span></div>") +
                 "<p class='map-initial-loading-text'>読み込み中</p>" +
             "</div>";
+        if (window.MapAppLoadingSpinner) window.MapAppLoadingSpinner.applyToNode(overlay);
         document.body.appendChild(overlay);
         return overlay;
     }

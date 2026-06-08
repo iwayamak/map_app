@@ -10,7 +10,7 @@ from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 
-from map_app.domain_terms import get_domain_term_bool
+from map_app.domain_terms import get_domain_term_bool, normalize_loading_spinner_style
 
 
 VIBRANT_TAG_COLORS = [
@@ -85,6 +85,11 @@ class SiteSettingsBehavior:
             terms,
             "statistics_show_recent_item_title",
             default=True,
+        )
+        terms["loading_spinner_style"] = normalize_loading_spinner_style(
+            terms.get("loading_spinner_style"),
+            terms.get("app_title"),
+            getattr(self, "site_title", ""),
         )
         modal_sections = terms.get("modal_sections")
         if not isinstance(modal_sections, dict):
