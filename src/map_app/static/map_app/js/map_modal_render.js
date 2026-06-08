@@ -72,7 +72,7 @@ function buildLoadingModalHtml() {
     return (
         "<div class='activity-modal-content activity-modal-loading'>" +
             "<div class='activity-modal-spinner' aria-hidden='true'></div>" +
-            "<p class='activity-modal-loading-text'>読み込み中...</p>" +
+            "<p class='activity-modal-loading-text'>読み込み中</p>" +
         "</div>"
     );
 }

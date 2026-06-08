@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
         button.addEventListener("click", function() {
             if (window.MapAppPageLoading && typeof window.MapAppPageLoading.navigate === "function") {
                 window.MapAppPageLoading.navigate(url, {
-                    title: "ページを開いています...",
-                    copy: "タップは受け付け済みです。そのままお待ちください。"
+                    title: "読み込み中",
+                    copy: ""
                 });
                 return;
             }

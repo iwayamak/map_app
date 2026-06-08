@@ -98,8 +98,8 @@ function bindPanelEvents() {
     function redirectWithLoading(url, title) {
         if (window.MapAppPageLoading && typeof window.MapAppPageLoading.navigate === "function") {
             window.MapAppPageLoading.navigate(url, {
-                title: title || "ページを開いています...",
-                copy: "タップは受け付け済みです。そのままお待ちください。"
+                title: title || "読み込み中",
+                copy: ""
             });
             return;
         }
@@ -114,12 +114,12 @@ function bindPanelEvents() {
     if (statsOverlay) statsOverlay.addEventListener("click", toggleStatistics);
     if (openAdminButton) {
         openAdminButton.addEventListener("click", function () {
-            redirectWithLoading("/admin/", "管理画面を開いています...");
+            redirectWithLoading("/admin/", "読み込み中");
         });
     }
     if (openVideosButton) {
         openVideosButton.addEventListener("click", function () {
-            redirectWithLoading("/videos/", "動画ライブラリを開いています...");
+            redirectWithLoading("/videos/", "読み込み中");
         });
     }
 }

@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 var submitButton = form.querySelector("button[type='submit'], input[type='submit']");
                 if (submitButton) submitButton.disabled = true;
                 if (window.MapAdminLoading && typeof window.MapAdminLoading.show === "function") {
-                    window.MapAdminLoading.show("統合しています...", "処理が完了するまで再実行せずお待ちください。");
+                    window.MapAdminLoading.show("読み込み中");
                 }
                 form.submit();
             });

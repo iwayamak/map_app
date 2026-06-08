@@ -28,7 +28,7 @@ function setupAutoSearch() {
         overlay.innerHTML =
             "<div class='map-initial-loading-card'>" +
                 "<div class='map-initial-loading-spinner' aria-hidden='true'></div>" +
-                "<p class='map-initial-loading-text'>ピンを読み込み中...</p>" +
+                "<p class='map-initial-loading-text'>読み込み中</p>" +
             "</div>";
         document.body.appendChild(overlay);
         return overlay;
@@ -67,7 +67,7 @@ function setupAutoSearch() {
         var overlay = ensureInitialMapLoadingOverlay();
         var text = overlay.querySelector(".map-initial-loading-text");
         if (text) {
-            text.textContent = "ピンの読み込みに失敗しました。再読み込みしてください。";
+            text.textContent = "読み込みに失敗しました";
         }
         overlay.classList.add("is-visible", "is-error");
     }
@@ -217,7 +217,7 @@ function setupAutoSearch() {
         if (!hasCluster) {
             if (attempt === 6) {
                 initialLoadingShowTimer = setTimeout(function() {
-                    showInitialMapLoading("地図とピンを準備中...");
+                    showInitialMapLoading("読み込み中");
                 }, 0);
             }
             if (attempt < 20) {
@@ -229,7 +229,7 @@ function setupAutoSearch() {
         }
         if (globalMarkerClusterGroup.getLayers().length === 0) {
             initialHydrationLoading = true;
-            showInitialMapLoading("ピンを読み込み中...");
+            showInitialMapLoading("読み込み中");
             scheduleSearch(0);
             return;
         }

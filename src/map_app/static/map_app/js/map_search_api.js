@@ -14,8 +14,8 @@
                 slowRequestTimer = setTimeout(function() {
                     if (!store.isLatestRequestToken(requestToken)) return;
                     global.MapAppPageLoading.show({
-                        title: "地図データを更新しています...",
-                        copy: "検索条件を反映中です。連続操作せずお待ちください。"
+                        title: "読み込み中",
+                        copy: ""
                     });
                 }, 450);
             }

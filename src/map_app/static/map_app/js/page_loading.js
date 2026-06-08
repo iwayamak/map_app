@@ -13,19 +13,16 @@
         overlay.innerHTML =
             "<div class='map-page-loading-card'>" +
                 "<div class='map-page-loading-spinner' aria-hidden='true'></div>" +
-                "<p class='map-page-loading-title'>読み込み中...</p>" +
-                "<p class='map-page-loading-copy'>そのままお待ちください。</p>" +
+                "<p class='map-page-loading-title'>読み込み中</p>" +
             "</div>";
         document.body.appendChild(overlay);
         return overlay;
     }
 
-    function setText(title, copy) {
+    function setText(title) {
         var node = ensureOverlay();
         var titleNode = node.querySelector(".map-page-loading-title");
-        var copyNode = node.querySelector(".map-page-loading-copy");
         if (titleNode && title) titleNode.textContent = title;
-        if (copyNode && copy) copyNode.textContent = copy;
     }
 
     function clearEscalationTimers() {
@@ -35,25 +32,12 @@
         escalationTimers = [];
     }
 
-    function scheduleEscalation(messages) {
-        clearEscalationTimers();
-        (messages || []).forEach(function(item) {
-            escalationTimers.push(setTimeout(function() {
-                setText(item.title, item.copy);
-            }, item.delayMs));
-        });
-    }
-
     function show(options) {
         var nextOptions = options || {};
         loading = true;
-        setText(nextOptions.title || "読み込み中...", nextOptions.copy || "そのままお待ちください。");
+        setText(nextOptions.title || "読み込み中");
         ensureOverlay().classList.add("is-visible");
         document.documentElement.classList.add("map-page-loading-active");
-        scheduleEscalation(nextOptions.escalationMessages || [
-            { delayMs: 1500, title: "サーバー処理中です...", copy: "通信に時間がかかっています。再度タップせずお待ちください。" },
-            { delayMs: 5000, title: "もう少しお待ちください", copy: "処理は継続中です。連続タップは不要です。" }
-        ]);
     }
 
     function hide() {
@@ -64,7 +48,7 @@
     }
 
     function navigate(url, options) {
-        show(options || { title: "ページを開いています...", copy: "タップは受け付け済みです。そのままお待ちください。" });
+        show(options || { title: "読み込み中" });
         requestAnimationFrame(function() {
             setTimeout(function() {
                 window.location.assign(url);
@@ -102,7 +86,7 @@
             }
             event.preventDefault();
             link.classList.add("is-page-loading-source");
-            navigate(link.href, { title: "ページを開いています...", copy: "タップは受け付け済みです。そのままお待ちください。" });
+            navigate(link.href, { title: "読み込み中" });
         }, true);
 
         document.addEventListener("submit", function(event) {
@@ -114,7 +98,7 @@
                 return;
             }
             form.dataset.pageLoadingSubmitting = "1";
-            show({ title: "送信中です...", copy: "処理が完了するまで再送信せずお待ちください。" });
+            show({ title: "読み込み中" });
         }, true);
 
         window.addEventListener("pageshow", hide);

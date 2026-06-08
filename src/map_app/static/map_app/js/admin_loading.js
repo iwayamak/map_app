@@ -13,19 +13,16 @@
         overlay.innerHTML =
             "<div class='pm-admin-loading-card'>" +
                 "<div class='pm-admin-loading-spinner' aria-hidden='true'></div>" +
-                "<p class='pm-admin-loading-title'>読み込み中...</p>" +
-                "<p class='pm-admin-loading-copy'>操作は受け付け済みです。</p>" +
+                "<p class='pm-admin-loading-title'>読み込み中</p>" +
             "</div>";
         document.body.appendChild(overlay);
         return overlay;
     }
 
-    function setText(title, copy) {
+    function setText(title) {
         var node = ensureOverlay();
         var titleNode = node.querySelector(".pm-admin-loading-title");
-        var copyNode = node.querySelector(".pm-admin-loading-copy");
         if (titleNode && title) titleNode.textContent = title;
-        if (copyNode && copy) copyNode.textContent = copy;
     }
 
     function clearTimers() {
@@ -33,18 +30,12 @@
         escalationTimers = [];
     }
 
-    function show(title, copy) {
+    function show(title) {
         loading = true;
-        setText(title || "読み込み中...", copy || "操作は受け付け済みです。そのままお待ちください。");
+        setText(title || "読み込み中");
         ensureOverlay().classList.add("is-visible");
         document.documentElement.classList.add("pm-admin-loading-active");
         clearTimers();
-        escalationTimers.push(setTimeout(function() {
-            setText("サーバー処理中です...", "通信に時間がかかっています。再度タップせずお待ちください。");
-        }, 1500));
-        escalationTimers.push(setTimeout(function() {
-            setText("もう少しお待ちください", "処理は継続中です。連続操作は不要です。");
-        }, 5000));
     }
 
     function hide() {
@@ -109,7 +100,7 @@
                 return;
             }
             link.classList.add("is-admin-loading-source");
-            show("ページを開いています...", "タップは受け付け済みです。そのままお待ちください。");
+            show("読み込み中");
         }, true);
 
         document.addEventListener("submit", function(event) {
@@ -122,7 +113,7 @@
             preserveSubmitter(form, event.submitter);
             form.dataset.adminLoadingSubmitting = "1";
             form.classList.add("is-admin-submitting");
-            show("保存しています...", "処理が完了するまで再送信せずお待ちください。");
+            show("読み込み中");
             setTimeout(function() {
                 form.querySelectorAll("button[type='submit'], input[type='submit']").forEach(function(control) {
                     control.disabled = true;
