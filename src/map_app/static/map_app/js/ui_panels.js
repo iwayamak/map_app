@@ -95,6 +95,16 @@ function bindPanelEvents() {
     var openAdminButton = document.getElementById("open-admin-button");
     var openVideosButton = document.getElementById("open-videos-button");
 
+    function redirectWithLoading(url, title) {
+        if (window.MapAppPageLoading && typeof window.MapAppPageLoading.show === "function") {
+            window.MapAppPageLoading.show({
+                title: title || "ページを開いています...",
+                copy: "タップは受け付け済みです。そのままお待ちください。"
+            });
+        }
+        window.location.href = url;
+    }
+
     if (hamburgerButton) hamburgerButton.addEventListener("click", toggleHamburgerMenu);
     if (hamburgerClose) hamburgerClose.addEventListener("click", toggleHamburgerMenu);
     if (menuOverlay) menuOverlay.addEventListener("click", toggleHamburgerMenu);
@@ -103,12 +113,12 @@ function bindPanelEvents() {
     if (statsOverlay) statsOverlay.addEventListener("click", toggleStatistics);
     if (openAdminButton) {
         openAdminButton.addEventListener("click", function () {
-            window.location.href = "/admin/";
+            redirectWithLoading("/admin/", "管理画面を開いています...");
         });
     }
     if (openVideosButton) {
         openVideosButton.addEventListener("click", function () {
-            window.location.href = "/videos/";
+            redirectWithLoading("/videos/", "動画ライブラリを開いています...");
         });
     }
 }

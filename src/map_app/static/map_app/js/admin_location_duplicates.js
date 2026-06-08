@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (confirmOkButton) {
         confirmOkButton.addEventListener("click", function() {
+            if (confirmOkButton.dataset.processing === "1") return;
+            confirmOkButton.dataset.processing = "1";
             closeConfirm(true);
         });
     }
@@ -100,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         form.addEventListener("submit", function(event) {
             event.preventDefault();
+            if (form.dataset.submitting === "1") return;
             if (formError) formError.textContent = "";
 
             if (!primaryInput.value || !duplicateInput.value) {
@@ -112,7 +115,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             openConfirm("統合すると元に戻せません。実行しますか？").then(function(confirmed) {
+                if (confirmOkButton) confirmOkButton.dataset.processing = "";
                 if (!confirmed) return;
+                form.dataset.submitting = "1";
+                var submitButton = form.querySelector("button[type='submit'], input[type='submit']");
+                if (submitButton) submitButton.disabled = true;
+                if (window.MapAdminLoading && typeof window.MapAdminLoading.show === "function") {
+                    window.MapAdminLoading.show("統合しています...", "処理が完了するまで再実行せずお待ちください。");
+                }
                 form.submit();
             });
         });

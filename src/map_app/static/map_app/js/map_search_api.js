@@ -8,6 +8,27 @@
         function run() {
             var requestToken = store.nextRequestToken();
             var params = searchState.buildSearchParams();
+            var slowRequestTimer = null;
+
+            if (global.MapAppPageLoading && typeof global.MapAppPageLoading.show === "function") {
+                slowRequestTimer = setTimeout(function() {
+                    if (!store.isLatestRequestToken(requestToken)) return;
+                    global.MapAppPageLoading.show({
+                        title: "地図データを更新しています...",
+                        copy: "検索条件を反映中です。連続操作せずお待ちください。"
+                    });
+                }, 450);
+            }
+
+            function clearSlowRequestLoading() {
+                if (slowRequestTimer) {
+                    clearTimeout(slowRequestTimer);
+                    slowRequestTimer = null;
+                }
+                if (global.MapAppPageLoading && typeof global.MapAppPageLoading.hide === "function") {
+                    global.MapAppPageLoading.hide();
+                }
+            }
 
             var activeController = store.getActiveRequestController();
             if (activeController) {
@@ -30,9 +51,12 @@
                 .then(function(payload) {
                     if (!store.isLatestRequestToken(requestToken)) return;
                     contract.validateMapSearchPayload(payload);
+                    clearSlowRequestLoading();
                     hooks.onSuccess(payload, params);
                 })
                 .catch(function(error) {
+                    if (!store.isLatestRequestToken(requestToken)) return;
+                    clearSlowRequestLoading();
                     if (error && error.name === "AbortError") return;
                     if (hooks.onError) hooks.onError(error);
                 });

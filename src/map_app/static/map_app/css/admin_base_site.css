@@ -9,6 +9,72 @@
     --pm-header-brand-gap: 10px;
 }
 
+.pm-admin-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    background: rgba(17, 24, 39, 0.22);
+    transition: opacity 0.16s ease, visibility 0.16s ease;
+}
+
+.pm-admin-loading.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.pm-admin-loading-card {
+    width: min(360px, calc(100vw - 48px));
+    padding: 22px 24px;
+    color: #111827;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 18px;
+    box-shadow: 0 18px 54px rgba(17, 24, 39, 0.26);
+    backdrop-filter: blur(14px);
+}
+
+.pm-admin-loading-spinner {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 13px;
+    border: 3px solid rgba(102, 126, 234, 0.2);
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: pmAdminLoadingSpin 0.8s linear infinite;
+}
+
+.pm-admin-loading-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.pm-admin-loading-copy {
+    margin: 8px 0 0;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+form.is-admin-submitting :is(button[type="submit"], input[type="submit"]) {
+    cursor: wait;
+}
+
+@keyframes pmAdminLoadingSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 #header {
     background-color: #667eea;
     background: var(--pm-admin-header-background) !important;

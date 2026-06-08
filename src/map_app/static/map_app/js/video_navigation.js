@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", function() {
     function bindRedirect(button, url) {
         if (!button) return;
         button.addEventListener("click", function() {
+            if (window.MapAppPageLoading && typeof window.MapAppPageLoading.show === "function") {
+                window.MapAppPageLoading.show({
+                    title: "ページを開いています...",
+                    copy: "タップは受け付け済みです。そのままお待ちください。"
+                });
+            }
             window.location.href = url;
         });
     }

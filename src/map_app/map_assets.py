@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.templatetags.static import static
 
-MAP_BUILD_VERSION = "20260608-2"
+MAP_BUILD_VERSION = "20260608-3"
 STATIC_PREFIX = getattr(settings, "MAP_APP_STATIC_PREFIX", "map_app").strip("/") or "map_app"
 CACHE_KEY_NAMESPACE = getattr(settings, "MAP_APP_CACHE_KEY_NAMESPACE", "map_app").strip() or "map_app"
 
@@ -44,6 +44,7 @@ MAP_JS_ASSET_PATHS = (
     f"{STATIC_PREFIX}/js/map_search_api.js",
     f"{STATIC_PREFIX}/js/map_search.js",
     f"{STATIC_PREFIX}/js/map_search_actions.js",
+    f"{STATIC_PREFIX}/js/page_loading.js",
     f"{STATIC_PREFIX}/js/ui_panels.js",
     f"{STATIC_PREFIX}/js/statistics_store.js",
     f"{STATIC_PREFIX}/js/statistics_dom_ui.js",

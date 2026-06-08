@@ -33,6 +33,26 @@ function fetchModalContent(markerIdentity) {
     var cacheKey = (markerIdentity.type || "activity_log") + ":" + String(markerIdentity.id || "");
     var cached = getCachedModalPayload(cacheKey);
     if (cached) return Promise.resolve(cached);
+    var slowModalTimer = null;
+
+    if (window.MapAppPageLoading && typeof window.MapAppPageLoading.show === "function") {
+        slowModalTimer = setTimeout(function() {
+            window.MapAppPageLoading.show({
+                title: "詳細を読み込んでいます...",
+                copy: "タップは受け付け済みです。そのままお待ちください。"
+            });
+        }, 500);
+    }
+
+    function clearSlowModalLoading() {
+        if (slowModalTimer) {
+            clearTimeout(slowModalTimer);
+            slowModalTimer = null;
+        }
+        if (window.MapAppPageLoading && typeof window.MapAppPageLoading.hide === "function") {
+            window.MapAppPageLoading.hide();
+        }
+    }
 
     var modalUrl = markerIdentity.type === "location"
         ? getLocationModalApiUrl(markerIdentity.id)
@@ -50,6 +70,11 @@ function fetchModalContent(markerIdentity) {
             var activity = payload && payload.activity;
             if (!activity) throw new Error("Invalid modal payload");
             setCachedModalPayload(cacheKey, activity);
+            clearSlowModalLoading();
             return activity;
+        })
+        .catch(function(error) {
+            clearSlowModalLoading();
+            throw error;
         });
 }
