@@ -1,6 +1,7 @@
 from collections import defaultdict
+from datetime import date, datetime, time
 
-from map_app.models import Location
+from map_app.domain import get_location_model
 
 
 def _resolve_record_title(record):
@@ -9,6 +10,33 @@ def _resolve_record_title(record):
     if hasattr(record, "get_record_item_names"):
         return record.get_record_item_names() or "記録"
     return getattr(record, "title", "") or "記録"
+
+
+def _sortable_datetime_value(value):
+    if value is None:
+        return 0.0
+    if isinstance(value, datetime):
+        try:
+            return value.timestamp()
+        except (OSError, OverflowError, ValueError):
+            return 0.0
+    if isinstance(value, date):
+        return datetime.combine(value, time.min).timestamp()
+    return 0.0
+
+
+def _recent_visit_sort_key(activity_log):
+    record_date = getattr(activity_log, "date", None)
+    if isinstance(record_date, date):
+        date_value = record_date.toordinal()
+    else:
+        date_value = 0
+    record_id = getattr(activity_log, "pk", None) or getattr(activity_log, "id", None) or 0
+    return (
+        date_value,
+        _sortable_datetime_value(getattr(activity_log, "created_at", None)),
+        int(record_id),
+    )
 
 
 def build_map_statistics(activity_logs):
@@ -33,6 +61,7 @@ def build_map_statistics(activity_logs):
 
     if location_info:
         location_ids = list(location_info.keys())
+        Location = get_location_model()
         through_model = Location.tags.through
         tagged_location_count = (
             through_model.objects.filter(location_id__in=location_ids)
@@ -49,7 +78,7 @@ def build_map_statistics(activity_logs):
     month_labels = [item[0] for item in sorted_months]
     month_values = [item[1] for item in sorted_months]
 
-    recent_visits = sorted(activity_logs, key=lambda activity_log: activity_log.date, reverse=True)[:10]
+    recent_visits = sorted(activity_logs, key=_recent_visit_sort_key, reverse=True)[:10]
     recent_visits_data = [
         {
             "location_name": activity_log.location.name,
