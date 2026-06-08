@@ -30,6 +30,7 @@
                         "<span class='map-loading-piano-white-key'></span>" +
                         "<span class='map-loading-piano-white-key'></span>" +
                         "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
                     "</span>" +
                     "<span class='map-loading-piano-black-keys' aria-hidden='true'>" +
                         "<span class='map-loading-piano-black-key is-csharp'></span>" +

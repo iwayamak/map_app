@@ -130,7 +130,7 @@
     position: absolute;
     inset: 8px 0 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 1px;
     padding: 0 1px 1px;
     border-radius: 7px;
@@ -150,10 +150,11 @@
 }
 
 .map-loading-piano-white-key:nth-child(1) { animation-delay: 0s; }
-.map-loading-piano-white-key:nth-child(2) { animation-delay: 0.08s; }
-.map-loading-piano-white-key:nth-child(3) { animation-delay: 0.16s; }
-.map-loading-piano-white-key:nth-child(4) { animation-delay: 0.24s; }
-.map-loading-piano-white-key:nth-child(5) { animation-delay: 0.32s; }
+.map-loading-piano-white-key:nth-child(2) { animation-delay: 0.06s; }
+.map-loading-piano-white-key:nth-child(3) { animation-delay: 0.12s; }
+.map-loading-piano-white-key:nth-child(4) { animation-delay: 0.18s; }
+.map-loading-piano-white-key:nth-child(5) { animation-delay: 0.24s; }
+.map-loading-piano-white-key:nth-child(6) { animation-delay: 0.30s; }
 
 .map-loading-piano-black-keys {
     position: absolute;
@@ -176,10 +177,10 @@
     animation: mapLoadingPianoBlackKey 1.05s ease-in-out infinite;
 }
 
-.map-loading-piano-black-key.is-csharp { left: 7px; animation-delay: 0.04s; }
-.map-loading-piano-black-key.is-dsharp { left: 15px; animation-delay: 0.12s; }
-.map-loading-piano-black-key.is-fsharp { left: 28px; animation-delay: 0.28s; }
-.map-loading-piano-black-key.is-gsharp { left: 36px; animation-delay: 0.36s; }
+.map-loading-piano-black-key.is-csharp { left: calc((100% / 6) - 2.5px); animation-delay: 0.03s; }
+.map-loading-piano-black-key.is-dsharp { left: calc((100% / 6) * 2 - 2.5px); animation-delay: 0.09s; }
+.map-loading-piano-black-key.is-fsharp { left: calc((100% / 6) * 4 - 2.5px); animation-delay: 0.21s; }
+.map-loading-piano-black-key.is-gsharp { left: calc((100% / 6) * 5 - 2.5px); animation-delay: 0.27s; }
 
 .map-page-loading-spinner[data-loading-style="piano_keys"],
 .map-initial-loading-spinner[data-loading-style="piano_keys"],
