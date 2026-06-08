@@ -5,12 +5,17 @@
             throw new Error("MapSearchContract is not loaded.");
         }
 
-        function run() {
+        function run(options) {
+            var runOptions = options || {};
             var requestToken = store.nextRequestToken();
             var params = searchState.buildSearchParams();
             var slowRequestTimer = null;
 
-            if (global.MapAppPageLoading && typeof global.MapAppPageLoading.show === "function") {
+            if (
+                !runOptions.suppressPageLoading &&
+                global.MapAppPageLoading &&
+                typeof global.MapAppPageLoading.show === "function"
+            ) {
                 slowRequestTimer = setTimeout(function() {
                     if (!store.isLatestRequestToken(requestToken)) return;
                     global.MapAppPageLoading.show({

@@ -151,9 +151,11 @@ function setupAutoSearch() {
         },
     });
 
-    function scheduleSearch(delayMs) {
+    function scheduleSearch(delayMs, runOptions) {
         store.clearDebounceTimer();
-        store.setDebounceTimer(setTimeout(searchApi.run, delayMs));
+        store.setDebounceTimer(setTimeout(function() {
+            searchApi.run(runOptions);
+        }, delayMs));
     }
 
     function applyFilters(options) {
@@ -238,7 +240,7 @@ function setupAutoSearch() {
         if (globalMarkerClusterGroup.getLayers().length === 0) {
             initialHydrationLoading = true;
             showInitialMapLoading("読み込み中");
-            scheduleSearch(0);
+            scheduleSearch(0, { suppressPageLoading: true });
             return;
         }
         hideInitialMapLoading();
