@@ -119,37 +119,73 @@
 }
 
 .map-loading-piano-keys {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 2px;
-    width: calc(var(--map-loading-spinner-size) + 2px);
-    height: calc(var(--map-loading-spinner-size) - 4px);
+    position: relative;
+    display: block;
+    width: calc(var(--map-loading-spinner-size) + 10px);
+    height: calc(var(--map-loading-spinner-size) - 2px);
     filter: drop-shadow(0 8px 16px var(--map-loading-spinner-shadow));
 }
 
-.map-loading-piano-key {
-    width: 6px;
-    height: 22px;
-    border-radius: 2px 2px 5px 5px;
-    background: linear-gradient(180deg, #ffffff 0%, #eef2f7 100%);
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    box-shadow:
-        inset 0 -2px 0 rgba(15, 23, 42, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    transform-origin: center bottom;
-    animation: mapLoadingPianoKey 0.92s ease-in-out infinite;
+.map-loading-piano-white-keys {
+    position: absolute;
+    inset: 8px 0 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    padding: 0 1px 1px;
+    border-radius: 7px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.16) 0%, rgba(15, 23, 42, 0.08) 100%);
+    overflow: hidden;
 }
 
-.map-loading-piano-key:nth-child(1) { animation-delay: 0s; }
-.map-loading-piano-key:nth-child(2) { animation-delay: 0.08s; }
-.map-loading-piano-key:nth-child(3) { animation-delay: 0.16s; }
-.map-loading-piano-key:nth-child(4) { animation-delay: 0.24s; }
-.map-loading-piano-key:nth-child(5) { animation-delay: 0.32s; }
+.map-loading-piano-white-key {
+    min-width: 0;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(180deg, #ffffff 0%, #eef3f8 72%, #dbe3ec 100%);
+    box-shadow:
+        inset 0 -2px 0 rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    transform-origin: center top;
+    animation: mapLoadingPianoWhiteKey 1.05s ease-in-out infinite;
+}
 
-.map-loading-piano-key:nth-child(3) {
-    background: linear-gradient(180deg, #f8fafc 0%, #dbeafe 100%);
-    border-color: rgba(102, 126, 234, 0.25);
+.map-loading-piano-white-key:nth-child(1) { animation-delay: 0s; }
+.map-loading-piano-white-key:nth-child(2) { animation-delay: 0.08s; }
+.map-loading-piano-white-key:nth-child(3) { animation-delay: 0.16s; }
+.map-loading-piano-white-key:nth-child(4) { animation-delay: 0.24s; }
+.map-loading-piano-white-key:nth-child(5) { animation-delay: 0.32s; }
+
+.map-loading-piano-black-keys {
+    position: absolute;
+    inset: 0 4px auto;
+    height: 20px;
+    pointer-events: none;
+}
+
+.map-loading-piano-black-key {
+    position: absolute;
+    top: 0;
+    width: 5px;
+    height: 16px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+    box-shadow:
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+        0 1px 2px rgba(15, 23, 42, 0.18);
+    transform-origin: center top;
+    animation: mapLoadingPianoBlackKey 1.05s ease-in-out infinite;
+}
+
+.map-loading-piano-black-key.is-csharp { left: 7px; animation-delay: 0.04s; }
+.map-loading-piano-black-key.is-dsharp { left: 15px; animation-delay: 0.12s; }
+.map-loading-piano-black-key.is-fsharp { left: 28px; animation-delay: 0.28s; }
+.map-loading-piano-black-key.is-gsharp { left: 36px; animation-delay: 0.36s; }
+
+.map-page-loading-spinner[data-loading-style="piano_keys"],
+.map-initial-loading-spinner[data-loading-style="piano_keys"],
+.pm-admin-loading-spinner[data-loading-style="piano_keys"],
+.activity-modal-spinner[data-loading-style="piano_keys"] {
+    width: calc(var(--map-loading-spinner-size) + 10px);
 }
 
 @keyframes mapLoadingOrbit {
@@ -158,17 +194,29 @@
     }
 }
 
-@keyframes mapLoadingPianoKey {
+@keyframes mapLoadingPianoWhiteKey {
     0%, 100% {
-        transform: translateY(0);
-        opacity: 0.92;
+        transform: translateY(0) scaleY(1);
+        filter: brightness(1);
     }
-    35% {
-        transform: translateY(1px) scaleY(0.9);
-        opacity: 1;
+    40% {
+        transform: translateY(2px) scaleY(0.95);
+        filter: brightness(0.98);
     }
     55% {
-        transform: translateY(-4px);
-        opacity: 1;
+        transform: translateY(4px) scaleY(0.92);
+        filter: brightness(0.94);
+    }
+}
+
+@keyframes mapLoadingPianoBlackKey {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(1px);
+    }
+    55% {
+        transform: translateY(3px);
     }
 }

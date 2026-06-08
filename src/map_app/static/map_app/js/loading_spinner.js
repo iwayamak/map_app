@@ -24,11 +24,19 @@
         if (style === "piano_keys") {
             return (
                 "<span class='map-loading-piano-keys'>" +
-                    "<span class='map-loading-piano-key'></span>" +
-                    "<span class='map-loading-piano-key'></span>" +
-                    "<span class='map-loading-piano-key'></span>" +
-                    "<span class='map-loading-piano-key'></span>" +
-                    "<span class='map-loading-piano-key'></span>" +
+                    "<span class='map-loading-piano-white-keys'>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key'></span>" +
+                    "</span>" +
+                    "<span class='map-loading-piano-black-keys' aria-hidden='true'>" +
+                        "<span class='map-loading-piano-black-key is-csharp'></span>" +
+                        "<span class='map-loading-piano-black-key is-dsharp'></span>" +
+                        "<span class='map-loading-piano-black-key is-fsharp'></span>" +
+                        "<span class='map-loading-piano-black-key is-gsharp'></span>" +
+                    "</span>" +
                 "</span>"
             );
         }
