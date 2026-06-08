@@ -34,7 +34,14 @@ function setupAutoSearch() {
         return overlay;
     }
 
+    function hidePageTransitionLoading() {
+        if (!window.MapAppPageLoading || typeof window.MapAppPageLoading.hide !== "function") return;
+        window.MapAppPageLoading.hide();
+    }
+
     function showInitialMapLoading(message) {
+        // Hand off from cross-page navigation loading to map hydration loading.
+        hidePageTransitionLoading();
         var overlay = ensureInitialMapLoadingOverlay();
         var text = overlay.querySelector(".map-initial-loading-text");
         if (text && message) {
@@ -58,6 +65,7 @@ function setupAutoSearch() {
     }
 
     function showInitialMapLoadingError() {
+        hidePageTransitionLoading();
         if (initialLoadingShowTimer) {
             clearTimeout(initialLoadingShowTimer);
             initialLoadingShowTimer = null;
