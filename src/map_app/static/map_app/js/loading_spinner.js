@@ -20,6 +20,10 @@
         return normalizeStyle(rootStyle || bodyStyle);
     }
 
+    function getNavigationDelay() {
+        return getStyle() === "piano_keys" ? 220 : 90;
+    }
+
     function renderInner(style) {
         if (style === "piano_keys") {
             return (
@@ -61,6 +65,7 @@
 
     global.MapAppLoadingSpinner = {
         getStyle: getStyle,
+        getNavigationDelay: getNavigationDelay,
         render: render,
         applyToNode: applyToNode,
     };

@@ -43,6 +43,10 @@ document.addEventListener("DOMContentLoaded", function() {
             nextUrl.searchParams.delete("q");
         }
         nextUrl.searchParams.delete("page");
+        if (window.MapAppPageLoading && typeof window.MapAppPageLoading.navigate === "function") {
+            window.MapAppPageLoading.navigate(nextUrl.toString(), { title: "読み込み中" });
+            return;
+        }
         window.location.assign(nextUrl.toString());
     }
 

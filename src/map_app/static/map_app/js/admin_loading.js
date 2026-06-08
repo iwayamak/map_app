@@ -39,6 +39,18 @@
         clearTimers();
     }
 
+    function navigate(url, title) {
+        show(title || "読み込み中");
+        var delayMs = window.MapAppLoadingSpinner && typeof window.MapAppLoadingSpinner.getNavigationDelay === "function"
+            ? window.MapAppLoadingSpinner.getNavigationDelay()
+            : 90;
+        requestAnimationFrame(function() {
+            setTimeout(function() {
+                window.location.assign(url);
+            }, delayMs);
+        });
+    }
+
     function hide() {
         loading = false;
         clearTimers();
@@ -100,8 +112,9 @@
                 event.preventDefault();
                 return;
             }
+            event.preventDefault();
             link.classList.add("is-admin-loading-source");
-            show("読み込み中");
+            navigate(link.href, "読み込み中");
         }, true);
 
         document.addEventListener("submit", function(event) {
@@ -128,6 +141,7 @@
 
     window.MapAdminLoading = {
         show: show,
+        navigate: navigate,
         hide: hide,
         isLoading: function() { return loading; }
     };

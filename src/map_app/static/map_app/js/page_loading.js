@@ -50,10 +50,13 @@
 
     function navigate(url, options) {
         show(options || { title: "読み込み中" });
+        var delayMs = global.MapAppLoadingSpinner && typeof global.MapAppLoadingSpinner.getNavigationDelay === "function"
+            ? global.MapAppLoadingSpinner.getNavigationDelay()
+            : 90;
         requestAnimationFrame(function() {
             setTimeout(function() {
                 window.location.assign(url);
-            }, 60);
+            }, delayMs);
         });
     }
 
