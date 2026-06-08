@@ -57,10 +57,8 @@ body.keyboard-focus-active .folium-map {
 
 .map-page-loading,
 .map-initial-loading {
+    inset: 0;
     position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     z-index: 3000;
     display: flex;
     align-items: center;
@@ -70,17 +68,12 @@ body.keyboard-focus-active .folium-map {
     visibility: hidden;
     pointer-events: none;
     background:
-        radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.18), transparent 34%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18), transparent 34%),
         rgba(15, 23, 42, 0.22);
     transition: opacity 0.18s ease, visibility 0.18s ease;
 }
 
-.map-page-loading {
-    top: 0;
-}
-
 .map-initial-loading {
-    top: var(--map-header-height);
     z-index: 950;
     background: transparent;
 }

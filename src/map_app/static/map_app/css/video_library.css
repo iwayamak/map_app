@@ -37,7 +37,7 @@ body.video-short-body {
     visibility: hidden;
     pointer-events: none;
     background:
-        radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.18), transparent 34%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18), transparent 34%),
         rgba(15, 23, 42, 0.26);
     transition: opacity 0.18s ease, visibility 0.18s ease;
 }
