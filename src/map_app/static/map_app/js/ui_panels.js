@@ -96,13 +96,14 @@ function bindPanelEvents() {
     var openVideosButton = document.getElementById("open-videos-button");
 
     function redirectWithLoading(url, title) {
-        if (window.MapAppPageLoading && typeof window.MapAppPageLoading.show === "function") {
-            window.MapAppPageLoading.show({
+        if (window.MapAppPageLoading && typeof window.MapAppPageLoading.navigate === "function") {
+            window.MapAppPageLoading.navigate(url, {
                 title: title || "ページを開いています...",
                 copy: "タップは受け付け済みです。そのままお待ちください。"
             });
+            return;
         }
-        window.location.href = url;
+        window.location.assign(url);
     }
 
     if (hamburgerButton) hamburgerButton.addEventListener("click", toggleHamburgerMenu);

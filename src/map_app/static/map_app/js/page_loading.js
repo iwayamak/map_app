@@ -63,6 +63,15 @@
         if (overlay) overlay.classList.remove("is-visible");
     }
 
+    function navigate(url, options) {
+        show(options || { title: "ページを開いています...", copy: "タップは受け付け済みです。そのままお待ちください。" });
+        requestAnimationFrame(function() {
+            setTimeout(function() {
+                window.location.assign(url);
+            }, 60);
+        });
+    }
+
     function isSkippableLink(link, event) {
         if (!link || !link.href) return true;
         if (link.dataset.noPageLoading === "1") return true;
@@ -91,8 +100,9 @@
                 event.preventDefault();
                 return;
             }
+            event.preventDefault();
             link.classList.add("is-page-loading-source");
-            show({ title: "ページを開いています...", copy: "タップは受け付け済みです。そのままお待ちください。" });
+            navigate(link.href, { title: "ページを開いています...", copy: "タップは受け付け済みです。そのままお待ちください。" });
         }, true);
 
         document.addEventListener("submit", function(event) {
@@ -115,6 +125,7 @@
         bindPageTransitions: bindPageTransitions,
         show: show,
         hide: hide,
+        navigate: navigate,
         isLoading: function() { return loading; }
     };
 

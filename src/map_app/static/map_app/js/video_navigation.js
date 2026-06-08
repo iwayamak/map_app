@@ -29,13 +29,14 @@ document.addEventListener("DOMContentLoaded", function() {
     function bindRedirect(button, url) {
         if (!button) return;
         button.addEventListener("click", function() {
-            if (window.MapAppPageLoading && typeof window.MapAppPageLoading.show === "function") {
-                window.MapAppPageLoading.show({
+            if (window.MapAppPageLoading && typeof window.MapAppPageLoading.navigate === "function") {
+                window.MapAppPageLoading.navigate(url, {
                     title: "ページを開いています...",
                     copy: "タップは受け付け済みです。そのままお待ちください。"
                 });
+                return;
             }
-            window.location.href = url;
+            window.location.assign(url);
         });
     }
 
