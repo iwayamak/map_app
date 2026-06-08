@@ -25,18 +25,18 @@
             return (
                 "<span class='map-loading-piano-keys'>" +
                     "<span class='map-loading-piano-white-keys'>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
-                        "<span class='map-loading-piano-white-key'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-1'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-2'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-3'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-4'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-5'></span>" +
+                        "<span class='map-loading-piano-white-key is-key-6'></span>" +
                     "</span>" +
                     "<span class='map-loading-piano-black-keys' aria-hidden='true'>" +
-                        "<span class='map-loading-piano-black-key is-csharp'></span>" +
-                        "<span class='map-loading-piano-black-key is-dsharp'></span>" +
-                        "<span class='map-loading-piano-black-key is-fsharp'></span>" +
-                        "<span class='map-loading-piano-black-key is-gsharp'></span>" +
+                        "<span class='map-loading-piano-black-key is-csharp is-key-1'></span>" +
+                        "<span class='map-loading-piano-black-key is-dsharp is-key-2'></span>" +
+                        "<span class='map-loading-piano-black-key is-fsharp is-key-4'></span>" +
+                        "<span class='map-loading-piano-black-key is-gsharp is-key-5'></span>" +
                     "</span>" +
                 "</span>"
             );
