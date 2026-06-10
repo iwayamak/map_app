@@ -13,16 +13,16 @@
    ========================================================= */
 #hamburger-menu {
     position: fixed;
-    top: 0;
+    top: var(--map-header-height, 84px);
     right: -100%;
     width: 280px;
-    height: 100dvh;
+    height: calc(100dvh - var(--map-header-height, 84px));
     background: white;
     box-shadow: -2px 0 20px rgba(0, 0, 0, 0.15);
     z-index: 1002;
     transition: right 0.3s ease;
     overflow-y: auto;
-    padding: 80px 20px 20px 20px;
+    padding: 64px 20px 20px 20px;
 }
 
 .hamburger-close {
@@ -95,10 +95,10 @@
 #menu-overlay,
 #statistics-overlay {
     position: fixed;
-    top: 0;
+    top: var(--map-header-height, 84px);
     left: 0;
     width: 100%;
-    height: 100dvh;
+    height: calc(100dvh - var(--map-header-height, 84px));
     background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
