@@ -1,10 +1,12 @@
 import logging
+import json
 import time
 from contextlib import contextmanager
 from datetime import timedelta
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db import close_old_connections
 from django.db import transaction
 from django.utils import timezone
@@ -21,8 +23,61 @@ logger = logging.getLogger(__name__)
 
 
 def schedule_video_processing(video_id):
+    backend = (getattr(settings, "VIDEO_PROCESSING_BACKEND", "local") or "local").strip().lower()
+    if backend == "sqs":
+        return enqueue_video_processing_message(video_id)
+    if backend == "both":
+        enqueue_video_processing_message(video_id)
+        cache.set(VIDEO_PROCESSING_WAKE_KEY, str(video_id), timeout=60)
+        return True
     cache.set(VIDEO_PROCESSING_WAKE_KEY, str(video_id), timeout=60)
     return True
+
+
+def enqueue_video_processing_message(video_id):
+    queue_url = (getattr(settings, "VIDEO_PROCESSING_QUEUE_URL", "") or "").strip()
+    if not queue_url:
+        logger.error("VIDEO_PROCESSING_QUEUE_URL is required when VIDEO_PROCESSING_BACKEND=sqs")
+        return False
+
+    video = get_processable_video(video_id)
+    if not video or not video.video_file:
+        logger.warning("video enqueue skipped because video is missing or has no file. video_id=%s", video_id)
+        return False
+
+    try:
+        import boto3
+    except ImportError:
+        logger.exception("boto3 is required for SQS video processing")
+        return False
+
+    payload = build_video_processing_payload(video)
+    client_kwargs = {"region_name": getattr(settings, "AWS_S3_REGION_NAME", None)}
+    endpoint_url = getattr(settings, "AWS_SQS_ENDPOINT_URL", "") or ""
+    if endpoint_url:
+        client_kwargs["endpoint_url"] = endpoint_url
+    client = boto3.client("sqs", **{key: value for key, value in client_kwargs.items() if value})
+    client.send_message(QueueUrl=queue_url, MessageBody=json.dumps(payload, separators=(",", ":")))
+    logger.info("video processing message enqueued. video_id=%s queue_url=%s", video_id, queue_url)
+    return True
+
+
+def build_video_processing_payload(video):
+    return {
+        "video_id": video.pk,
+        "input_key": video.video_file.name,
+        "title": video.title,
+        "thumbnail_only": bool(getattr(video, "thumbnail_regeneration_requested", False)),
+        "storage": {
+            "bucket": getattr(settings, "AWS_STORAGE_BUCKET_NAME", ""),
+            "region": getattr(settings, "AWS_S3_REGION_NAME", "ap-northeast-1"),
+            "media_location": getattr(settings, "AWS_MEDIA_LOCATION", "media"),
+            "endpoint_url": getattr(settings, "AWS_S3_ENDPOINT_URL", "") or "",
+        },
+        "callback": {
+            "url": getattr(settings, "VIDEO_PROCESSING_CALLBACK_URL", ""),
+        },
+    }
 
 
 def update_video_processing_progress(video_id, *, step=None, percent=None):
@@ -254,3 +309,68 @@ def wait_for_video_job(poll_interval_seconds=5):
         cache.delete(VIDEO_PROCESSING_WAKE_KEY)
         return
     time.sleep(poll_interval_seconds)
+
+
+def apply_video_processing_callback(payload):
+    video_id = int(payload.get("video_id") or 0)
+    status = (payload.get("status") or "").strip().lower()
+    Video = get_video_model()
+    video = Video.objects.filter(pk=video_id).first()
+    if not video:
+        return False, "video not found"
+
+    video._skip_video_processing = True
+    previous_video_name = video.video_file.name if video.video_file else ""
+    previous_thumbnail_name = video.thumbnail.name if video.thumbnail else ""
+
+    if status == "completed":
+        output_key = (payload.get("output_key") or previous_video_name or "").strip()
+        thumbnail_key = (payload.get("thumbnail_key") or "").strip()
+        if output_key:
+            video.video_file.name = output_key
+        if thumbnail_key:
+            video.thumbnail.name = thumbnail_key
+        width = payload.get("video_width")
+        height = payload.get("video_height")
+        if width:
+            video.video_width = int(width)
+        if height:
+            video.video_height = int(height)
+        video.mark_processing_ready()
+        update_fields = [
+            "video_file",
+            "thumbnail",
+            "processing_status",
+            "processing_error",
+            "processing_step",
+            "processing_progress_percent",
+            "video_width",
+            "video_height",
+            "thumbnail_regeneration_requested",
+            "processed_at",
+            "updated_at",
+        ]
+        video.save(update_fields=update_fields)
+        cleanup_processed_input_files(video, previous_video_name, previous_thumbnail_name)
+        return True, ""
+
+    error_message = (payload.get("error") or "video processing failed")[:500]
+    video.mark_processing_failed(error_message)
+    video.save(
+        update_fields=[
+            "processing_status",
+            "processing_step",
+            "processing_error",
+            "processing_progress_percent",
+            "thumbnail_regeneration_requested",
+            "updated_at",
+        ]
+    )
+    return True, ""
+
+
+def cleanup_processed_input_files(video, previous_video_name, previous_thumbnail_name):
+    if previous_video_name and previous_video_name != video.video_file.name:
+        default_storage.delete(previous_video_name)
+    if previous_thumbnail_name and video.thumbnail and previous_thumbnail_name != video.thumbnail.name:
+        default_storage.delete(previous_thumbnail_name)

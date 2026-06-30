@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import django
 from django.conf import settings
+from django.test import RequestFactory, override_settings
 
 if not settings.configured:
     settings.configure(
@@ -86,6 +87,68 @@ class VideoProcessingInjectionTests(TestCase):
         generate_video_thumbnail_func.assert_called_once()
         delete_replaced_file_func.assert_any_call(video.video_file, "videos/original.mp4")
         delete_replaced_file_func.assert_any_call(video.thumbnail, "thumbs/old.jpg")
+
+    @override_settings(
+        AWS_STORAGE_BUCKET_NAME="media-bucket",
+        AWS_S3_REGION_NAME="ap-northeast-1",
+        AWS_MEDIA_LOCATION="media",
+        VIDEO_PROCESSING_CALLBACK_URL="https://example.com/api/video-processing/callback/",
+    )
+    def test_build_video_processing_payload_uses_relative_storage_keys(self):
+        video = SimpleNamespace(
+            pk=10,
+            video_file=SimpleNamespace(name="videos/direct/input.mp4"),
+            title="sample",
+            thumbnail_regeneration_requested=False,
+        )
+
+        payload = pipeline.build_video_processing_payload(video)
+
+        self.assertEqual(payload["video_id"], 10)
+        self.assertEqual(payload["input_key"], "videos/direct/input.mp4")
+        self.assertEqual(payload["storage"]["bucket"], "media-bucket")
+        self.assertEqual(payload["storage"]["media_location"], "media")
+        self.assertEqual(payload["callback"]["url"], "https://example.com/api/video-processing/callback/")
+
+    @override_settings(VIDEO_PROCESSING_CALLBACK_SECRET="secret")
+    @patch("map_app.video_processing_callback.apply_video_processing_callback")
+    def test_video_processing_callback_requires_valid_signature(self, mock_apply_callback):
+        import hashlib
+        import hmac
+        import json
+
+        from map_app.video_processing_callback import video_processing_callback_view
+
+        body = json.dumps({"video_id": 1, "status": "completed"}, separators=(",", ":")).encode("utf-8")
+        signature = hmac.new(b"secret", body, hashlib.sha256).hexdigest()
+        mock_apply_callback.return_value = (True, "")
+
+        request = RequestFactory().post(
+            "/api/video-processing/callback/",
+            data=body,
+            content_type="application/json",
+            HTTP_X_VIDEO_PROCESSING_SIGNATURE=f"sha256={signature}",
+        )
+        response = video_processing_callback_view(request)
+
+        self.assertEqual(response.status_code, 200)
+        mock_apply_callback.assert_called_once()
+
+    @override_settings(VIDEO_PROCESSING_CALLBACK_SECRET="secret")
+    @patch("map_app.video_processing_callback.apply_video_processing_callback")
+    def test_video_processing_callback_rejects_invalid_signature(self, mock_apply_callback):
+        from map_app.video_processing_callback import video_processing_callback_view
+
+        request = RequestFactory().post(
+            "/api/video-processing/callback/",
+            data=b'{"video_id":1}',
+            content_type="application/json",
+            HTTP_X_VIDEO_PROCESSING_SIGNATURE="sha256=invalid",
+        )
+        response = video_processing_callback_view(request)
+
+        self.assertEqual(response.status_code, 403)
+        mock_apply_callback.assert_not_called()
 
 
 class ServiceInjectionTests(TestCase):
