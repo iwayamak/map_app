@@ -53,6 +53,11 @@ def enqueue_video_processing_message(video_id):
 
     payload = build_video_processing_payload(video)
     client_kwargs = {"region_name": getattr(settings, "AWS_S3_REGION_NAME", None)}
+    access_key_id = (getattr(settings, "SQS_ACCESS_KEY_ID", "") or "").strip()
+    secret_access_key = (getattr(settings, "SQS_SECRET_ACCESS_KEY", "") or "").strip()
+    if access_key_id and secret_access_key:
+        client_kwargs["aws_access_key_id"] = access_key_id
+        client_kwargs["aws_secret_access_key"] = secret_access_key
     endpoint_url = getattr(settings, "AWS_SQS_ENDPOINT_URL", "") or ""
     if endpoint_url:
         client_kwargs["endpoint_url"] = endpoint_url
