@@ -72,6 +72,7 @@ MAP_APP_SYSTEM_INFO_ONLY_TAG_LEGACY_KEY = "system_legacy_info_only_tag_label"
 - link preview service
 - healthcheck service
 - video query/transcode/processing services
+- admin video direct-upload UI, controlled by host setting `VIDEO_DIRECT_UPLOAD_ENABLED`
 - SiteSettings admin builder (`build_sitesettings_admin`)
 - modal image UI (fixed stage + aspect-ratio preserving transitions)
 
@@ -90,3 +91,24 @@ python -m unittest discover -s tests -p "test_*.py"
 ```
 
 See [docs/migration_checklist.md](docs/migration_checklist.md) for host-app migration steps.
+
+## Production Notes
+
+`map_app` is deployed as the shared module for:
+
+- `https://piano.suu3.jp/`
+- `https://goshuin.suu3.jp/`
+
+The consolidated production host is `suusan-web` (`3.115.43.47`). Deploy
+`map_app` before each host app so template, admin, and service changes are
+available to `suusan_piano_map` and `goshuin_map`.
+
+For piano-map video uploads, the browser-to-object-storage direct upload UI is
+enabled only when the host app sets:
+
+```python
+VIDEO_DIRECT_UPLOAD_ENABLED = True
+```
+
+If object-storage CORS is broken, host apps can temporarily set this to
+`False` so admin uploads fall back to Django's normal multipart upload path.
