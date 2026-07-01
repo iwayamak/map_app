@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import django
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
 from django.test import RequestFactory, override_settings
 
 if not settings.configured:
@@ -21,6 +22,8 @@ else:
 
 from map_app.services.video_processing import ffmpeg
 from map_app.services.video_processing import pipeline
+from map_app.admin_video import VideoAdmin
+from map_app.models import Video
 
 
 class _DummyFileField:
@@ -109,6 +112,16 @@ class VideoProcessingInjectionTests(TestCase):
         self.assertEqual(payload["storage"]["bucket"], "media-bucket")
         self.assertEqual(payload["storage"]["media_location"], "media")
         self.assertEqual(payload["callback"]["url"], "https://example.com/api/video-processing/callback/")
+
+    @override_settings(USE_S3=True, VIDEO_DIRECT_UPLOAD_ENABLED=False)
+    @patch("map_app.admin_video.reverse", return_value="/admin/map_app/video/direct-upload-url/")
+    def test_video_admin_can_disable_direct_upload(self, _mock_reverse):
+        request = RequestFactory().get("/admin/map_app/video/add/")
+        video_admin = VideoAdmin(Video, AdminSite())
+
+        formfield = video_admin.formfield_for_dbfield(Video._meta.get_field("video_file"), request)
+
+        self.assertEqual(formfield.widget.attrs["data-direct-upload-enabled"], "0")
 
     @override_settings(VIDEO_PROCESSING_CALLBACK_SECRET="secret")
     @patch("map_app.video_processing_callback.apply_video_processing_callback")

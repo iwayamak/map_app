@@ -203,7 +203,8 @@ class VideoAdmin(admin.ModelAdmin):
         formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
         if db_field.name == "video_file" and formfield is not None:
             formfield.widget.attrs["data-direct-upload-url"] = reverse("admin:map_app_video_direct_upload")
-            formfield.widget.attrs["data-direct-upload-enabled"] = "1" if settings.USE_S3 else "0"
+            direct_upload_enabled = getattr(settings, "VIDEO_DIRECT_UPLOAD_ENABLED", True)
+            formfield.widget.attrs["data-direct-upload-enabled"] = "1" if settings.USE_S3 and direct_upload_enabled else "0"
         return formfield
 
     def video_file_size(self, obj):
