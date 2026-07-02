@@ -29,6 +29,7 @@ from map_app.services.healthcheck_service import run_health_checks
 from map_app.services.map_cache_warmup_service import schedule_map_cache_warmup
 from map_app.services.map_page_cache_service import get_unfiltered_map_page_html
 from map_app.services.map_page_service import build_map_search_payload, render_map_page_html
+from map_app.services.public_activity_service import build_recent_activity_payload
 from map_app.services.site_context_service import load_site_context
 from map_app.services.video_query_service import build_interleaved_video_rows, get_published_videos_queryset
 
@@ -327,6 +328,18 @@ def map_search_api_view(request):
             search_query,
             ",".join(selected_tags),
         )
+        return JsonResponse({"error": "Service temporarily unavailable."}, status=503)
+
+
+def public_recent_activities_view(request):
+    try:
+        limit = max(1, min(20, int(request.GET.get("limit", "5"))))
+    except ValueError:
+        return JsonResponse({"error": "Invalid limit."}, status=400)
+    try:
+        return JsonResponse(build_recent_activity_payload(request, limit=limit))
+    except DatabaseError:
+        logger.exception("public_recent_activities_view db_error")
         return JsonResponse({"error": "Service temporarily unavailable."}, status=503)
 
 
