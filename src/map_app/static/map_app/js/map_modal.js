@@ -86,5 +86,8 @@ function replaceMapMarkers(markers) {
         handleMarkerClick(marker, buildMarkerIdentity(activityLogId, locationId));
         globalMarkerClusterGroup.addLayer(marker);
     });
+    if (typeof openInitialActivityFromUrl === "function") {
+        setTimeout(openInitialActivityFromUrl, 150);
+    }
     return true;
 }

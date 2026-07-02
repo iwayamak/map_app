@@ -17,15 +17,15 @@ def build_recent_activity_payload(request, *, limit=5):
         ActivityLog.objects.select_related("location")
         .order_by("-date", "-created_at")[:limit]
     )
-    map_url = request.build_absolute_uri(reverse(f"{getattr(settings, 'MAP_APP_URL_NAMESPACE', 'map_app')}:map"))
-    activities = [_serialize_activity_log(activity_log, map_url) for activity_log in activity_logs]
+    map_path = reverse(f"{getattr(settings, 'MAP_APP_URL_NAMESPACE', 'map_app')}:map")
+    activities = [_serialize_activity_log(request, activity_log, map_path) for activity_log in activity_logs]
     return {
         "service": site_settings.site_title,
         "activities": activities,
     }
 
 
-def _serialize_activity_log(activity_log, map_url):
+def _serialize_activity_log(request, activity_log, map_path):
     record_date = activity_log.date
     location = activity_log.location
     title = activity_log.title or location.name
@@ -36,7 +36,7 @@ def _serialize_activity_log(activity_log, map_url):
         "id": f"activity-log:{activity_log.id}",
         "title": title,
         "summary": summary,
-        "url": map_url,
+        "url": request.build_absolute_uri(f"{map_path}?activity_log_id={activity_log.id}"),
         "published_at": published_at.isoformat(),
         "activity_date": record_date.isoformat(),
         "created_at": activity_log.created_at.isoformat(),

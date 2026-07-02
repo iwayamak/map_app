@@ -15,5 +15,8 @@ function bindMarkerEvents(mapId) {
         bindClusterMarkerEvents(clusterGroup);
         keepSpiderfyCenterOnViewportCenter(mapObj, clusterGroup);
         bindMapStabilityGuards(mapObj, clusterGroup);
+        if (typeof openInitialActivityFromUrl === "function") {
+            setTimeout(openInitialActivityFromUrl, 150);
+        }
     });
 }

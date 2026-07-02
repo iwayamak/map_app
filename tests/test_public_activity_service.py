@@ -56,5 +56,5 @@ class PublicActivityServiceTests(TestCase):
         self.assertEqual(payload["activities"][0]["id"], "activity-log:1")
         self.assertEqual(payload["activities"][0]["title"], "駅ピアノ")
         self.assertEqual(payload["activities"][0]["summary"], "東京駅 / 2026/07/01")
-        self.assertEqual(payload["activities"][0]["url"], "https://example.test/")
+        self.assertEqual(payload["activities"][0]["url"], "https://example.test/?activity_log_id=1")
         self.assertEqual(payload["activities"][0]["activity_date"], "2026-07-01")
