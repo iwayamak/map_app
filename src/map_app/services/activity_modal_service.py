@@ -154,11 +154,14 @@ def build_activity_modal_payload(activity_id, *, build_link_preview_map_func=Non
         pk=activity_id,
     )
 
-    current_count = (
-        ActivityLog.objects.filter(location_id=activity.location_id)
-        .filter(Q(date__lt=activity.date) | Q(date=activity.date, id__lte=activity.id))
-        .count()
-    )
+    current_count_query = Q(date__lt=activity.date)
+    if activity.time:
+        current_count_query |= Q(date=activity.date, time__lt=activity.time)
+        current_count_query |= Q(date=activity.date, time=activity.time, id__lte=activity.id)
+    else:
+        current_count_query |= Q(date=activity.date, id__lte=activity.id)
+
+    current_count = ActivityLog.objects.filter(location_id=activity.location_id).filter(current_count_query).count()
 
     activity_items = []
     if use_record_items:

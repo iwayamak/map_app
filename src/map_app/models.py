@@ -187,16 +187,19 @@ class ActivityLog(ActivityLogBehavior, BaseActivityLog):
         db_table = "map_app_activitylog"
         verbose_name = "記録"
         verbose_name_plural = "記録"
-        ordering = ["-date", "-created_at"]
+        ordering = ["-date", "-time", "-created_at"]
         indexes = [
             models.Index(fields=["date"], name="piano_map_a_date_0b5782_idx"),
             models.Index(fields=["location", "date"], name="piano_map_a_locatio_be02cf_idx"),
         ]
 
     def __str__(self):
+        date_label = self.date
+        if self.time:
+            date_label = f"{self.date} {self.time:%H:%M}"
         if self.title:
-            return f"{self.location.name} - {self.title} ({self.date})"
-        return f"{self.location.name} ({self.date})"
+            return f"{self.location.name} - {self.title} ({date_label})"
+        return f"{self.location.name} ({date_label})"
 
 
 class ActivityLogItem(BaseActivityLogItem):

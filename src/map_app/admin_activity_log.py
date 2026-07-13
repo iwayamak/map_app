@@ -8,6 +8,7 @@ from django.db import DatabaseError, ProgrammingError
 from django.db.models import Count, Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.dateparse import parse_time
 
 from map_app.domain_terms import get_domain_term_bool
 
@@ -81,8 +82,8 @@ def build_activity_log_admin(
 
     class ActivityLogAdmin(csv_admin_mixin, simple_delete_list_admin_mixin, admin.ModelAdmin):
         form = ActivityLogAdminForm
-        list_display = ("date", "location", "activity_item_count", "delete_button")
-        list_display_links = ("date",)
+        list_display = ("recorded_at_display", "location", "activity_item_count", "delete_button")
+        list_display_links = ("recorded_at_display",)
         list_filter = ("date", "location", "created_at")
         search_fields = ("title", "location__name", "activitylogitem__item__name")
         date_hierarchy = "date"
@@ -139,9 +140,17 @@ def build_activity_log_admin(
 
         fieldsets = (
             ("基本情報", {
-                "fields": ("location", "date")
+                "fields": ("location", "date", "time")
             }),
         )
+
+        def recorded_at_display(self, obj):
+            if obj.time:
+                return f"{obj.date:%Y-%m-%d} {obj.time:%H:%M}"
+            return obj.date.strftime("%Y-%m-%d")
+
+        recorded_at_display.short_description = "記録日時"
+        recorded_at_display.admin_order_field = "date"
 
         def get_fieldsets(self, request, obj=None):
             base_fieldsets = list(super().get_fieldsets(request, obj))
@@ -178,6 +187,8 @@ def build_activity_log_admin(
             return queryset.select_related("location").annotate(activity_item_count_value=Count("activitylogitem"))
 
         def get_delete_button_label(self, obj):
+            if obj.time:
+                return f"{obj.location.name} ({obj.date} {obj.time:%H:%M})"
             return f"{obj.location.name} ({obj.date})"
 
         def save_related(self, request, form, formsets, change):
@@ -228,12 +239,19 @@ def build_activity_log_admin(
                 if not item_names and obj.title:
                     item_names = [name.strip() for name in obj.title.split(",") if name.strip()]
                 max_activity_item_count = max(max_activity_item_count, len(item_names))
-                row_data.append((obj.location.name, obj.date.strftime("%Y-%m-%d"), item_names))
+                row_data.append(
+                    (
+                        obj.location.name,
+                        obj.date.strftime("%Y-%m-%d"),
+                        obj.time.strftime("%H:%M") if obj.time else "",
+                        item_names,
+                    )
+                )
 
-            header = ["場所名", "記録日"] + [f"項目名{i}" for i in range(1, max_activity_item_count + 1)]
+            header = ["場所名", "記録日", "記録時刻"] + [f"項目名{i}" for i in range(1, max_activity_item_count + 1)]
             rows = [
-                [location_name, date_text, *item_names, *([""] * (max_activity_item_count - len(item_names)))]
-                for location_name, date_text, item_names in row_data
+                [location_name, date_text, time_text, *item_names, *([""] * (max_activity_item_count - len(item_names)))]
+                for location_name, date_text, time_text, item_names in row_data
             ]
             return build_csv_response("activity_logs", header, rows)
 
@@ -251,12 +269,19 @@ def build_activity_log_admin(
                             location = location_model.objects.get(name=row["場所名"])
                             date_text = row.get("記録日") or row.get("演奏日") or ""
                             date_obj = datetime.strptime(date_text, "%Y-%m-%d").date()
+                            time_text = (row.get("記録時刻") or row.get("演奏時刻") or "").strip()
+                            time_obj = parse_time(time_text) if time_text else None
+                            if time_text and time_obj is None:
+                                raise ValueError(f"時刻形式が不正です: {time_text}")
 
-                            activity_log_model.objects.create(
-                                location=location,
-                                date=date_obj,
-                                title=row.get("項目名") or row.get("曲名") or "",
-                            )
+                            create_kwargs = {
+                                "location": location,
+                                "date": date_obj,
+                                "title": row.get("項目名") or row.get("曲名") or "",
+                            }
+                            if time_text:
+                                create_kwargs["time"] = time_obj
+                            activity_log_model.objects.create(**create_kwargs)
                             created_count += 1
                         except location_model.DoesNotExist:
                             error_rows.append(f'行{idx}: 場所「{row["場所名"]}」が見つかりません')

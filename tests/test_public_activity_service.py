@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone as datetime_timezone
+from datetime import date, datetime, time, timezone as datetime_timezone
 from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -21,11 +21,12 @@ if not settings.configured:
 from map_app.services.public_activity_service import build_recent_activity_payload
 
 
-def _activity_log(pk, title, location_name, record_date, created_at):
+def _activity_log(pk, title, location_name, record_date, created_at, record_time=None):
     return SimpleNamespace(
         id=pk,
         title=title,
         date=record_date,
+        time=record_time,
         created_at=created_at,
         location=SimpleNamespace(id=10 + pk, name=location_name),
     )
@@ -41,6 +42,7 @@ class PublicActivityServiceTests(TestCase):
                 "東京駅",
                 date(2026, 7, 1),
                 datetime(2026, 7, 1, 12, 0, tzinfo=datetime_timezone.utc),
+                time(14, 30),
             )
         ]
         request = SimpleNamespace(build_absolute_uri=lambda path: f"https://example.test{path}")
@@ -55,6 +57,7 @@ class PublicActivityServiceTests(TestCase):
         self.assertEqual(payload["service"], "ピアノマップ")
         self.assertEqual(payload["activities"][0]["id"], "activity-log:1")
         self.assertEqual(payload["activities"][0]["title"], "駅ピアノ")
-        self.assertEqual(payload["activities"][0]["summary"], "東京駅 / 2026/07/01")
+        self.assertEqual(payload["activities"][0]["summary"], "東京駅 / 2026/07/01 14:30")
         self.assertEqual(payload["activities"][0]["url"], "https://example.test/?activity_log_id=1")
         self.assertEqual(payload["activities"][0]["activity_date"], "2026-07-01")
+        self.assertEqual(payload["activities"][0]["activity_time"], "14:30")

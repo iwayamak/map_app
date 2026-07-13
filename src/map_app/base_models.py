@@ -1,4 +1,9 @@
 from django.db import models
+from django.utils import timezone
+
+
+def default_activity_log_time():
+    return timezone.localtime().replace(microsecond=0).time()
 
 
 class BaseSiteSettings(models.Model):
@@ -66,6 +71,12 @@ class BaseActivityItem(models.Model):
 class BaseActivityLog(models.Model):
     title = models.CharField(max_length=200, blank=True, default="", verbose_name="記録タイトル（任意）")
     date = models.DateField(verbose_name="記録日")
+    time = models.TimeField(
+        blank=True,
+        null=True,
+        default=default_activity_log_time,
+        verbose_name="記録時刻",
+    )
     custom_data = models.JSONField(
         default=dict,
         blank=True,
@@ -76,7 +87,7 @@ class BaseActivityLog(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ["-date", "-created_at"]
+        ordering = ["-date", "-time", "-created_at"]
 
 
 class BaseActivityLogItem(models.Model):

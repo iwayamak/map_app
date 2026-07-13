@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time, timezone
 from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -17,12 +17,13 @@ if not settings.configured:
 from map_app.statistics_service import build_map_statistics
 
 
-def _activity_log(pk, location_id, location_name, record_date, created_at):
+def _activity_log(pk, location_id, location_name, record_date, created_at, record_time=None):
     return SimpleNamespace(
         pk=pk,
         id=pk,
         title=f"record-{pk}",
         date=record_date,
+        time=record_time,
         created_at=created_at,
         location=SimpleNamespace(
             id=location_id,
@@ -49,4 +50,20 @@ class StatisticsServiceTests(TestCase):
         self.assertEqual(
             [visit["location_name"] for visit in stats["recent_visits_data"]],
             ["Newest day", "New same date", "Old same date"],
+        )
+
+    def test_recent_visits_sort_same_date_by_record_time_desc(self):
+        fake_location_model = SimpleNamespace(tags=SimpleNamespace(through=MagicMock()))
+        fake_location_model.tags.through.objects.filter.return_value.values.return_value.distinct.return_value.count.return_value = 0
+        activity_logs = [
+            _activity_log(1, 1, "Morning", date(2026, 6, 1), datetime(2026, 6, 1, 18, tzinfo=timezone.utc), time(9, 0)),
+            _activity_log(2, 2, "Evening", date(2026, 6, 1), datetime(2026, 6, 1, 8, tzinfo=timezone.utc), time(18, 0)),
+        ]
+
+        with patch("map_app.statistics_service.get_location_model", return_value=fake_location_model):
+            stats = build_map_statistics(activity_logs)
+
+        self.assertEqual(
+            [visit["location_name"] for visit in stats["recent_visits_data"]],
+            ["Evening", "Morning"],
         )

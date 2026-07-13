@@ -55,12 +55,12 @@ def get_filtered_activity_log_queryset(search_query="", selected_tags=None, doma
     if include_unvisited_only:
         return ActivityLog.objects.none()
 
-    activity_log_qs = ActivityLog.objects.select_related("location").order_by("date", "id")
+    activity_log_qs = ActivityLog.objects.select_related("location").order_by("date", "time", "id")
 
     if include_domain_info_only:
         first_activity_log_id_subquery = (
             ActivityLog.objects.filter(location_id=OuterRef("location_id"))
-            .order_by("date", "id")
+            .order_by("date", "time", "id")
             .values("id")[:1]
         )
         activity_log_qs = activity_log_qs.annotate(

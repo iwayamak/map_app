@@ -31,9 +31,15 @@ def _recent_visit_sort_key(activity_log):
         date_value = record_date.toordinal()
     else:
         date_value = 0
+    record_time = getattr(activity_log, "time", None)
+    if isinstance(record_time, time):
+        time_value = (record_time.hour * 3600) + (record_time.minute * 60) + record_time.second
+    else:
+        time_value = 0
     record_id = getattr(activity_log, "pk", None) or getattr(activity_log, "id", None) or 0
     return (
         date_value,
+        time_value,
         _sortable_datetime_value(getattr(activity_log, "created_at", None)),
         int(record_id),
     )

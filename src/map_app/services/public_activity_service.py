@@ -15,7 +15,7 @@ def build_recent_activity_payload(request, *, limit=5):
     ActivityLog = get_activity_log_model()
     activity_logs = (
         ActivityLog.objects.select_related("location")
-        .order_by("-date", "-created_at")[:limit]
+        .order_by("-date", "-time", "-created_at")[:limit]
     )
     map_path = reverse(f"{getattr(settings, 'MAP_APP_URL_NAMESPACE', 'map_app')}:map")
     activities = [_serialize_activity_log(request, activity_log, map_path) for activity_log in activity_logs]
@@ -27,10 +27,13 @@ def build_recent_activity_payload(request, *, limit=5):
 
 def _serialize_activity_log(request, activity_log, map_path):
     record_date = activity_log.date
+    record_time = activity_log.time or time.min
     location = activity_log.location
     title = activity_log.title or location.name
     summary = f"{location.name} / {record_date.strftime('%Y/%m/%d')}"
-    published_at = datetime.combine(record_date, time.min)
+    if activity_log.time:
+        summary = f"{summary} {activity_log.time:%H:%M}"
+    published_at = datetime.combine(record_date, record_time)
     published_at = timezone.make_aware(published_at, timezone.get_current_timezone())
     return {
         "id": f"activity-log:{activity_log.id}",
@@ -39,6 +42,7 @@ def _serialize_activity_log(request, activity_log, map_path):
         "url": request.build_absolute_uri(f"{map_path}?activity_log_id={activity_log.id}"),
         "published_at": published_at.isoformat(),
         "activity_date": record_date.isoformat(),
+        "activity_time": activity_log.time.isoformat(timespec="minutes") if activity_log.time else "",
         "created_at": activity_log.created_at.isoformat(),
         "location": {
             "id": location.id,
