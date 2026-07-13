@@ -6,6 +6,10 @@ def default_activity_log_time():
     return timezone.localtime().replace(microsecond=0).time()
 
 
+def default_activity_log_date():
+    return timezone.localdate()
+
+
 class BaseSiteSettings(models.Model):
     site_title = models.CharField(max_length=100, verbose_name="サイトタイトル")
     site_logo = models.ImageField(upload_to="site/", blank=True, null=True, verbose_name="サイトロゴ")
@@ -70,7 +74,7 @@ class BaseActivityItem(models.Model):
 
 class BaseActivityLog(models.Model):
     title = models.CharField(max_length=200, blank=True, default="", verbose_name="記録タイトル（任意）")
-    date = models.DateField(verbose_name="記録日")
+    date = models.DateField(default=default_activity_log_date, verbose_name="記録日")
     time = models.TimeField(
         blank=True,
         null=True,

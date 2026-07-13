@@ -38,3 +38,7 @@ class BaseModelsTests(TestCase):
 
             self.assertEqual(base_models.default_activity_log_time(), "12:34:56")
             mock_localtime.return_value.replace.assert_called_once_with(microsecond=0)
+
+    def test_activity_log_date_default_uses_current_local_date(self):
+        with patch("map_app.base_models.timezone.localdate", return_value="2026-07-13"):
+            self.assertEqual(base_models.default_activity_log_date(), "2026-07-13")

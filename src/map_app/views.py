@@ -333,7 +333,7 @@ def map_search_api_view(request):
 
 def public_recent_activities_view(request):
     try:
-        limit = max(1, min(20, int(request.GET.get("limit", "5"))))
+        limit = max(1, min(100, int(request.GET.get("limit", "30"))))
     except ValueError:
         return JsonResponse({"error": "Invalid limit."}, status=400)
     try:
